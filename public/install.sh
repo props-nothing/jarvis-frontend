@@ -10,6 +10,7 @@
 #   JARVIS_REF      branch, tag or commit (default: main)
 #   JARVIS_SRC      where the source lives (default: ~/.local/src/jarvisv2)
 #   JARVIS_SERVICE  set to 0 to skip starting at login (default: 1)
+#   JARVIS_INSTALL_RUST  set to 1 to install Rust with rustup when cargo is missing (default: 0)
 set -euo pipefail
 
 REPO="${JARVIS_REPO:-https://github.com/props-nothing/jarvisv2.git}"
@@ -21,14 +22,37 @@ say() { printf '\033[36m▸\033[0m %s\n' "$*"; }
 die() { printf '\033[31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
 need() { command -v "$1" >/dev/null 2>&1 || die "$1 is required. $2"; }
 
+# Suggest the right package command for this distribution.
+pkg_hint() {
+  if [ "$(uname -s)" = "Darwin" ]; then echo "xcode-select --install"
+  elif command -v dnf >/dev/null 2>&1; then echo "sudo dnf install -y git gcc make"
+  elif command -v apt-get >/dev/null 2>&1; then echo "sudo apt-get install -y git build-essential"
+  elif command -v zypper >/dev/null 2>&1; then echo "sudo zypper install -y git gcc make"
+  elif command -v pacman >/dev/null 2>&1; then echo "sudo pacman -S --needed git base-devel"
+  else echo "install git and a C compiler with your package manager"
+  fi
+}
+
 case "$(uname -s)" in
   Linux | Darwin) ;;
   *) die "This installer is for macOS and Linux. On Windows use install.ps1." ;;
 esac
 
-need git "Install it with your package manager (macOS: xcode-select --install)."
-need cargo "Install Rust from https://rustup.rs and open a new terminal."
-need cc "Install a C compiler (macOS: xcode-select --install; Debian/Ubuntu: apt install build-essential)."
+need git "Try: $(pkg_hint)"
+need cc "Try: $(pkg_hint)"
+
+# rustup puts cargo in ~/.cargo/bin, which a fresh shell may not have on PATH yet.
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+if ! command -v cargo >/dev/null 2>&1; then
+  if [ "${JARVIS_INSTALL_RUST:-0}" = "1" ]; then
+    need curl "Try: $(pkg_hint)"
+    say "Installing Rust with rustup (JARVIS_INSTALL_RUST=1)"
+    curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs | sh -s -- -y --profile minimal
+    . "$HOME/.cargo/env"
+  else
+    die "cargo is required. Install Rust from https://rustup.rs, or re-run with JARVIS_INSTALL_RUST=1 to let this script do it."
+  fi
+fi
 
 if [ -d "$SRC/.git" ]; then
   say "Updating source in $SRC"

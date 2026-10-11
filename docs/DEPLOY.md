@@ -22,4 +22,4 @@ Then run the installers on a clean Linux, macOS and Windows machine. This has no
 
 ## Pinning a release
 
-`JARVIS_REF` selects a branch, tag or commit and defaults to `main`. Once tagged releases exist, change the default to the latest tag and, when prebuilt archives are public, switch the scripts to download and verify the SHA-256 instead of building.
+`JARVIS_REF` selects a branch, tag or commit and defaults to `main`. `JARVIS_INSTALL_RUST=1` lets `install.sh` install Rust with rustup when `cargo` is missing (for example on a fresh AlmaLinux or other RHEL-family server); otherwise it stops and says what to install. Missing `git` or a C compiler produces the matching `dnf`, `apt-get`, `zypper` or `pacman` command as a hint; the script never runs `sudo` itself. Once tagged releases exist, change the default to the latest tag and, when prebuilt archives are public, switch the scripts to download and verify the SHA-256 instead of building.

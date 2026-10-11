@@ -20,7 +20,8 @@ for (const [name, text] of [["install.sh", sh], ["install.ps1", ps1]]) {
   if (!text.includes("github.com/props-nothing/jarvisv2.git")) fail(`${name} must clone the official repository`);
   if (!text.includes("cargo") || !text.includes("jarvis-cli")) fail(`${name} must build the jarvis-cli package`);
   if (!text.includes("install")) fail(`${name} must run 'jarvis install'`);
-  if (/\b(sudo|Invoke-Expression|iex)\b/.test(text.replace(/^\s*#.*$/gm, ""))) fail(`${name} must not need elevation or eval remote code`);
+  const code = text.replace(/^\s*#.*$/gm, "").split("\n").filter((l) => !/^\s*(elif|if)?.*\becho "sudo /.test(l)).join("\n");
+  if (/\b(sudo|Invoke-Expression|iex)\b/.test(code)) fail(`${name} must not need elevation or eval remote code`);
 }
 
 const bash = spawnSync("bash", ["-n", join(root, "public", "install.sh")], { encoding: "utf8" });
