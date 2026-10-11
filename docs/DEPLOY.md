@@ -18,7 +18,7 @@ npm run check:install
 curl -fsSL https://YOUR-HOST/install.sh | head -n 3     # must print the bash shebang, not HTML
 ```
 
-Then run the installers on a clean Linux, macOS and Windows machine. This has not been done yet.
+Ubuntu 24.04 has been run end to end (see below). Still to do: AlmaLinux, macOS and Windows clean-machine runs, and `install.sh` through `curl | bash` from the hosted site.
 
 ## Server test findings (Ubuntu 24.04.5, 1 vCPU, 4 GB, fresh non-root user, 2026-10-11)
 
