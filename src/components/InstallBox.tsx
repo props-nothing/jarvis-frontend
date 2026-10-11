@@ -18,7 +18,7 @@ export function useInstallCommands() {
         `git clone ${REPO_GIT_URL}`,
         "cd jarvisv2",
         "cargo build --release -p jarvis-cli",
-        "./target/release/jarvis install --service",
+        "./target/release/jarvis install",
       ].join("\n"),
     } satisfies Record<TabId, string>;
   }, []);

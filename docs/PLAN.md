@@ -28,7 +28,7 @@ No accounts, analytics, tracking, cookies or third-party fonts and scripts. The 
 
 | Method | State | Notes |
 | --- | --- | --- |
-| `curl -fsSL <host>/install.sh \| bash` | Works once the site is hosted | Clones, `cargo build --release -p jarvis-cli`, `jarvis install --service` |
+| `curl -fsSL <host>/install.sh \| bash` | Works once the site is hosted | Clones, `cargo build --release -p jarvis-cli`, `jarvis install`; `JARVIS_SERVICE=1` adds `--service` (off by default, see "Server test findings" in DEPLOY.md) |
 | `irm <host>/install.ps1 \| iex` | Same | Windows, per-user, no administrator rights |
 | From source | Works now | Plain git and cargo commands, no hosting needed |
 | Prebuilt archive | Blocked | Needs a licence ([P9-004 to P9-007]); switch the scripts to download and verify the SHA-256 when it exists |

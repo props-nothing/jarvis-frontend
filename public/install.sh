@@ -9,14 +9,15 @@
 #   JARVIS_REPO     git URL to clone      (default: https://github.com/props-nothing/jarvisv2.git)
 #   JARVIS_REF      branch, tag or commit (default: main)
 #   JARVIS_SRC      where the source lives (default: ~/.local/src/jarvisv2)
-#   JARVIS_SERVICE  set to 0 to skip starting at login (default: 1)
+#   JARVIS_SERVICE  set to 1 to also start at login; off by default because a service started before `jarvis init`
+#                   runs without the console and `jarvis restart` cannot replace it (default: 0)
 #   JARVIS_INSTALL_RUST  set to 1 to install Rust with rustup when cargo is missing (default: 0)
 set -euo pipefail
 
 REPO="${JARVIS_REPO:-https://github.com/props-nothing/jarvisv2.git}"
 REF="${JARVIS_REF:-main}"
 SRC="${JARVIS_SRC:-$HOME/.local/src/jarvisv2}"
-SERVICE="${JARVIS_SERVICE:-1}"
+SERVICE="${JARVIS_SERVICE:-0}"
 
 say() { printf '\033[36m▸\033[0m %s\n' "$*"; }
 die() { printf '\033[31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
@@ -78,6 +79,7 @@ else
   "$BIN" install --service
 fi
 
-printf '\n\033[32m✓ JARVIS is installed.\033[0m Open a new terminal and run: jarvis\n'
+printf '\n\033[32m✓ JARVIS is installed.\033[0m Open a new terminal (or log in again over SSH) and run: jarvis\n'
 printf '  It asks which model to use, starts in the background and opens the console.\n'
+printf '  Then, to start it at login: jarvis service install\n'
 printf '  Remove it again with: jarvis uninstall\n'

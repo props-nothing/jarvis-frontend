@@ -5,13 +5,14 @@
 # %LOCALAPPDATA%\Programs\JARVIS and puts it on your PATH. No administrator rights are needed and
 # your settings and memory are never touched.
 #
-# Environment overrides: JARVIS_REPO, JARVIS_REF, JARVIS_SRC, JARVIS_SERVICE (set to 0 to skip start-at-login).
+# Environment overrides: JARVIS_REPO, JARVIS_REF, JARVIS_SRC, JARVIS_SERVICE (set to 1 to also start at login; off by
+# default because a service started before `jarvis init` runs without the console).
 $ErrorActionPreference = 'Stop'
 
 $Repo = if ($env:JARVIS_REPO) { $env:JARVIS_REPO } else { 'https://github.com/props-nothing/jarvisv2.git' }
 $Ref = if ($env:JARVIS_REF) { $env:JARVIS_REF } else { 'main' }
 $Src = if ($env:JARVIS_SRC) { $env:JARVIS_SRC } else { Join-Path $env:LOCALAPPDATA 'jarvisv2-src' }
-$Service = if ($env:JARVIS_SERVICE) { $env:JARVIS_SERVICE } else { '1' }
+$Service = if ($env:JARVIS_SERVICE) { $env:JARVIS_SERVICE } else { '0' }
 
 function Say($m) { Write-Host "> $m" -ForegroundColor Cyan }
 function Need($cmd, $hint) {
@@ -43,9 +44,10 @@ $Bin = Join-Path $Src 'target\release\jarvis.exe'
 if (-not (Test-Path $Bin)) { throw "Build finished but $Bin is missing." }
 
 Say 'Installing for the current user'
-if ($Service -eq '0') { Run $Bin @('install') } else { Run $Bin @('install', '--service') }
+if ($Service -eq '1') { Run $Bin @('install', '--service') } else { Run $Bin @('install') }
 
 Write-Host ''
 Write-Host 'JARVIS is installed. Open a new terminal and run: jarvis' -ForegroundColor Green
 Write-Host '  It asks which model to use, starts in the background and opens the console.'
+Write-Host '  Then, to start it at login: jarvis service install'
 Write-Host '  Remove it again with: jarvis uninstall'
