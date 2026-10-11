@@ -30,17 +30,19 @@ Run end to end with `JARVIS_INSTALL_RUST=1 bash install.sh`:
 | rustup install | Worked (Rust 1.99.0 stable; the repo's `rust-toolchain.toml` pins 1.98.1 and rustup fetches it as needed) |
 | Clone and `cargo build --release -p jarvis-cli` | Worked, 10 min 41 s on 1 vCPU. A rebuild is seconds |
 | `jarvis install` | Installed to `~/.local/share/jarvis`, linked in `~/.local/bin` |
-| `jarvis init`, `start`, `service install` | Worked. One daemon, systemd user unit active, lingering enabled, console answers HTTP 200 on `127.0.0.1:8765` |
+| `jarvis init`, `start`, `service install` | `init` and `start` worked and the console answers HTTP 200 on `127.0.0.1:8765`. `service install` while a `jarvis start` daemon was running did **not** work cleanly: see finding 4 |
 | SSH tunnel from another computer | Console reached through `ssh -L`. The port was not reachable from outside |
 | `jarvis doctor --live` | Ran. Reported the model unreachable, which is correct: no model server was installed |
 
 Findings that changed the installer:
 
-1. **`install --service` before `init` leaves a broken daemon.** The unit started with no configuration (`http_port=0`), and `jarvis restart` then failed with "another jarvisd process already owns this profile". The installer no longer starts the service by default (`JARVIS_SERVICE=1` opts in), and tells the user to run `jarvis service install` after the first run. Running `jarvis start` and then `jarvis service install` was verified to adopt a single daemon. Recommended fix in the platform repository: `jarvis restart` should defer to the systemd, launchd or Run-entry owner, and a service started without configuration should not be left running.
+1. **`install --service` before `init` leaves a broken daemon.** The unit started with no configuration (`http_port=0`), and `jarvis restart` then failed with "another jarvisd process already owns this profile". The installer no longer starts the service by default (`JARVIS_SERVICE=1` opts in), and tells the user to run `jarvis stop` and then `jarvis service install` after the first run. Recommended fix in the platform repository: `jarvis restart` should defer to the systemd, launchd or Run-entry owner, and a service started without configuration should not be left running.
 2. A non-interactive `su -` has no user systemd bus, so `systemctl --user` fails there. A real SSH login works.
 3. `~/.local/bin` is on the PATH only from the next login.
+4. **`service install` while a `jarvis start` daemon is running leaves the unit crash-looping.** The singleton refuses the second daemon every 3 seconds (1972 restarts after about two hours) while the manual daemon keeps serving. `jarvis stop` lets systemd take over, which then worked: console 200, doctor ok. My first test reported "one active daemon" because I looked at the wrong moment; this entry replaces that claim. Logged for the core as part of `P9-022`.
+5. With the local Ollama (`ollama pull qwen2.5:1.5b`), `jarvis init` with no `--base-url` finds it; passing `--base-url http://localhost:11434/v1` is treated as a hosted provider and demands `--api-key-file`. `jarvis ask` then completed a real run in 26 s on one CPU.
 
-Not tested: an actual model (no Ollama on the server), `jarvis hud` with a display, AlmaLinux, macOS, Windows.
+Not tested: `jarvis hud` with a display, AlmaLinux, aarch64, macOS, Windows.
 
 ## Pinning a release
 

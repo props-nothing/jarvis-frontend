@@ -25,6 +25,7 @@ Every factual statement on the site comes from the JARVIS repository. When these
 
 ## Deliberately illustrative
 
+- `public/console.jpg` is a real capture (2026-10-11): `jarvis hud` through an SSH tunnel to a daemon on Ubuntu 24.04, answering via Ollama `qwen2.5:1.5b` on one CPU. The prompt and answer are as returned. Re-capture it when the console's look changes.
 - The terminal session and the approval card are illustrations and are labelled as such. The model name, folder and tool wording are examples, not captured output.
 - The orb is decorative; it is not a rendering of the console's head.
 

@@ -81,5 +81,5 @@ fi
 
 printf '\n\033[32m✓ JARVIS is installed.\033[0m Open a new terminal (or log in again over SSH) and run: jarvis\n'
 printf '  It asks which model to use, starts in the background and opens the console.\n'
-printf '  Then, to start it at login: jarvis service install\n'
+printf '  Then, to start it at login: jarvis stop && jarvis service install\n'
 printf '  Remove it again with: jarvis uninstall\n'

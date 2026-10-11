@@ -4,22 +4,24 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 
 ## Next, in order
 
-- [ ] **1. Host the site over HTTPS** (**needs owner**: domain or host). Static `dist/`. Serve `install.sh` and `install.ps1` as plain text with no SPA rewrite. Then run `curl -fsSL https://HOST/install.sh | head -n 3` and confirm it prints the shebang. See `docs/DEPLOY.md`.
-- [ ] **2. Core: `jarvis stop|restart` and a service that owns the profile.** Found on Ubuntu 24.04; recorded under `P9-022` in the main `TODO.md` with a suggested fix. Not fixed by this repo's author, because the core is being changed by another agent. Until it lands the installers do not start the service by default.
-- [ ] **3. Test AlmaLinux 10** (the dnf hint and the rustup path in `install.sh` are unrun on a real box), aarch64 Linux, macOS (`install.sh`) and a clean Windows machine (`install.ps1`). Ubuntu 24.04 x86_64 is done (`docs/DEPLOY.md`).
-- [ ] **4. Test with a real model on a server** (install Ollama on the test server, run a chat, `doctor --live`).
-- [ ] **5. Replace the illustrative terminal and the decorative head with real captures** of the console (screenshots or a short recording) once a model works.
-- [ ] **6. Prebuilt downloads** (**needs owner**: licence; main `P9-004` to `P9-007`). Then switch both installers to download an archive and verify its SHA-256, add a version badge, and make a build-time call to the releases API.
+- [ ] **1. Host the site over HTTPS** (**needs owner**: domain or host). Static `dist/`. Serve `install.sh` and `install.ps1` as plain text with no SPA rewrite. See `docs/DEPLOY.md`. Verified already: the built site served from a plain static server returns `install.sh` as `text/x-sh` with the shebang first, and `curl -fsSL … | bash` ran it successfully on Ubuntu 24.04.
+- [ ] **2. Core: stop, restart and `service install` when a daemon already owns the profile.** Found on Ubuntu 24.04 (three variants), recorded under `P9-022` in the main `TODO.md` with a suggested fix. Not fixed from this repo because another agent is changing the core. Until it lands the installers do not start the service, and the page says to run `jarvis stop` before `jarvis service install`.
+- [ ] **3. Test AlmaLinux 10** (the dnf hint and the rustup path in `install.sh` are unrun on a real box; the rustup path is verified on Ubuntu), aarch64 Linux, macOS (`install.sh`) and a clean Windows machine (`install.ps1`).
+- [ ] **4. Real capture of a tool call and an approval.** The console screenshot on the page shows a plain chat. Add one with the live mission feed and an approval card once a model that handles tools reliably is available (the 1.5B model sometimes prints a raw tool call).
+- [ ] **5. Prebuilt downloads** (**needs owner**: licence; main `P9-004` to `P9-007`). Then switch both installers to download an archive and verify its SHA-256, add a version badge, and read the releases API at build time.
 
 ## Polish
 
-- [ ] Approval demo card has dead space between the buttons and the footnote on wide screens.
+- [ ] The hero head is a decorative orb. The real console has a wireframe face; consider drawing that face (or a short loop of it) in the hero.
 - [ ] Open Graph share image and a `/docs` page rendered from the main repository's `docs/user`.
 - [ ] Make `check-install.mjs` also find Git Bash on Windows for `bash -n` (it skips when only the WSL stub exists).
-- [ ] Re-verify every claim in `docs/CONTENT-ACCURACY.md` whenever the main repository's `README.md`, `ROADMAP.md` or `docs/user/platforms.md` changes.
+- [ ] Re-verify every claim in `docs/CONTENT-ACCURACY.md` whenever the main repository's `README.md`, `ROADMAP.md` or `docs/user/platforms.md` changes, and re-capture `public/console.jpg` when the console's look changes.
 
 ## Done
 
 - [x] Site, install box with OS-aware tabs, installers, docs (`ec6b616`).
 - [x] AlmaLinux and RHEL-family hints, optional rustup install (`5373c61`).
 - [x] Installer no longer starts the service before first-run setup; Ubuntu 24.04 end-to-end test recorded (`f4430b2`).
+- [x] `curl | bash` path tested from a local static server on Ubuntu 24.04.
+- [x] Real model test: Ollama + `qwen2.5:1.5b` on the Ubuntu server, a completed run in 26 s on one CPU.
+- [x] Real console capture on the page ("The real thing" section); approval card alignment fixed.

@@ -26,7 +26,7 @@ const commands: [string, string][] = [
   ["jarvis cancel", "The kill switch for running work"],
   ["jarvis keys set voice --from-env ELEVENLABS_API_KEY", "Add a natural voice"],
   ["jarvis mcp list", "Abilities and where each one stands"],
-  ["jarvis service install", "Start at login and restart if it stops"],
+  ["jarvis stop && jarvis service install", "Start at login and restart if it stops"],
   ["jarvis eval run evals/basics.toml", "Measure a change to a prompt, tool or model"],
 ];
 
@@ -46,6 +46,7 @@ function Nav() {
         JARVIS
       </a>
       <nav className="nav__links" aria-label="Sections">
+        <a href="#console">Console</a>
         <a href="#capabilities">Capabilities</a>
         <a href="#trust">Trust</a>
         <a href="#architecture">Architecture</a>
@@ -198,6 +199,37 @@ export default function App() {
         </Section>
 
         <Section
+          id="console"
+          eyebrow="The real thing"
+          title={
+            <>
+              This is the <span className="grad">actual console</span>.
+            </>
+          }
+          lede="Not a mock-up. A screenshot of jarvis hud, linked to a daemon on a fresh Ubuntu 24.04 server, answering through a 1.5-billion-parameter model that runs locally on a single CPU core."
+        >
+          <figure className="shot" data-reveal>
+            <div className="shot__bar">
+              <span className="dot dot--r" />
+              <span className="dot dot--y" />
+              <span className="dot dot--g" />
+              <span className="term__title">127.0.0.1:8765 — through an SSH tunnel</span>
+            </div>
+            <img
+              src="/console.jpg"
+              width={1440}
+              height={900}
+              loading="lazy"
+              alt="The JARVIS console: a wireframe face on the left and a chat on the right where the user asks what JARVIS is and it answers."
+            />
+            <figcaption>
+              The face reacts while JARVIS thinks, speaks and listens. Beside it, a live feed of the sources it reads and the tools it calls, and the
+              approvals waiting for you. Model: qwen2.5:1.5b through Ollama, CPU only, so the reply took about 25 seconds; a larger model or a GPU is the usual setup.
+            </figcaption>
+          </figure>
+        </Section>
+
+        <Section
           id="capabilities"
           eyebrow="What it does today"
           title="A real assistant, not a chat box."
@@ -312,7 +344,8 @@ export default function App() {
                   <span className="install__prompt">$</span> jarvis ask summarise this folder and list open questions
                 </pre>
                 <p>
-                  Or talk to it in the console. Add <code>jarvis service install</code> to have it start at login.
+                  Or talk to it in the console. To have it start at login, run <code>jarvis stop</code> and then{" "}
+                  <code>jarvis service install</code>.
                 </p>
               </div>
             </li>

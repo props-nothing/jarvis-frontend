@@ -49,5 +49,5 @@ if ($Service -eq '1') { Run $Bin @('install', '--service') } else { Run $Bin @('
 Write-Host ''
 Write-Host 'JARVIS is installed. Open a new terminal and run: jarvis' -ForegroundColor Green
 Write-Host '  It asks which model to use, starts in the background and opens the console.'
-Write-Host '  Then, to start it at login: jarvis service install'
+Write-Host '  Then, to start it at login: jarvis stop; jarvis service install'
 Write-Host '  Remove it again with: jarvis uninstall'
