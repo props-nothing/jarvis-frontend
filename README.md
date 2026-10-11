@@ -20,6 +20,7 @@ npm run check:install  # static checks of the installer scripts
 
 | Document | What it covers |
 | --- | --- |
+| [TODO.md](TODO.md) | What is next, what is blocked on the owner, what is done |
 | [docs/PROJECT-REVIEW.md](docs/PROJECT-REVIEW.md) | What JARVIS is, what works today, who the site speaks to |
 | [docs/PLAN.md](docs/PLAN.md) | Goals, page structure, install strategy, milestones |
 | [docs/DESIGN.md](docs/DESIGN.md) | Visual language, motion, accessibility, performance |
