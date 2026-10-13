@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { REPO_URL } from "../config";
 
 const sections = [
-  ["console", "Console"], ["capabilities", "Capabilities"], ["trust", "Trust"],
-  ["architecture", "Architecture"], ["install", "Install"], ["roadmap", "Roadmap"], ["faq", "FAQ"],
+  ["capabilities", "Capabilities"], ["trust", "Why JARVIS"],
+  ["install", "Install"], ["roadmap", "Roadmap"], ["faq", "FAQ"],
 ];
 
 export default function Nav() {
@@ -38,11 +39,12 @@ export default function Nav() {
         {sections.map(([id, label]) => <a key={id} href={`#${id}`} onClick={() => setOpen(false)}>{label}</a>)}
       </nav>
       <div className="nav__actions">
-        <button type="button" className="btn btn--ghost btn--sm nav__menu" ref={menuButton}
+        <button type="button" className="icon-button nav__menu" ref={menuButton}
+          aria-label={open ? "Close navigation" : "Open navigation"} title={open ? "Close navigation" : "Open navigation"}
           aria-expanded={open} aria-controls="site-navigation" onClick={() => setOpen(!open)}>
-          {open ? "Close" : "Menu"}
+          {open ? <X size={20} aria-hidden /> : <Menu size={20} aria-hidden />}
         </button>
-        <a className="btn btn--ghost btn--sm" href={REPO_URL} target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a className="btn btn--ghost btn--sm" href={REPO_URL} target="_blank" rel="noreferrer">GitHub <ArrowUpRight size={15} aria-hidden /></a>
       </div>
     </header>
   );

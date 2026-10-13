@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Check, RotateCcw, X } from "lucide-react";
 
 type Decision = "pending" | "approved" | "denied";
 
@@ -20,19 +21,19 @@ export default function ApprovalDemo() {
       </p>
       {decision === "pending" ? (
         <div className="approval__actions">
-          <button className="btn btn--solid" onClick={() => setDecision("approved")}>
-            Approve
+          <button type="button" className="btn btn--solid" onClick={() => setDecision("approved")}>
+            <Check size={16} aria-hidden /> Approve
           </button>
-          <button className="btn btn--ghost" onClick={() => setDecision("denied")}>
-            Deny
+          <button type="button" className="btn btn--ghost" onClick={() => setDecision("denied")}>
+            <X size={16} aria-hidden /> Deny
           </button>
           <span className="approval__hint">…or say “yes” / “no”</span>
         </div>
       ) : (
         <div className="approval__result" role="status">
-          {decision === "approved" ? "✓ Approved. Sent, and written to the audit trail." : "✕ Denied. Nothing left your machine."}
-          <button className="link" onClick={() => setDecision("pending")}>
-            Try again
+          {decision === "approved" ? "Approved. JARVIS would send the email and record the outcome." : "Denied. JARVIS would not send the email."}
+          <button type="button" className="icon-button" aria-label="Reset approval demo" title="Reset approval demo" onClick={() => setDecision("pending")}>
+            <RotateCcw size={16} aria-hidden />
           </button>
         </div>
       )}

@@ -1,5 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
+import { Check, Copy } from "lucide-react";
 import { REPO_GIT_URL, REPO_URL, siteOrigin } from "../config";
 import { installCommands, isWindows } from "../installCommands";
 import type { InstallTab } from "../installCommands";
@@ -115,8 +116,8 @@ export default function InstallBox({ compact = false }: { compact?: boolean }) {
             </span>
           ))}
         </pre>
-        <button type="button" className="install__copy" onClick={copy} aria-label="Copy install command">
-          {copyState === "copied" ? "Copied ✓" : "Copy"}
+        <button type="button" className="install__copy" onClick={copy} aria-label="Copy install command" title="Copy install command">
+          {copyState === "copied" ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />}
         </button>
       </div>
       <p className="install__feedback" role="status">

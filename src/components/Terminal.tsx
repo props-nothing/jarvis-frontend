@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { RotateCcw, Square } from "lucide-react";
 
 type Step =
   | { kind: "cmd"; text: string }
@@ -20,33 +21,18 @@ const script: Step[] = [
 ];
 
 export default function Terminal() {
-  const [lines, setLines] = useState<{ step: Step; shown: string }[]>([]);
-  const rootRef = useRef<HTMLDivElement>(null);
+  const [lines, setLines] = useState<{ step: Step; shown: string }[]>(() => script.map((step) => ({ step, shown: step.text })));
   const bodyRef = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStarted(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.35 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!started || motion.matches) {
       setLines(script.map((step) => ({ step, shown: step.text })));
+      if (started) setStarted(false);
       return;
     }
+    setLines([]);
     let cancelled = false;
     const timers: number[] = [];
     const later = (ms: number, fn: () => void) => {
@@ -54,7 +40,7 @@ export default function Terminal() {
     };
 
     const run = (index: number) => {
-      if (index >= script.length) return;
+      if (index >= script.length) { setStarted(false); return; }
       const step = script[index];
       if (step.kind === "out") {
         setLines((prev) => [...prev, { step, shown: step.text }]);
@@ -71,10 +57,13 @@ export default function Terminal() {
       };
       later(350, type);
     };
+    const onMotion = () => { if (motion.matches) setStarted(false); };
+    motion.addEventListener("change", onMotion);
     run(0);
     return () => {
       cancelled = true;
       timers.forEach(clearTimeout);
+      motion.removeEventListener("change", onMotion);
     };
   }, [started]);
 
@@ -84,12 +73,16 @@ export default function Terminal() {
   }, [lines]);
 
   return (
-    <div className="term" ref={rootRef}>
+    <div className="term">
       <div className="term__bar">
         <span className="dot dot--r" />
         <span className="dot dot--y" />
         <span className="dot dot--g" />
         <span className="term__title">jarvis — illustrative session</span>
+        <button type="button" className="icon-button term__replay" aria-label={started ? "Stop session replay" : "Replay illustrative session"}
+          title={started ? "Stop session replay" : "Replay illustrative session"} onClick={() => setStarted(!started)}>
+          {started ? <Square size={14} aria-hidden /> : <RotateCcw size={14} aria-hidden />}
+        </button>
       </div>
       <div className="term__body" ref={bodyRef} aria-label="Illustrative terminal session">
         {lines.map((l, i) =>
@@ -104,7 +97,6 @@ export default function Terminal() {
             </div>
           ),
         )}
-        {started && lines.length >= script.length ? <span className="caret caret--idle" /> : null}
       </div>
       <p className="term__foot">Wording is illustrative. Run it yourself to see the real prompts.</p>
     </div>

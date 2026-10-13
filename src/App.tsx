@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useState } from "react";
+import { ArrowDown, ArrowRight, BookOpen, Brain, CalendarDays, Code2, FileText, Globe, Mic, Pause, Play, Plug, Send, ShieldCheck, TerminalSquare } from "lucide-react";
 import Nav from "./components/Nav";
-import Orb from "./components/Orb";
 import InstallBox from "./components/InstallBox";
 import Terminal from "./components/Terminal";
 import ApprovalDemo from "./components/ApprovalDemo";
@@ -18,6 +18,9 @@ import {
   SECURITY_URL,
 } from "./config";
 
+const JarvisMask = lazy(() => import("./components/JarvisMask"));
+const featureIcons = [FileText, Globe, CalendarDays, TerminalSquare, Code2, Mic, Brain, Plug, Send];
+
 const commands: [string, string][] = [
   ["jarvis", "First run: set up, start and open the console"],
   ["jarvis ask <task>", "Give it a job from the terminal"],
@@ -32,37 +35,40 @@ const commands: [string, string][] = [
 ];
 
 function Hero() {
+  const [paused, setPaused] = useState(false);
   return (
     <section className="hero" id="top">
+      <div className="hero__visual">
+        <div className="hero__mask">
+          <Suspense fallback={<div className="mask__loading" aria-hidden /> }>
+            <JarvisMask paused={paused} />
+          </Suspense>
+        </div>
+        <div className="hud hud--tl"><ShieldCheck size={16} aria-hidden /> Owner-controlled</div>
+        <div className="hud hud--tr"><span className="badge__dot" /> Local-first</div>
+        <div className="hero__signal" aria-hidden>
+          {Array.from({ length: 31 }, (_, index) => <span key={index} style={{ height: `${4 + Math.sin(index * 1.8) ** 2 * 15}px` }} />)}
+        </div>
+        <button type="button" className="icon-button mask__pause" aria-label={paused ? "Resume face animation" : "Pause face animation"}
+          title={paused ? "Resume face animation" : "Pause face animation"} aria-pressed={paused} onClick={() => setPaused(!paused)}>
+          {paused ? <Play size={16} aria-hidden /> : <Pause size={16} aria-hidden />}
+        </button>
+      </div>
       <div className="hero__copy">
-        <a className="badge" href={ROADMAP_URL} target="_blank" rel="noreferrer">
-          <span className="badge__dot" /> Working-assistant stage · open on GitHub <span aria-hidden>→</span>
-        </a>
-        <h1>
-          The AI that works <span className="grad">for you</span>.
-          <br />
-          On your machine.
-        </h1>
+        <h1 translate="no">JARVIS<span className="hero__period">.</span></h1>
+        <p className="hero__tagline">Your own intelligence. Your rules.</p>
         <p className="hero__lede">
-          JARVIS is a personal AI operating system: one program that reasons, remembers, uses your tools and keeps working
-          while you are away. <strong>Models suggest. Policy decides. You approve.</strong>
+          An assistant that remembers, takes action, and keeps working.<br className="desktop-break" />
+          On your machine. With your models. Always under your control.
         </p>
-        <InstallBox />
         <div className="hero__cta">
           <a className="btn btn--solid" href="#install">
-            Get started
+            Install JARVIS <ArrowDown size={17} aria-hidden />
           </a>
           <a className="btn btn--ghost" href={QUICK_START_URL} target="_blank" rel="noreferrer">
-            Read the quick start
+            <BookOpen size={17} aria-hidden /> Read the docs
           </a>
         </div>
-      </div>
-      <div className="hero__visual">
-        <Orb />
-        <div className="hud hud--tl">127.0.0.1:8765</div>
-        <div className="hud hud--tr">LOCAL-FIRST</div>
-        <div className="hud hud--bl">POLICY: ENFORCED</div>
-        <div className="hud hud--br">AUDIT: ON</div>
       </div>
     </section>
   );
@@ -70,10 +76,10 @@ function Hero() {
 
 function Stats() {
   const items = [
-    ["1", "program to install"],
-    ["127.0.0.1", "listens locally by default"],
-    ["SQLite", "no infrastructure fleet"],
-    ["190+", "architecture decision records"],
+    ["Your machine", "Local state. No hosted control plane."],
+    ["Your model", "Local or hosted. Switch at any time."],
+    ["Your memory", "Inspect it. Correct it. Forget it."],
+    ["Your decision", "Models suggest. You stay in charge."],
   ];
   return (
     <section className="stats" data-reveal>
@@ -113,37 +119,6 @@ function Section({
 }
 
 export default function App() {
-  useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>("[data-reveal]");
-    if (!("IntersectionObserver" in window)) {
-      els.forEach((el) => el.classList.add("in"));
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            observer.unobserve(e.target);
-          }
-        }),
-      { threshold: 0.12 },
-    );
-    els.forEach((el) => observer.observe(el));
-
-    const glow = (e: PointerEvent) => {
-      const card = (e.target as HTMLElement).closest<HTMLElement>(".card");
-      if (!card) return;
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-    };
-    document.addEventListener("pointermove", glow);
-    return () => {
-      observer.disconnect();
-      document.removeEventListener("pointermove", glow);
-    };
-  }, []);
-
   return (
     <>
       <a className="skip-link" href="#main">Skip to content</a>
@@ -151,6 +126,10 @@ export default function App() {
       <Nav />
       <main id="main" tabIndex={-1}>
         <Hero />
+        <section className="quick-install" aria-label="Quick install">
+          <InstallBox />
+          <a className="hero__source" href={REPO_URL} target="_blank" rel="noreferrer">Built in Rust. Developed in the open. <ArrowRight size={14} aria-hidden /></a>
+        </section>
         <Stats />
 
         <Section
@@ -158,7 +137,7 @@ export default function App() {
           eyebrow="See it work"
           title={
             <>
-              Ask in plain words. <span className="grad">Watch every step.</span>
+              Less chatting. More doing.
             </>
           }
           lede="Everything JARVIS reads and every tool it calls shows up live in the console. Anything that matters waits for your yes or no."
@@ -170,55 +149,25 @@ export default function App() {
         </Section>
 
         <Section
-          id="console"
-          eyebrow="The real thing"
-          title={
-            <>
-              This is the <span className="grad">actual console</span>.
-            </>
-          }
-          lede="Not a mock-up. A screenshot of jarvis hud, linked to a daemon on a fresh Ubuntu 24.04 server, answering through a 1.5-billion-parameter model that runs locally on a single CPU core."
-        >
-          <figure className="shot" data-reveal>
-            <div className="shot__bar">
-              <span className="dot dot--r" />
-              <span className="dot dot--y" />
-              <span className="dot dot--g" />
-              <span className="term__title">127.0.0.1:8765 — through an SSH tunnel</span>
-            </div>
-            <img
-              src="/console.jpg"
-              width={1440}
-              height={900}
-              loading="lazy"
-              alt="The JARVIS console: a wireframe face on the left and a chat on the right where the user asks what JARVIS is and it answers."
-            />
-            <figcaption>
-              The face reacts while JARVIS thinks, speaks and listens. Beside it, a live feed of the sources it reads and the tools it calls, and the
-              approvals waiting for you. Model: qwen2.5:1.5b through Ollama, CPU only, so the reply took about 25 seconds; a larger model or a GPU is the usual setup.
-            </figcaption>
-          </figure>
-        </Section>
-
-        <Section
           id="capabilities"
           eyebrow="What it does today"
           title="A real assistant, not a chat box."
-          lede="Everything on this page is built and runs end to end against a local or hosted model. What is not built yet is on the roadmap."
+          lede="Put your files, research, calendar and projects to work. Choose what JARVIS can access, and approve the actions that matter."
         >
           <div className="cards">
-            {features.map((f, i) => (
-              <article key={f.title} className="card" data-reveal style={{ transitionDelay: `${(i % 3) * 70}ms` }}>
+            {features.map((f, index) => {
+              const Icon = featureIcons[index];
+              return <article key={f.title} className="card">
                 <div className="card__top">
                   <span className="card__icon" aria-hidden>
-                    {f.icon}
+                    <Icon size={24} strokeWidth={1.5} />
                   </span>
                   <span className="pill">{f.tag}</span>
                 </div>
                 <h3>{f.title}</h3>
                 <p>{f.body}</p>
-              </article>
-            ))}
+              </article>;
+            })}
           </div>
         </Section>
 
@@ -227,7 +176,7 @@ export default function App() {
           eyebrow="Trust by design"
           title={
             <>
-              The model can <span className="grad">ask</span>. Only policy can <span className="grad">allow</span>.
+              Powerful by default.<br /> Accountable by design.
             </>
           }
           lede="An assistant you can leave alone is one you can audit. Permissions, approvals, memory and workflow state belong to JARVIS, never to a model."
@@ -281,7 +230,7 @@ export default function App() {
           eyebrow="Install"
           title={
             <>
-              From zero to <span className="grad">talking</span> in three steps.
+              Make it yours.
             </>
           }
           lede="You need a model: Ollama on this machine is the easiest, or any OpenAI-compatible key. Docker (code sandbox) and Node.js (built-in browser) are optional."
@@ -357,8 +306,8 @@ export default function App() {
               </div>
             ))}
             <p className="platforms__note">
-              Honest status: only Windows has been used end to end by a person so far. Linux and macOS are built and tested
-              in CI; treat your first run there as a test.{" "}
+              Windows and Ubuntu 24.04 have recorded end-to-end runs. Other Linux distributions, architectures and macOS
+              still need clean-machine verification; CI alone is not that proof.{" "}
               <a href={PLATFORMS_URL} target="_blank" rel="noreferrer">
                 Platform details →
               </a>
@@ -409,7 +358,7 @@ export default function App() {
 
         <section className="final" data-reveal>
           <h2>
-            Ready to meet <span className="grad">your</span> JARVIS?
+            Your next assistant<br /> should answer to you.
           </h2>
           <InstallBox compact />
           <div className="hero__cta">

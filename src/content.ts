@@ -83,6 +83,8 @@ export const roadmap: { status: "built" | "next" | "planned"; label: string; ite
       { name: "Projects, schedules, triggers", note: "Caps, digest, push" },
       { name: "MCP, browser, docs lookup", note: "One-click abilities" },
       { name: "Skills and memory", note: "Proposed by the model, approved by you" },
+      { name: "Tool discovery", note: "Selected for the request without making tools unreachable" },
+      { name: "Model routing", note: "Per-task models; tokens reported by model" },
       { name: "Telegram", note: "Reach from a phone" },
       { name: "Evals", note: "jarvis eval scores prompt suites against the last run" },
     ],
@@ -91,9 +93,8 @@ export const roadmap: { status: "built" | "next" | "planned"; label: string; ite
     status: "next",
     label: "In the queue",
     items: [
-      { name: "Tool discovery", note: "Hundreds of tools without a token tax" },
-      { name: "Model routing", note: "Compared with jarvis eval" },
-      { name: "Coding agents over ACP", note: "Claude, Codex, Gemini, Copilot in a worktree, reviewed before merge" },
+      { name: "Coding-agent verification", note: "ACP and Codex tasks are built; console sign-in and cancellation need live proof" },
+      { name: "Broader call verification", note: "Owner outbound calls reported working; broader call paths remain unverified" },
       { name: "Setup polish", note: "Fewer questions on first run" },
     ],
   },
@@ -101,7 +102,7 @@ export const roadmap: { status: "built" | "next" | "planned"; label: string; ite
     status: "planned",
     label: "Planned",
     items: [
-      { name: "Local voice and telephony", note: "Recognition and synthesis without the cloud, then calls" },
+      { name: "Local voice", note: "Browser-independent recognition and synthesis without the cloud" },
       { name: "Desktop client", note: "Tauri app on Windows, macOS and Linux" },
       { name: "Signed installers and public downloads", note: "Blocked on the owner choosing a licence" },
       { name: "Server profile", note: "PostgreSQL + pgvector for multi-device" },
@@ -111,7 +112,7 @@ export const roadmap: { status: "built" | "next" | "planned"; label: string; ite
 
 export const platforms = [
   { os: "Windows 10/11", state: "Run end to end by a person", level: "verified" as const, service: "Per-user Run entry at login" },
-  { os: "Linux x86_64 / aarch64", state: "Compiles, lints and tests in CI", level: "ci" as const, service: "systemd user unit" },
+  { os: "Linux x86_64 / aarch64", state: "Ubuntu 24.04 verified; other targets CI-tested", level: "verified" as const, service: "systemd user unit" },
   { os: "macOS Apple silicon / Intel", state: "Compiles, lints and tests in CI", level: "ci" as const, service: "launchd agent" },
 ];
 
