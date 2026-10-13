@@ -1,3 +1,4 @@
+export const SITE_URL = "https://www.jarvisd.dev";
 export const REPO_URL = "https://github.com/props-nothing/jarvisv2";
 export const REPO_GIT_URL = `${REPO_URL}.git`;
 export const DOCS_URL = `${REPO_URL}/tree/main/docs`;

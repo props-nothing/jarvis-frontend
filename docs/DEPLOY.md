@@ -1,8 +1,8 @@
 # Deploy
 
-The output is static: `npm run build` writes `dist/`, which includes `install.sh` and `install.ps1` copied from `public/`.
+The production site is **https://www.jarvisd.dev/** on Vercel. The apex `https://jarvisd.dev/` redirects permanently to `www`. Vercel DNS uses `ns1.vercel-dns.com` and `ns2.vercel-dns.com`; the GitHub repository is connected so a push to `main` deploys production.
 
-Any static host works (Cloudflare Pages, Netlify, GitHub Pages, S3 + CDN, nginx).
+The output is static: `npm run build` writes `dist/`, which includes `install.sh` and `install.ps1` copied from `public/`. `vercel.json` forces both installers to `text/plain; charset=utf-8`, prevents MIME sniffing, and adds security headers to all responses.
 
 ## Requirements
 
