@@ -12,7 +12,7 @@ JARVIS is a persistent, installable personal AI service that reasons, remembers,
 - **Local-first.** SQLite by default; keys in private files; the HTTP console binds `127.0.0.1:8765`. PostgreSQL + pgvector is the planned server backend.
 - **Browser console** (`jarvis hud`): a holographic head that speaks and listens, a live mission view of sources read and tools called, approval buttons, and every setting.
 - **Models are adapters.** Any OpenAI-compatible endpoint (Ollama local or cloud, OpenAI, Gemini, Anthropic compatible, others) with an optional fallback provider.
-- **Trust boundary.** The model may request an effect; Rust policy decides. Tool calls pass schema validation, authentication, authorization, risk classification, approval, timeout, execution and audit. Approvals are one yes or no ([ADR-0136](https://github.com/props-nothing/jarvisv2/blob/main/docs/adr/0136-an-approval-is-a-yes-or-no-from-the-owner.md)).
+- **Trust boundary.** The model may request an effect; Rust policy decides. Tool calls pass schema validation, authentication, authorization, risk classification, approval, timeout, execution and audit. Approvals are one yes or no ([ADR-0136](https://github.com/props-nothing/jarvis-core/blob/main/docs/adr/0136-an-approval-is-a-yes-or-no-from-the-owner.md)).
 
 ## What works today
 

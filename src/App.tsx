@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import Nav from "./components/Nav";
 import Orb from "./components/Orb";
 import InstallBox from "./components/InstallBox";
 import Terminal from "./components/Terminal";
@@ -29,37 +30,6 @@ const commands: [string, string][] = [
   ["jarvis stop && jarvis service install", "Start at login and restart if it stops"],
   ["jarvis eval run evals/basics.toml", "Measure a change to a prompt, tool or model"],
 ];
-
-function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <header className={`nav ${scrolled ? "nav--solid" : ""}`}>
-      <a className="nav__brand" href="#top" aria-label="JARVIS home">
-        <span className="nav__mark" aria-hidden />
-        JARVIS
-      </a>
-      <nav className="nav__links" aria-label="Sections">
-        <a href="#console">Console</a>
-        <a href="#capabilities">Capabilities</a>
-        <a href="#trust">Trust</a>
-        <a href="#architecture">Architecture</a>
-        <a href="#install">Install</a>
-        <a href="#roadmap">Roadmap</a>
-        <a href="#faq">FAQ</a>
-      </nav>
-      <a className="btn btn--ghost btn--sm" href={REPO_URL} target="_blank" rel="noreferrer">
-        GitHub ↗
-      </a>
-    </header>
-  );
-}
 
 function Hero() {
   return (
@@ -176,9 +146,10 @@ export default function App() {
 
   return (
     <>
+      <a className="skip-link" href="#main">Skip to content</a>
       <div className="bg-grid" aria-hidden />
       <Nav />
-      <main>
+      <main id="main" tabIndex={-1}>
         <Hero />
         <Stats />
 

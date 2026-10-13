@@ -1,27 +1,15 @@
-import { useMemo, useState } from "react";
-import { REPO_GIT_URL, siteOrigin } from "../config";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
+import { REPO_GIT_URL, REPO_URL, siteOrigin } from "../config";
+import { installCommands, isWindows } from "../installCommands";
+import type { InstallTab } from "../installCommands";
 
-type TabId = "unix" | "windows" | "source";
-
-function detectTab(): TabId {
-  if (typeof navigator === "undefined") return "unix";
-  return /Windows/i.test(navigator.userAgent) ? "windows" : "unix";
+function windowsHost(): boolean {
+  return typeof navigator !== "undefined" && isWindows(navigator.userAgent);
 }
 
 export function useInstallCommands() {
-  return useMemo(() => {
-    const origin = siteOrigin();
-    return {
-      unix: `curl -fsSL ${origin}/install.sh | bash`,
-      windows: `irm ${origin}/install.ps1 | iex`,
-      source: [
-        `git clone ${REPO_GIT_URL}`,
-        "cd jarvisv2",
-        "cargo build --release -p jarvis-cli",
-        "./target/release/jarvis install",
-      ].join("\n"),
-    } satisfies Record<TabId, string>;
-  }, []);
+  return useMemo(() => installCommands(siteOrigin(), REPO_GIT_URL, windowsHost()), []);
 }
 
 async function copyText(text: string): Promise<boolean> {
@@ -29,19 +17,26 @@ async function copyText(text: string): Promise<boolean> {
     await navigator.clipboard.writeText(text);
     return true;
   } catch {
+    const focused = document.activeElement as HTMLElement | null;
     const area = document.createElement("textarea");
     area.value = text;
     area.style.position = "fixed";
     area.style.opacity = "0";
+    area.setAttribute("aria-hidden", "true");
     document.body.appendChild(area);
-    area.select();
-    const ok = document.execCommand("copy");
-    area.remove();
-    return ok;
+    try {
+      area.select();
+      return document.execCommand("copy");
+    } catch {
+      return false;
+    } finally {
+      area.remove();
+      focused?.focus({ preventScroll: true });
+    }
   }
 }
 
-const tabs: { id: TabId; label: string }[] = [
+const tabs: { id: InstallTab; label: string }[] = [
   { id: "unix", label: "macOS / Linux" },
   { id: "windows", label: "Windows" },
   { id: "source", label: "From source" },
@@ -49,34 +44,70 @@ const tabs: { id: TabId; label: string }[] = [
 
 export default function InstallBox({ compact = false }: { compact?: boolean }) {
   const commands = useInstallCommands();
-  const [tab, setTab] = useState<TabId>(detectTab);
-  const [copied, setCopied] = useState(false);
+  const id = useId();
+  const [tab, setTab] = useState<InstallTab>(() => windowsHost() ? "windows" : "unix");
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const timer = useRef<number | undefined>(undefined);
+  const request = useRef(0);
 
-  const copy = async () => {
-    if (await copyText(commands[tab])) {
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    }
+  useEffect(() => () => {
+    window.clearTimeout(timer.current);
+    request.current += 1;
+  }, []);
+
+  const selectTab = (next: InstallTab) => {
+    window.clearTimeout(timer.current);
+    request.current += 1;
+    setCopyState("idle");
+    setTab(next);
   };
 
-  const prompt = tab === "windows" ? "PS>" : "$";
+  const onTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let next: number;
+    switch (event.key) {
+      case "ArrowRight": next = (index + 1) % tabs.length; break;
+      case "ArrowLeft": next = (index + tabs.length - 1) % tabs.length; break;
+      case "Home": next = 0; break;
+      case "End": next = tabs.length - 1; break;
+      default: return;
+    }
+    event.preventDefault();
+    selectTab(tabs[next].id);
+    (event.currentTarget.parentElement?.children[next] as HTMLElement)?.focus();
+  };
+
+  const copy = async () => {
+    window.clearTimeout(timer.current);
+    const current = ++request.current;
+    const ok = await copyText(commands[tab]);
+    if (request.current !== current) return;
+    setCopyState(ok ? "copied" : "failed");
+    if (ok) timer.current = window.setTimeout(() => setCopyState("idle"), 1800);
+  };
+
+  const prompt = tab === "windows" || (tab === "source" && windowsHost()) ? "PS>" : "$";
 
   return (
     <div className={`install ${compact ? "install--compact" : ""}`}>
       <div className="install__tabs" role="tablist" aria-label="Install method">
-        {tabs.map((t) => (
+        {tabs.map((t, index) => (
           <button
             key={t.id}
+            id={`${id}-${t.id}`}
+            type="button"
             role="tab"
             aria-selected={tab === t.id}
+            aria-controls={`${id}-panel`}
+            tabIndex={tab === t.id ? 0 : -1}
             className={`install__tab ${tab === t.id ? "is-active" : ""}`}
-            onClick={() => setTab(t.id)}
+            onClick={() => selectTab(t.id)}
+            onKeyDown={(event) => onTabKey(event, index)}
           >
             {t.label}
           </button>
         ))}
       </div>
-      <div className="install__body">
+      <div className="install__body" id={`${id}-panel`} role="tabpanel" aria-labelledby={`${id}-${tab}`} tabIndex={0}>
         <pre className="install__code" aria-label="Install command">
           {commands[tab].split("\n").map((line, i) => (
             <span key={i} className="install__line">
@@ -84,13 +115,18 @@ export default function InstallBox({ compact = false }: { compact?: boolean }) {
             </span>
           ))}
         </pre>
-        <button className="install__copy" onClick={copy} aria-live="polite">
-          {copied ? "Copied ✓" : "Copy"}
+        <button type="button" className="install__copy" onClick={copy} aria-label="Copy install command">
+          {copyState === "copied" ? "Copied ✓" : "Copy"}
         </button>
       </div>
+      <p className="install__feedback" role="status">
+        {copyState === "copied" ? "Install command copied." : copyState === "failed" ? "Clipboard unavailable. Select and copy the command above." : ""}
+      </p>
       <p className="install__note">
-        Builds one program from source for now (needs <code>git</code> and Rust). Prebuilt signed downloads arrive with the
-        first public release. Then run <code>jarvis</code>.
+        Builds from source (needs Git, Rust and C/C++ build tools). Then run <code>jarvis</code>.{" "}
+        <a href={tab === "source" ? REPO_URL : `${siteOrigin()}/install.${tab === "windows" ? "ps1" : "sh"}`} target="_blank" rel="noreferrer">
+          {tab === "source" ? "View source" : "Inspect installer"}
+        </a>
       </p>
     </div>
   );

@@ -1,6 +1,6 @@
 # JARVIS web
 
-The public site and install page for [JARVIS](https://github.com/props-nothing/jarvisv2), the local-first personal AI operating system. Live at [jarvisd.dev](https://www.jarvisd.dev/).
+The public site and install page for [JARVIS](https://github.com/props-nothing/jarvis-core), the local-first personal AI operating system. Live at [jarvisd.dev](https://www.jarvisd.dev/).
 This folder is its own git repository, separate from the Rust platform repository it sits in.
 
 - **Stack:** Vite, React 19, TypeScript, plain CSS. No runtime dependency except React. The hero head is a hand-written canvas animation.
@@ -9,12 +9,17 @@ This folder is its own git repository, separate from the Rust platform repositor
 
 ## Run
 
+Use Node.js 24 or newer. Installer validation also needs Bash (Git Bash on Windows) and PowerShell (`pwsh` on Linux/macOS, Windows PowerShell 5.1 on Windows). Missing interpreters fail checks rather than silently skipping them; `JARVIS_BASH` and `JARVIS_POWERSHELL` can select explicit executable paths.
+
 ```text
-npm install
-npm run dev          # http://localhost:5173
-npm run build        # typecheck and production build into dist/
-npm run check:install  # static checks of the installer scripts
+npm ci
+npm run dev            # http://localhost:5173
+npm run build          # typecheck and production build into dist/
+npm run check:install  # parse both installers without executing them
+npm test               # offline real-Git regressions; no Rust build or service install
 ```
+
+[Frontend checks](.github/workflows/checks.yml) run on native Ubuntu, macOS and Windows runners. The tests use disposable repositories, a stand-in build command and an inert test executable; they do not claim a clean-machine JARVIS install on every OS.
 
 ## Docs
 
@@ -31,7 +36,9 @@ npm run check:install  # static checks of the installer scripts
 
 ```text
 public/            install.sh, install.ps1, favicon
-scripts/           check-install.mjs
+scripts/           installer contract and shell-discovery checks
+tests/             built-in Node regression tests
+src/installCommands.ts   platform-aware clone and install commands
 src/content.ts     all copy that states a fact about JARVIS
 src/config.ts      repository and documentation URLs
 src/components/    Orb, InstallBox, Terminal, ApprovalDemo, Pipeline, Architecture

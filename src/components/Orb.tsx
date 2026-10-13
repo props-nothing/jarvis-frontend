@@ -48,7 +48,8 @@ export default function Orb() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reduced = motion.matches;
     const sphere = fibonacciSphere(760);
     const rings = [
       { pts: ring(1.32, 160), tilt: [0.5, 0, 0.2] as V3, speed: 0.35, color: CYAN },
@@ -76,10 +77,12 @@ export default function Orb() {
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cancelAnimationFrame(raf);
+      frame(performance.now());
     };
 
     const frame = (now: number) => {
-      const t = now / 1000;
+      const t = reduced ? 0 : now / 1000;
       tiltX += (targetX - tiltX) * 0.06;
       tiltY += (targetY - tiltY) * 0.06;
       energy += (targetEnergy - energy) * 0.05;
@@ -173,19 +176,26 @@ export default function Orb() {
       targetY = 0;
     };
 
-    resize();
-    raf = requestAnimationFrame(frame);
+    const onMotion = () => {
+      reduced = motion.matches;
+      cancelAnimationFrame(raf);
+      frame(performance.now());
+    };
 
-    const observer = new IntersectionObserver(([entry]) => {
+    resize();
+
+    const observer = "IntersectionObserver" in window ? new IntersectionObserver(([entry]) => {
       const wasVisible = visible;
       visible = entry.isIntersecting;
-      if (visible && !wasVisible && !reduced) {
+      if (!visible) cancelAnimationFrame(raf);
+      else if (!wasVisible) {
         cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(frame);
+        frame(performance.now());
       }
-    });
-    observer.observe(canvas);
+    }) : null;
+    observer?.observe(canvas);
 
+    motion.addEventListener("change", onMotion);
     window.addEventListener("resize", resize);
     canvas.addEventListener("pointermove", onMove);
     canvas.addEventListener("pointerenter", onEnter);
@@ -193,7 +203,8 @@ export default function Orb() {
 
     return () => {
       cancelAnimationFrame(raf);
-      observer.disconnect();
+      observer?.disconnect();
+      motion.removeEventListener("change", onMotion);
       window.removeEventListener("resize", resize);
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerenter", onEnter);

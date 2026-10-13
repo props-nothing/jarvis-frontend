@@ -12,12 +12,17 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 ## Polish
 
 - [ ] The hero head is a decorative orb. The real console has a wireframe face; consider drawing that face (or a short loop of it) in the hero.
-- [ ] Open Graph share image and a `/docs` page rendered from the main repository's `docs/user`.
-- [ ] Make `check-install.mjs` also find Git Bash on Windows for `bash -n` (it skips when only the WSL stub exists).
+- [x] Open Graph/Twitter share metadata and the real console image are deployed.
+- [ ] A `/docs` page rendered from the main repository's `docs/user`.
+- [x] Syntax validation now finds working Git Bash on Windows, rejects broken/missing interpreters, and parses both scripts without executing them.
 - [ ] Re-verify every claim in `docs/CONTENT-ACCURACY.md` whenever the main repository's `README.md`, `ROADMAP.md` or `docs/user/platforms.md` changes, and re-capture `public/console.jpg` when the console's look changes.
 
 ## Done
 
+- [x] Repository rename to `props-nothing/jarvis-core`: current links, source commands and defaults; an explicitly reused old official checkout is supported without rewriting origin.
+- [x] Source-install reruns refuse dirty/foreign trees; fetch failures and invalid opt-in flags fail closed. 21 local real-Git/shell/command tests pass, including Windows PowerShell execution with inert fixtures (not a clean-machine Rust build).
+- [x] Keyboard install tabs, clipboard failure/race feedback, skip link, responsive mobile navigation and reduced-motion canvas resize are fixed. Browser regression checks pass at 320–1440 px.
+- [x] SHA-pinned frontend CI covers native Ubuntu, macOS and Windows build/syntax/fixture tests. Hosted run results must be checked independently; this does not complete clean-machine installation testing.
 - [x] Hosted at `https://www.jarvisd.dev/` on Vercel; apex redirects to `www`; canonical/social metadata, sitemap, security.txt and hardened response headers are deployed. Both installers are served as plain text.
 - [x] Site, install box with OS-aware tabs, installers, docs (`ec6b616`).
 - [x] AlmaLinux and RHEL-family hints, optional rustup install (`5373c61`).

@@ -15,6 +15,7 @@ The output is static: `npm run build` writes `dist/`, which includes `install.sh
 ```text
 npm run build
 npm run check:install
+npm test
 curl -fsSL https://YOUR-HOST/install.sh | head -n 3     # must print the bash shebang, not HTML
 ```
 
@@ -43,6 +44,14 @@ Findings that changed the installer:
 5. With the local Ollama (`ollama pull qwen2.5:1.5b`), `jarvis init` with no `--base-url` finds it; passing `--base-url http://localhost:11434/v1` is treated as a hosted provider and demands `--api-key-file`. `jarvis ask` then completed a real run in 26 s on one CPU.
 
 Not tested: `jarvis hud` with a display, AlmaLinux, aarch64, macOS, Windows.
+
+## Safe reruns and the repository rename
+
+The source repository is now `https://github.com/props-nothing/jarvis-core`. Fresh installs clone to `~/.local/src/jarvis-core` (Unix) or `%LOCALAPPDATA%\jarvis-core-src` (Windows). Existing installations and their memory/configuration are not deleted or moved. To reuse an older source directory, set `JARVIS_SRC` explicitly. The previous official HTTPS Git origin is accepted as an alias, but the installer fetches the configured new URL without rewriting your origin.
+
+On a rerun both scripts refuse staged, unstaged or untracked source changes, a mismatched origin, or an existing non-Git directory before fetching/building. Save your changes or choose another source directory. Ignored build outputs are allowed. Branches, tags and commits are fetched explicitly and built from detached `FETCH_HEAD`; a failed fetch never builds a stale checkout. Only `0` and `1` are valid opt-in flags.
+
+`npm test` exercises these contracts with real Git and disposable build/install fixtures on Windows (including both shells); CI additionally checks native macOS/Ubuntu. This is separate from the full Rust build/service evidence above. Bash discovery prefers working Git Bash over the Windows WSL stub, and both shell syntax checks are mandatory.
 
 ## Pinning a release
 
