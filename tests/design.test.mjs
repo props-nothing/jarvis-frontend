@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { pipeline, roadmap, roadmapReviewedAt } from "../src/content.ts";
+import { demoReducer, demoScenarios, initialDemoState } from "../src/demoFlow.ts";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 
@@ -78,4 +79,46 @@ test("policy inspection preserves gate order and accessible labelled controls", 
   assert.match(component, /case "Home"/);
   assert.match(component, /case "End"/);
   assert.doesNotMatch(component, /setInterval|setTimeout|onMouseEnter/);
+});
+
+const tick = (state) => demoReducer(state, { type: "tick", runId: state.runId, step: state.step });
+
+test("illustrative workflows cannot advance through an approval without an owner decision", () => {
+  for (const scenario of demoScenarios.filter((entry) => entry.approval)) {
+    let state = demoReducer(initialDemoState, { type: "select", scenarioId: scenario.id });
+    state = demoReducer(state, { type: "start" });
+    for (let step = 0; step < scenario.steps.length; step += 1) state = tick(state);
+    assert.equal(state.status, "approval");
+    assert.equal(state.step, scenario.steps.length - 1);
+    assert.deepEqual(tick(state), state);
+    assert.equal(tick(demoReducer(state, { type: "approve" })).status, "completed");
+    const denied = demoReducer(state, { type: "deny" });
+    assert.equal(denied.status, "denied");
+    assert.deepEqual(tick(denied), denied);
+  }
+});
+
+test("pause, stop and scenario changes reject stale illustrative-workflow ticks", () => {
+  const running = demoReducer(initialDemoState, { type: "start" });
+  const paused = demoReducer(running, { type: "pause" });
+  assert.deepEqual(tick(paused), paused);
+  assert.equal(tick(demoReducer(paused, { type: "resume" })).step, 1);
+  const stopped = demoReducer(running, { type: "stop" });
+  assert.deepEqual(tick(stopped), stopped);
+  const changed = demoReducer(running, { type: "select", scenarioId: "research" });
+  const restarted = demoReducer(changed, { type: "start" });
+  assert.deepEqual(demoReducer(restarted, { type: "tick", runId: running.runId, step: 0 }), restarted);
+  assert.equal(restarted.decision, null);
+  assert.equal(demoReducer(running, { type: "approve" }).decision, null);
+});
+
+test("a read-only illustrative workflow completes without an approval or persistent effect", () => {
+  let state = demoReducer(initialDemoState, { type: "select", scenarioId: "research" });
+  state = demoReducer(state, { type: "start" });
+  for (const step of demoScenarios.find((entry) => entry.id === "research").steps) {
+    assert.equal(step.approval, undefined);
+    state = tick(state);
+  }
+  assert.equal(state.status, "completed");
+  assert.equal(state.decision, null);
 });

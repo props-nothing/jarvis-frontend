@@ -2,8 +2,7 @@ import { lazy, Suspense, useState } from "react";
 import { ArrowDown, ArrowRight, BookOpen, Brain, CalendarDays, Code2, Database, FileText, Globe, LockKeyhole, Mic, OctagonX, Pause, Play, Plug, Send, ShieldCheck, TerminalSquare, UserCheck } from "lucide-react";
 import Nav from "./components/Nav";
 import InstallBox from "./components/InstallBox";
-import Terminal from "./components/Terminal";
-import ApprovalDemo from "./components/ApprovalDemo";
+import WorkflowDemo from "./components/Terminal";
 import Pipeline from "./components/Pipeline";
 import Architecture from "./components/Architecture";
 import { features, platforms, roadmap, roadmapReviewedAt } from "./content";
@@ -142,10 +141,7 @@ export default function App() {
           }
           lede="Everything JARVIS reads and every tool it calls shows up live in the console. Anything that matters waits for your yes or no."
         >
-          <div className="split" data-reveal>
-            <Terminal />
-            <ApprovalDemo />
-          </div>
+          <WorkflowDemo />
         </Section>
 
         <Section
