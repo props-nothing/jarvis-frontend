@@ -4,11 +4,10 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 
 ## Next, in order
 
-- [x] **1. Host the site over HTTPS.** `jarvisd.dev` purchased 2026-10-13; production is `https://www.jarvisd.dev/` on Vercel, with the apex redirecting to `www`. `install.sh` and `install.ps1` are real files, not SPA rewrites. `curl -fsSL https://www.jarvisd.dev/install.sh | bash` is the production command.
-- [ ] **2. Core: stop, restart and `service install` when a daemon already owns the profile.** Found on Ubuntu 24.04 (three variants), recorded under `P9-022` in the main `TODO.md` with a suggested fix. Not fixed from this repo because another agent is changing the core. Until it lands the installers do not start the service, and the page says to run `jarvis stop` before `jarvis service install`.
-- [ ] **3. Test AlmaLinux 10** (the dnf hint and the rustup path in `install.sh` are unrun on a real box; the rustup path is verified on Ubuntu), aarch64 Linux, macOS (`install.sh`) and a clean Windows machine (`install.ps1`).
-- [ ] **4. Real capture of a tool call and an approval.** The console screenshot on the page shows a plain chat. Add one with the live mission feed and an approval card once a model that handles tools reliably is available (the 1.5B model sometimes prints a raw tool call).
-- [ ] **5. Prebuilt downloads** (**needs owner**: licence; main `P9-004` to `P9-007`). Then switch both installers to download an archive and verify its SHA-256, add a version badge, and read the releases API at build time.
+- [ ] **1. Core: stop, restart and `service install` when a daemon already owns the profile.** Found on Ubuntu 24.04 (three variants), recorded under `P9-022` in the main `TODO.md` with a suggested fix. Not fixed from this repo because another agent is changing the core. Until it lands the installers do not start the service, and the page says to run `jarvis stop` before `jarvis service install`.
+- [ ] **2. Test AlmaLinux 10** (the dnf hint and the rustup path in `install.sh` are unrun on a real box; the rustup path is verified on Ubuntu), aarch64 Linux, macOS (`install.sh`) and a clean Windows machine (`install.ps1`).
+- [ ] **3. Real capture of a tool call and an approval.** The console screenshot on the page shows a plain chat. Add one with the live mission feed and an approval card once a model that handles tools reliably is available (the 1.5B model sometimes prints a raw tool call).
+- [ ] **4. Prebuilt downloads** (**needs owner**: licence; main `P9-004` to `P9-007`). Then switch both installers to download an archive and verify its SHA-256, add a version badge, and read the releases API at build time.
 
 ## Polish
 
@@ -19,6 +18,7 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 
 ## Done
 
+- [x] Hosted at `https://www.jarvisd.dev/` on Vercel; apex redirects to `www`; canonical/social metadata, sitemap, security.txt and hardened response headers are deployed. Both installers are served as plain text.
 - [x] Site, install box with OS-aware tabs, installers, docs (`ec6b616`).
 - [x] AlmaLinux and RHEL-family hints, optional rustup install (`5373c61`).
 - [x] Installer no longer starts the service before first-run setup; Ubuntu 24.04 end-to-end test recorded (`f4430b2`).

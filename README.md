@@ -1,6 +1,6 @@
 # JARVIS web
 
-The public site and install page for [JARVIS](https://github.com/props-nothing/jarvisv2), the local-first personal AI operating system.
+The public site and install page for [JARVIS](https://github.com/props-nothing/jarvisv2), the local-first personal AI operating system. Live at [jarvisd.dev](https://www.jarvisd.dev/).
 This folder is its own git repository, separate from the Rust platform repository it sits in.
 
 - **Stack:** Vite, React 19, TypeScript, plain CSS. No runtime dependency except React. The hero head is a hand-written canvas animation.
