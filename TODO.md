@@ -22,7 +22,7 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 - [x] Repository rename to `props-nothing/jarvis-core`: current links, source commands and defaults; an explicitly reused old official checkout is supported without rewriting origin.
 - [x] Source-install reruns refuse dirty/foreign trees; fetch failures and invalid opt-in flags fail closed. 21 local real-Git/shell/command tests pass, including Windows PowerShell execution with inert fixtures (not a clean-machine Rust build).
 - [x] Keyboard install tabs, clipboard failure/race feedback, skip link, responsive mobile navigation and reduced-motion canvas resize are fixed. Browser regression checks pass at 320–1440 px.
-- [x] SHA-pinned frontend CI covers native Ubuntu, macOS and Windows build/syntax/fixture tests. Hosted run results must be checked independently; this does not complete clean-machine installation testing.
+- [x] SHA-pinned frontend CI passes on native Ubuntu 24.04, macOS 15 and Windows 2025 ([run 38466482868](https://github.com/props-nothing/jarvis-frontend/actions/runs/38466482868), `062d9fa`). This does not complete clean-machine installation testing.
 - [x] Hosted at `https://www.jarvisd.dev/` on Vercel; apex redirects to `www`; canonical/social metadata, sitemap, security.txt and hardened response headers are deployed. Both installers are served as plain text.
 - [x] Site, install box with OS-aware tabs, installers, docs (`ec6b616`).
 - [x] AlmaLinux and RHEL-family hints, optional rustup install (`5373c61`).

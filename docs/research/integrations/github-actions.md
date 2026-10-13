@@ -38,4 +38,8 @@ Cheapest falsification: introduce broken shell syntax or a dirty temporary check
 
 ## Unresolved
 
-No hosted result is claimed until the workflow actually finishes. Native clean-machine Rust builds and service-manager ownership still need their separate acceptance evidence. Vercel's independent deployment is not gated by this workflow unless the owner enables that integration policy.
+Native clean-machine Rust builds and service-manager ownership still need their separate acceptance evidence. Vercel's independent deployment is not gated by this workflow unless the owner enables that integration policy.
+
+## Verification log
+
+2026-10-13: [run 38466482868](https://github.com/props-nothing/jarvis-frontend/actions/runs/38466482868) for commit `062d9fa` completed successfully on all three runners (Windows 2025, Ubuntu 24.04, macOS 15). Each job ran `npm ci`, `npm run check:install`, `npm test`, and `npm run build`. This proves the fixture/syntax/build contracts, not a full native JARVIS installation.

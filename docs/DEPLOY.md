@@ -53,6 +53,15 @@ On a rerun both scripts refuse staged, unstaged or untracked source changes, a m
 
 `npm test` exercises these contracts with real Git and disposable build/install fixtures on Windows (including both shells); CI additionally checks native macOS/Ubuntu. This is separate from the full Rust build/service evidence above. Bash discovery prefers working Git Bash over the Windows WSL stub, and both shell syntax checks are mandatory.
 
+## Website validation (2026-10-13)
+
+- `npm run check:install`: both real shell parsers passed, with no skipped interpreter.
+- `npm test`: 21 Windows-local tests passed, including native PowerShell fixtures, Git Bash, the repository rename and destructive-update refusal.
+- `npm run build`: passed.
+- [Native CI run 38466482868](https://github.com/props-nothing/jarvis-frontend/actions/runs/38466482868): Ubuntu 24.04, Windows 2025 and macOS 15 all passed the same checks/build (PowerShell installer execution fixtures run only on Windows).
+- Browser checks against both the local build and `https://www.jarvisd.dev/`: keyboard tabs/focus, unique panels, successful/denied/stale clipboard requests, mobile menu/Escape/link close, 320/390/768/1024/1440 px without horizontal overflow, and reduced-motion canvas resize. No page or console errors observed.
+- Production `install.sh` contains the new repository and guards, uses LF line endings, and is served as actual script text. Download verification does not execute the production installer on this workstation.
+
 ## Pinning a release
 
 `JARVIS_REF` selects a branch, tag or commit and defaults to `main`. `JARVIS_INSTALL_RUST=1` lets `install.sh` install Rust with rustup when `cargo` is missing (for example on a fresh AlmaLinux or other RHEL-family server); otherwise it stops and says what to install. Missing `git` or a C compiler produces the matching `dnf`, `apt-get`, `zypper` or `pacman` command as a hint; the script never runs `sudo` itself. Once tagged releases exist, change the default to the latest tag and, when prebuilt archives are public, switch the scripts to download and verify the SHA-256 instead of building.
