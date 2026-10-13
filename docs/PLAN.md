@@ -17,13 +17,12 @@ No accounts, analytics, tracking, cookies or third-party fonts and scripts. The 
 | Hero | JARVIS name over an unframed canonical HUD face, primary install/docs actions |
 | Quick install | OS-aware commands, clipboard feedback and source-install prerequisites |
 | Principles | Your machine, model, memory and decision |
-| See it work | Readable illustrative terminal with opt-in replay, interactive approval card |
+| See it work | Three illustrative mission workflows with trace inspection, pause/resume/stop, connected approvals and outcome previews |
 | Capabilities | Nine cards, each backed by a documented feature |
-| Trust | Static seven-gate pipeline and four guarantees |
-| Architecture | Clients, `jarvisd`, adapters, data. Planned parts drawn dashed |
+| Trust | Keyboard-accessible seven-gate inspector and four ownership guarantees |
+| Architecture | Rust-centered system blueprint; available interfaces, replaceable adapters, local data and explicit experimental/unshipped states |
 | Install | Three steps, handy commands, headless-server tunnel, platform status |
-| Roadmap | Working, in the queue, planned |
-| FAQ | Download availability, models, safety, privacy, remote access |
+| Roadmap | Dated evidence review: available, experimental, next and deliberately deferred |
 
 ## Install strategy
 

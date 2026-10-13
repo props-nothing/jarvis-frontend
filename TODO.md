@@ -20,6 +20,7 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 
 ## Done
 
+- [x] Follow-up: FAQ removed; evidence-dated four-state roadmap, Rust architecture blueprint, accessible trust-gate inspector, connected three-workflow mission demo and mobile-menu fixes. Focused reducer/menu tests and integrated Chromium interactions/layout checks pass. These examples perform no provider or filesystem operations; deployment and native-device checks remain open.
 - [x] Repository rename to `props-nothing/jarvis-core`: current links, source commands and defaults; an explicitly reused old official checkout is supported without rewriting origin.
 - [x] Source-install reruns refuse dirty/foreign trees; fetch failures and invalid opt-in flags fail closed. 21 local real-Git/shell/command tests pass, including Windows PowerShell execution with inert fixtures (not a clean-machine Rust build).
 - [x] Keyboard install tabs, clipboard failure/race feedback, skip link, responsive mobile navigation and reduced-motion canvas resize are fixed. Browser regression checks pass at 320–1440 px.

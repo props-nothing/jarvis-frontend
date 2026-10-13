@@ -20,14 +20,20 @@ Every factual statement on the site comes from the JARVIS repository. When these
 | Approvals are one yes or no | ADR-0136 |
 | Platform status table | `docs/user/platforms.md` |
 | No licence, no public downloads, no signed installers | `README.md` licence status, `docs/user/platforms.md` known gaps |
-| Roadmap columns | `ROADMAP.md` |
+| Roadmap columns, reviewed 2026-10-13 | `ROADMAP.md`, current acceptance ledger `TODO.md`, `docs/user/code-agents.md`, `docs/user/phone.md` |
 | Tool discovery and per-task model routing are built | `ROADMAP.md`, ADR-0176 and ADR-0196 |
-| ACP/Codex tasks are built; console sign-in/cancellation need verification | `ROADMAP.md` snapshot 2026-10-13 |
+| ACP/Codex tasks are experimental; ordinary/background tasks have recorded proof, sign-in/cancellation need verification | `TODO.md` item 8, `docs/user/code-agents.md`; the older README handshake-only statement is stale relative to these records |
+| Full-text knowledge search is a delivered first slice | `TODO.md` P11-014, ADR-0206; vector retrieval is not claimed |
+| Owner outbound calls have owner-reported evidence, not general telephony verification | `TODO.md` item 10, `docs/user/phone.md` |
+| Local voice, desktop, distribution, server profile and multi-step workflows remain unshipped or deferred | `ROADMAP.md`, `TODO.md` parked scope and distribution gates |
 | Windows and Ubuntu have end-to-end evidence; other targets need clean-machine checks | Platform documentation and this site's `docs/DEPLOY.md` |
 
 ## Deliberately illustrative
 
-- The terminal session and the approval card are illustrations and are labelled as such. The model name, folder and tool wording are examples, not captured output.
+- Email, research and file workflows are illustrative, not captured output or a live assistant session. Messages, folders, sources and outcomes are example data. There is no model, account or filesystem connection.
+- Approval examples share the workflow state machine: approval gates cannot be passed by a timer; denial, pause, stop and switching examples cannot create an external effect. These presentation tests are not proof of Rust policy enforcement.
+- The policy-gate inspector explains the documented order. It does not execute tools or grant permissions.
+- The FAQ section, its data, navigation entry and styles have been removed. Privacy and source-install caveats remain in the trust/install sections and footer.
 - The face uses the actual HUD's canonical MediaPipe geometry, but is a decorative website scene, not a live daemon, microphone or model session. Pointer response and animation do not indicate assistant activity.
 - Static console screenshots and their social metadata were removed in the 2026-10-13 redesign.
 

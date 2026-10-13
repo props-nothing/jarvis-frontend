@@ -85,6 +85,7 @@ test("mobile navigation retains dismissal, focus and bounded-layout contracts", 
   const navigation = read("src/components/Nav.tsx");
   assert.match(navigation, /aria-expanded=\{open\}/);
   assert.match(navigation, /querySelector<HTMLAnchorElement>\("a"\)\?\.focus/);
+  assert.match(navigation, /links\.current\.scrollTop = 0/);
   assert.match(navigation, /addEventListener\("pointerdown", outside\)/);
   assert.match(navigation, /addEventListener\("focusin", outside\)/);
   assert.match(navigation, /removeEventListener\("pointerdown", outside\)/);
