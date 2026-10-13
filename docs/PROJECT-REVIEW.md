@@ -1,6 +1,6 @@
 # Project review: what JARVIS is
 
-Reviewed 2026-10-11 from the main repository (`README.md`, `ROADMAP.md`, `docs/architecture/overview.md`, `docs/user/*`, `apps/jarvis-cli/src`).
+Product scope reconciled 2026-10-13 against the main repository's architecture, requirements and roadmap. Website design and interaction review: [DESIGN.md](DESIGN.md).
 
 ## One sentence
 
@@ -20,12 +20,25 @@ Files and documents (incl. OCR), web search and fetch, a built-in browser and do
 
 ## What does not exist yet
 
-Public downloads, signed installers, any licence, a Tauri desktop client, telephony, local speech, coding agents over ACP, the server profile. Only Windows has been run end to end by a person; Linux and macOS are built and tested in CI.
+Public downloads, signed installers, a distribution licence, a Tauri desktop client, browser-independent local speech and the server profile. ACP/Codex tasks are built with recorded evidence; console sign-in and cancellation need live verification. Owner outbound calls have reported evidence, but broader call paths remain unverified. Windows and Ubuntu 24.04 have end-to-end records; other targets still need clean-machine tests.
 
 ## Consequences for the website
 
 1. The most important claim is trust, not capability: "models suggest, policy decides, you approve".
 2. Install commands must be real. They build from source today; prebuilt binaries come after a licence decision.
 3. Platform status is stated plainly.
-4. Visual language reuses the console's palette (deep navy, cyan, amber) so the site and product feel like one thing.
-5. Comparable reference: openclaw.ai (hero, one-line install, feature grid). We match that structure and add the trust pipeline, which is what sets JARVIS apart.
+4. The site uses the actual HUD face geometry over graphite, with cyan, white, amber and red accents. Screenshot-dependent presentation is removed.
+5. Comparable reference: openclaw.ai for direct installation and concrete capabilities. JARVIS retains its own identity and owner-policy story.
+
+## Frontend Review Findings
+
+Fixed in this redesign, ordered by impact:
+
+- Narrow/short-view layout pushed installation out of view. Explicit phone and landscape sizing now preserves the next-section hint without horizontal overflow.
+- The old Console navigation target would become stale after screenshot removal. Every navigation target now has a checked section ID.
+- Screenshot assets and social metadata contradicted the requested presentation. Both references and the binary capture are removed.
+- Decorative continuous animations lacked user controls. The face has pause/reduced-motion/visibility gates; terminal replay is opt-in; the pipeline is static.
+- Approval success text could imply a real external effect. Results now describe what JARVIS would do and remain labelled as a demo.
+- Platform and roadmap claims had drifted. The page now distinguishes recorded delivery, live verification gaps and planned work.
+
+Residual risks: the optional Three.js scene adds about 153 kB gzip; integrated Chromium checks do not establish native Safari/iOS or Android behavior; public signed distribution and clean-machine installer gates are not completed by a website redesign. No Rust authority, provider protocol or installer execution behavior was changed.

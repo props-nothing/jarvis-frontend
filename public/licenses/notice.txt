@@ -1,0 +1,13 @@
+JARVIS website visual dependencies
+
+Canonical face geometry: Copyright 2019-2023 The MediaPipe Authors.
+Apache License 2.0: /licenses/mediapipe.txt
+The geometry is downloaded unchanged from google-ai-edge/mediapipe at
+a908d668c730da128dfa8d9f6bd25d519d006692. The website's rendering is new.
+No MediaPipe SDK, tracking, camera, microphone or face recognition is used.
+
+Three.js 0.186.1: /licenses/three.txt
+Lucide React 1.56.0: /licenses/lucide.txt
+
+These licenses cover the named third-party materials only. They do not
+choose or change the JARVIS project's own distribution license.

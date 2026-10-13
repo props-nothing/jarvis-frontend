@@ -6,16 +6,17 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 
 - [ ] **1. Core: stop, restart and `service install` when a daemon already owns the profile.** Found on Ubuntu 24.04 (three variants), recorded under `P9-022` in the main `TODO.md` with a suggested fix. Not fixed from this repo because another agent is changing the core. Until it lands the installers do not start the service, and the page says to run `jarvis stop` before `jarvis service install`.
 - [ ] **2. Test AlmaLinux 10** (the dnf hint and the rustup path in `install.sh` are unrun on a real box; the rustup path is verified on Ubuntu), aarch64 Linux, macOS (`install.sh`) and a clean Windows machine (`install.ps1`).
-- [ ] **3. Real capture of a tool call and an approval.** The console screenshot on the page shows a plain chat. Add one with the live mission feed and an approval card once a model that handles tools reliably is available (the 1.5B model sometimes prints a raw tool call).
+- [x] **3. Mask-led website redesign and complete frontend review.** Replaced the decorative orb with the official HUD face geometry, removed the screenshot section/asset/social references, redesigned desktop/mobile layouts, fixed motion and interaction risks and reconciled platform/roadmap claims. 24 Node tests, typecheck/build, installer syntax contracts and integrated Chromium checks pass; native mobile/Safari and live deployment are not claimed. See `docs/DESIGN.md` and `docs/PROJECT-REVIEW.md`.
 - [ ] **4. Prebuilt downloads** (**needs owner**: licence; main `P9-004` to `P9-007`). Then switch both installers to download an archive and verify its SHA-256, add a version badge, and read the releases API at build time.
 
 ## Polish
 
-- [ ] The hero head is a decorative orb. The real console has a wireframe face; consider drawing that face (or a short loop of it) in the hero.
-- [x] Open Graph/Twitter share metadata and the real console image are deployed.
+- [x] The hero uses the actual canonical HUD face with pointer response, pause, reduced-motion handling and static fallback. Desktop/mobile screenshots and nonblank canvas checks pass.
+- [x] Canonical Open Graph/Twitter metadata remains configured; screenshot-dependent previews are removed in the local redesign.
+- [ ] Verify the redesigned site on native Safari/iOS and Android devices, then deploy it. The optional face scene adds about 153 kB gzip; retain that budget explicitly.
 - [ ] A `/docs` page rendered from the main repository's `docs/user`.
 - [x] Syntax validation now finds working Git Bash on Windows, rejects broken/missing interpreters, and parses both scripts without executing them.
-- [ ] Re-verify every claim in `docs/CONTENT-ACCURACY.md` whenever the main repository's `README.md`, `ROADMAP.md` or `docs/user/platforms.md` changes, and re-capture `public/console.jpg` when the console's look changes.
+- [ ] Re-verify every claim in `docs/CONTENT-ACCURACY.md` whenever the main repository's `README.md`, `ROADMAP.md` or `docs/user/platforms.md` changes. The website face is decorative, not a live assistant connection.
 
 ## Done
 
@@ -29,4 +30,4 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 - [x] Installer no longer starts the service before first-run setup; Ubuntu 24.04 end-to-end test recorded (`f4430b2`).
 - [x] `curl | bash` path tested from a local static server on Ubuntu 24.04.
 - [x] Real model test: Ollama + `qwen2.5:1.5b` on the Ubuntu server, a completed run in 26 s on one CPU.
-- [x] Real console capture on the page ("The real thing" section); approval card alignment fixed.
+- [x] Historical real console capture and approval-card alignment; the capture was retired by the 2026-10-13 redesign.

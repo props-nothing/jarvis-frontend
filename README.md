@@ -3,7 +3,7 @@
 The public site and install page for [JARVIS](https://github.com/props-nothing/jarvis-core), the local-first personal AI operating system. Live at [jarvisd.dev](https://www.jarvisd.dev/).
 This folder is its own git repository, separate from the Rust platform repository it sits in.
 
-- **Stack:** Vite, React 19, TypeScript, plain CSS. No runtime dependency except React. The hero head is a hand-written canvas animation.
+- **Stack:** Vite, React 19, TypeScript, plain CSS, named Lucide icons and a lazy Three.js face scene. The mask uses the same official canonical geometry as the JARVIS HUD, with a static canvas fallback. No external asset requests or model connection.
 - **Install commands:** the page shows `curl … | bash`, `irm … | iex` and a from-source tab. The commands use whichever host serves the site, and `public/install.sh` and `public/install.ps1` are served from the same host.
 - **Honest by design:** there is no public prebuilt download and no licence yet, so the installers build from source and the page says so. See [docs/CONTENT-ACCURACY.md](docs/CONTENT-ACCURACY.md).
 
@@ -41,7 +41,9 @@ tests/             built-in Node regression tests
 src/installCommands.ts   platform-aware clone and install commands
 src/content.ts     all copy that states a fact about JARVIS
 src/config.ts      repository and documentation URLs
-src/components/    Orb, InstallBox, Terminal, ApprovalDemo, Pipeline, Architecture
+src/assets/        pinned canonical face geometry (Apache-2.0)
+src/components/    JarvisMask, InstallBox, Terminal, ApprovalDemo, Pipeline, Architecture
+public/licenses/   third-party attribution and license texts
 ```
 
 ## Licence

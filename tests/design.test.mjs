@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 
@@ -33,6 +33,7 @@ test("all navigation targets exist, with no obsolete screenshot or orb", () => {
   }
   assert.doesNotMatch(app, /console\.jpg|<Orb|id="console"/);
   assert.doesNotMatch(read("index.html"), /console\.jpg/);
+  assert.equal(existsSync(new URL("../public/console.jpg", import.meta.url)), false);
   assert.match(app, /lazy\(\(\) => import\("\.\/components\/JarvisMask"\)\)/);
   assert.match(app, /Pause face animation/);
 });

@@ -21,14 +21,16 @@ Every factual statement on the site comes from the JARVIS repository. When these
 | Platform status table | `docs/user/platforms.md` |
 | No licence, no public downloads, no signed installers | `README.md` licence status, `docs/user/platforms.md` known gaps |
 | Roadmap columns | `ROADMAP.md` |
-| 190+ architecture decision records | count of files in `docs/adr` (195 on 2026-10-11) |
+| Tool discovery and per-task model routing are built | `ROADMAP.md`, ADR-0176 and ADR-0196 |
+| ACP/Codex tasks are built; console sign-in/cancellation need verification | `ROADMAP.md` snapshot 2026-10-13 |
+| Windows and Ubuntu have end-to-end evidence; other targets need clean-machine checks | Platform documentation and this site's `docs/DEPLOY.md` |
 
 ## Deliberately illustrative
 
-- `public/console.jpg` is a real capture (2026-10-11): `jarvis hud` through an SSH tunnel to a daemon on Ubuntu 24.04, answering via Ollama `qwen2.5:1.5b` on one CPU. The prompt and answer are as returned. Re-capture it when the console's look changes.
 - The terminal session and the approval card are illustrations and are labelled as such. The model name, folder and tool wording are examples, not captured output.
-- The orb is decorative; it is not a rendering of the console's head.
+- The face uses the actual HUD's canonical MediaPipe geometry, but is a decorative website scene, not a live daemon, microphone or model session. Pointer response and animation do not indicate assistant activity.
+- Static console screenshots and their social metadata were removed in the 2026-10-13 redesign.
 
 ## Not claimed
 
-Telephony, desktop app, signed installers, prebuilt downloads, a hosted service, any benchmark or performance figure.
+General telephony availability, desktop app, signed installers, prebuilt downloads, a hosted service, any assistant benchmark or performance figure. Owner outbound-call evidence is distinguished from broader unverified call paths. No licence decision was made here.

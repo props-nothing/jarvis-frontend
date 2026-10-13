@@ -58,7 +58,7 @@ function Hero() {
         <h1 translate="no">JARVIS<span className="hero__period">.</span></h1>
         <p className="hero__tagline">Your own intelligence. Your rules.</p>
         <p className="hero__lede">
-          An assistant that remembers, takes action, and keeps working.<br className="desktop-break" />
+          An assistant that remembers, takes action, and keeps working.<br className="desktop-break" />{" "}
           On your machine. With your models. Always under your control.
         </p>
         <div className="hero__cta">
@@ -382,6 +382,7 @@ export default function App() {
           <a href={DOCS_URL} target="_blank" rel="noreferrer">Docs</a>
           <a href={SECURITY_URL} target="_blank" rel="noreferrer">Security</a>
           <a href={ROADMAP_URL} target="_blank" rel="noreferrer">Roadmap</a>
+          <a href="/licenses/notice.txt" target="_blank" rel="noreferrer">Licenses</a>
         </nav>
       </footer>
     </>

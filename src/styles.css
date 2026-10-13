@@ -325,7 +325,7 @@ h4 {
   cursor: crosshair;
 }
 .mask__canvas[hidden] { display: none; }
-.mask__pause { position: absolute; bottom: 4px; left: calc(50% + 120px); width: 36px; height: 36px; }
+.mask__pause { position: absolute; bottom: 4px; left: calc(50% + 120px); width: 44px; height: 44px; }
 .mask__loading { height: 100%; }
 .hero__signal { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); height: 20px; display: flex; align-items: center; gap: 3px; }
 .hero__signal span { width: 2px; background: var(--cyan); opacity: 0.5; }
@@ -551,7 +551,7 @@ h4 {
   font-size: 0.74rem;
   color: var(--dim);
 }
-.term__replay { margin-left: auto; width: 36px; height: 36px; flex-shrink: 0; }
+.term__replay { margin-left: auto; width: 44px; height: 44px; flex-shrink: 0; }
 .term__body {
   flex: 1;
   padding: 16px 18px;
@@ -1140,6 +1140,7 @@ h4 {
 .footer nav {
   display: flex;
   gap: 22px;
+  flex-wrap: wrap;
 }
 
 /* Responsive */
