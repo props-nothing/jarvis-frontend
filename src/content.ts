@@ -60,52 +60,58 @@ export const features: Feature[] = [
 ];
 
 export const pipeline = [
-  { step: "Schema", note: "Arguments must match the tool's schema" },
-  { step: "Authenticate", note: "Who is asking, over which transport" },
-  { step: "Authorize", note: "Is this actor allowed this tool" },
-  { step: "Risk", note: "Classify the effect, not the wording" },
-  { step: "Approval", note: "Policy decides what you are asked" },
-  { step: "Execute", note: "With a timeout, idempotent where it matters" },
-  { step: "Audit", note: "Recorded, with sources and outcome" },
+  { step: "Schema", note: "Validate the request", detail: "Tool arguments must match a defined schema. A convincing prompt cannot make an invalid request executable." },
+  { step: "Authenticate", note: "Establish identity", detail: "The gateway identifies the caller and transport. Being a model, an app, or a browser tab is not permission to act." },
+  { step: "Authorize", note: "Check the grant", detail: "Rust checks the actor's granted tools and scope. A model request cannot widen access to your files, accounts or workspace." },
+  { step: "Risk", note: "Classify the effect", detail: "Risk follows what an action does, not how harmless its wording sounds. Reading a draft and sending it are different effects." },
+  { step: "Approval", note: "The owner decides", detail: "Policy decides which actions need your approval. You answer yes or no from an authenticated surface; the model cannot approve itself." },
+  { step: "Execute", note: "Bound the action", detail: "An authorized tool runs with a timeout and the permitted scope. Idempotency is applied where relevant, not assumed for every external operation." },
+  { step: "Audit", note: "Keep the evidence", detail: "The decision and outcome are recorded with sources. A requested action is not the same as a confirmed external result." },
 ];
 
 export type RoadmapItem = { name: string; note: string };
+export const roadmapReviewedAt = "2026-10-13";
 
-export const roadmap: { status: "built" | "next" | "planned"; label: string; items: RoadmapItem[] }[] = [
+export const roadmap: { status: "built" | "experimental" | "next" | "planned"; label: string; items: RoadmapItem[] }[] = [
   {
     status: "built",
-    label: "Working today",
+    label: "Available now",
     items: [
-      { name: "Daemon and CLI", note: "One program; jarvis daemon is the same file" },
-      { name: "Browser console", note: "Holographic head, live mission view, settings" },
-      { name: "Approvals and kill switch", note: "Survive a restart; jarvis cancel" },
-      { name: "Gmail and Calendar", note: "Sign in from Settings" },
-      { name: "Projects, schedules, triggers", note: "Caps, digest, push" },
-      { name: "MCP, browser, docs lookup", note: "One-click abilities" },
-      { name: "Skills and memory", note: "Proposed by the model, approved by you" },
-      { name: "Tool discovery", note: "Selected for the request without making tools unreachable" },
-      { name: "Model routing", note: "Per-task models; tokens reported by model" },
-      { name: "Telegram", note: "Reach from a phone" },
-      { name: "Evals", note: "jarvis eval scores prompt suites against the last run" },
+      { name: "Console, CLI & Telegram", note: "Text, browser voice, live activity and authenticated app access" },
+      { name: "Files & knowledge search", note: "Granted folders, documents and a first full-text knowledge index" },
+      { name: "Google, web & MCP", note: "Gmail, Calendar, browser tools and managed MCP servers" },
+      { name: "Memory, skills & projects", note: "Owner-approved learning, project journals, digests and budgets" },
+      { name: "Triggers & model routing", note: "Time-zone schedules, quiet hours, per-task models and spend guards" },
+      { name: "Policy & oversight", note: "Durable approvals, cancellation, audit, usage and evaluation suites" },
+    ],
+  },
+  {
+    status: "experimental",
+    label: "Experimental",
+    items: [
+      { name: "ACP coding agents", note: "Ordinary and background Codex tasks verified; console sign-in and real-agent cancellation remain open. Worktrees are not a sandbox." },
+      { name: "Provider-backed calls", note: "Owner outbound calls reported working. Inbound and third-party configurations still need broader proof." },
     ],
   },
   {
     status: "next",
-    label: "In the queue",
+    label: "Up next",
     items: [
-      { name: "Coding-agent verification", note: "ACP and Codex tasks are built; console sign-in and cancellation need live proof" },
-      { name: "Broader call verification", note: "Owner outbound calls reported working; broader call paths remain unverified" },
-      { name: "Setup polish", note: "Fewer questions on first run" },
+      { name: "Owner-account verification", note: "OCR, fallback provider, push, replies and saved provider changes" },
+      { name: "MCP credentials & remote use", note: "Credential-bearing servers, remote servers and apply-without-restart checks" },
+      { name: "First-run polish", note: "A clearer first five minutes; licence and clean-machine gates stay explicit" },
+      { name: "Retrieval & safety evaluation", note: "Measure knowledge-search quality, tool ranking and hostile-page behavior" },
     ],
   },
   {
     status: "planned",
-    label: "Planned",
+    label: "Later, deliberately",
     items: [
       { name: "Local voice", note: "Browser-independent recognition and synthesis without the cloud" },
-      { name: "Desktop client", note: "Tauri app on Windows, macOS and Linux" },
+      { name: "Desktop client", note: "Tauri is parked until there is a named requirement" },
       { name: "Signed installers and public downloads", note: "Blocked on the owner choosing a licence" },
-      { name: "Server profile", note: "PostgreSQL + pgvector for multi-device" },
+      { name: "Server profile", note: "PostgreSQL + pgvector; multi-device requires proven ownership semantics" },
+      { name: "Multi-step workflow engine", note: "Parked until ordinary runs and schedules cannot express the job" },
     ],
   },
 ];
@@ -116,29 +122,3 @@ export const platforms = [
   { os: "macOS Apple silicon / Intel", state: "Compiles, lints and tests in CI", level: "ci" as const, service: "launchd agent" },
 ];
 
-export const faqs: { q: string; a: string }[] = [
-  {
-    q: "Is JARVIS available to download?",
-    a: "Not as a public download yet. No licence has been chosen, which blocks distribution. Today you build one program from source with the Rust toolchain; the installer below does that for you. Prebuilt, signed archives arrive after the licence decision.",
-  },
-  {
-    q: "Which models does it work with?",
-    a: "Any OpenAI-compatible endpoint: Ollama on your computer or Ollama Cloud, OpenAI, Gemini, Anthropic's compatible endpoint and others. You can add a fallback model at a second provider.",
-  },
-  {
-    q: "What stops it doing something I did not ask for?",
-    a: "The model can only request an effect. Deterministic Rust policy decides whether it may happen, every tool call is validated, risk-classified and audited, and effects that matter ask you first. jarvis cancel is a kill switch.",
-  },
-  {
-    q: "Does it send my data to the cloud?",
-    a: "Only what you point it at. State lives in SQLite on your machine, keys sit in private files and are never printed or sent to the browser. Your prompts go to the model provider you choose; choose Ollama locally and they stay on the machine.",
-  },
-  {
-    q: "Can I reach it from outside my machine?",
-    a: "The console listens on 127.0.0.1 only, on purpose. On a server, use an SSH tunnel. Telegram is the no-tunnel way to reach it from a phone. A TLS remote mode is separate, explicit future work; do not forward the port to the internet.",
-  },
-  {
-    q: "How is it different from other agent frameworks?",
-    a: "Frameworks and models are replaceable adapters here. Memory, permissions, approvals, audit and workflow state belong to JARVIS, never to a model or an external runtime.",
-  },
-];

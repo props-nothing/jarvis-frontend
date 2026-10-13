@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+import { pipeline, roadmap, roadmapReviewedAt } from "../src/content.ts";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 
@@ -32,6 +33,10 @@ test("all navigation targets exist, with no obsolete screenshot or orb", () => {
     assert.ok(ids.has(target), `missing navigation target: ${target}`);
   }
   assert.doesNotMatch(app, /console\.jpg|<Orb|id="console"/);
+  assert.doesNotMatch(app, /id="faq"|faqs/);
+  assert.doesNotMatch(navigation, /"faq"|"FAQ"/);
+  assert.doesNotMatch(read("src/content.ts"), /export const faqs/);
+  assert.doesNotMatch(read("src/styles.css"), /\.faq\b/);
   assert.doesNotMatch(read("index.html"), /console\.jpg/);
   assert.equal(existsSync(new URL("../public/console.jpg", import.meta.url)), false);
   assert.match(app, /lazy\(\(\) => import\("\.\/components\/JarvisMask"\)\)/);
@@ -45,4 +50,32 @@ test("the public site uses bounded type and does not hide content behind animati
   assert.doesNotMatch(styles, /transition:\s*all/);
   assert.match(styles, /\[data-reveal\]\s*\{\s*opacity:\s*1/);
   assert.match(styles, /prefers-reduced-motion/);
+});
+
+test("roadmap distinguishes delivered capability, limited proof and deliberate deferral", () => {
+  assert.equal(roadmapReviewedAt, "2026-10-13");
+  assert.deepEqual(roadmap.map((section) => section.status), ["built", "experimental", "next", "planned"]);
+  const section = (status) => roadmap.find((entry) => entry.status === status).items;
+  assert.ok(section("built").some((item) => /knowledge search/i.test(item.name)));
+  assert.match(section("experimental").find((item) => /ACP/.test(item.name)).note, /Codex tasks verified.*sign-in.*cancellation/);
+  assert.match(section("experimental").find((item) => /calls/.test(item.name)).note, /Owner outbound.*Inbound.*broader proof/);
+  assert.match(section("planned").find((item) => /workflow engine/.test(item.name)).note, /Parked/);
+  assert.match(section("planned").find((item) => /downloads/.test(item.name)).note, /licence/);
+  assert.match(read("src/components/Architecture.tsx"), /Worktrees, not OS isolation/);
+  assert.doesNotMatch(read("src/components/Architecture.tsx"), /planned:\s*true/);
+});
+
+test("policy inspection preserves gate order and accessible labelled controls", () => {
+  assert.deepEqual(pipeline.map((gate) => gate.step), ["Schema", "Authenticate", "Authorize", "Risk", "Approval", "Execute", "Audit"]);
+  assert.ok(pipeline.every((gate) => gate.detail.length > 40));
+  const component = read("src/components/Pipeline.tsx");
+  assert.match(component, /role="tablist"/);
+  assert.match(component, /role="tabpanel"/);
+  assert.match(component, /aria-selected=/);
+  assert.match(component, /aria-labelledby=/);
+  assert.match(component, /ArrowRight/);
+  assert.match(component, /ArrowLeft/);
+  assert.match(component, /case "Home"/);
+  assert.match(component, /case "End"/);
+  assert.doesNotMatch(component, /setInterval|setTimeout|onMouseEnter/);
 });

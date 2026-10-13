@@ -1,12 +1,12 @@
 import { lazy, Suspense, useState } from "react";
-import { ArrowDown, ArrowRight, BookOpen, Brain, CalendarDays, Code2, FileText, Globe, Mic, Pause, Play, Plug, Send, ShieldCheck, TerminalSquare } from "lucide-react";
+import { ArrowDown, ArrowRight, BookOpen, Brain, CalendarDays, Code2, Database, FileText, Globe, LockKeyhole, Mic, OctagonX, Pause, Play, Plug, Send, ShieldCheck, TerminalSquare, UserCheck } from "lucide-react";
 import Nav from "./components/Nav";
 import InstallBox from "./components/InstallBox";
 import Terminal from "./components/Terminal";
 import ApprovalDemo from "./components/ApprovalDemo";
 import Pipeline from "./components/Pipeline";
 import Architecture from "./components/Architecture";
-import { faqs, features, platforms, roadmap } from "./content";
+import { features, platforms, roadmap, roadmapReviewedAt } from "./content";
 import {
   ADR_URL,
   ARCHITECTURE_URL,
@@ -176,32 +176,32 @@ export default function App() {
           eyebrow="Trust by design"
           title={
             <>
-              Powerful by default.<br /> Accountable by design.
+              The model asks.<br /> Rust enforces.
             </>
           }
-          lede="An assistant you can leave alone is one you can audit. Permissions, approvals, memory and workflow state belong to JARVIS, never to a model."
+          lede="Intelligence is not authority. Every tool effect passes deterministic policy. Permissions, approvals and evidence belong to JARVIS, never to the model."
         >
           <div data-reveal>
             <Pipeline />
           </div>
           <div className="trust" data-reveal>
             <div className="trust__item">
-              <h3>Approvals stay light</h3>
-              <p>One click, one command or one spoken word from any surface you hold the credential for. Policy decides what is asked, so it asks less, not more.</p>
+              <h3><UserCheck size={22} strokeWidth={1.4} aria-hidden /> One decision. Yours.</h3>
+              <p>One click, one command or one spoken yes or no from an authenticated surface. No extra devices, codes or approval levels.</p>
             </div>
             <div className="trust__item">
-              <h3>Kill switch</h3>
+              <h3><OctagonX size={22} strokeWidth={1.4} aria-hidden /> You can stop the work</h3>
               <p>
-                <code>jarvis cancel</code> stops running work. A stop that would interrupt tasks is refused unless you force it.
+                <code>jarvis cancel</code> requests cancellation. The console also has a stop control, and browser voice accepts "Jarvis, stop".
               </p>
             </div>
             <div className="trust__item">
-              <h3>Untrusted by default</h3>
-              <p>Web pages and tool output are information, never instructions. Tool programs start with a small environment and never see your keys.</p>
+              <h3><LockKeyhole size={22} strokeWidth={1.4} aria-hidden /> A prompt is not a permission</h3>
+              <p>Pages, mail and tool output are untrusted data. They cannot widen a grant, override policy or approve an action on your behalf.</p>
             </div>
             <div className="trust__item">
-              <h3>Local keys, local state</h3>
-              <p>Keys live in private files, never printed or sent to the browser. State is SQLite on your machine. The console only listens on 127.0.0.1.</p>
+              <h3><Database size={22} strokeWidth={1.4} aria-hidden /> Local state. Explicit connections.</h3>
+              <p>Memory and audit live in local SQLite. Cloud models and connected services receive the data needed for the operations you enable.</p>
             </div>
           </div>
         </Section>
@@ -209,8 +209,8 @@ export default function App() {
         <Section
           id="architecture"
           eyebrow="Architecture"
-          title="Rust owns the authority. Everything else is replaceable."
-          lede="Models, agent frameworks, voice providers and tools are adapters behind explicit ports. Swap one and nothing you own is lost."
+          title={<>One trusted core.<br /> Every connection replaceable.</>}
+          lede="Your interfaces reach one native daemon. Models reason. Tools act. Rust owns identity, permissions, memory and the evidence of what happened."
         >
           <div data-reveal>
             <Architecture />
@@ -318,14 +318,15 @@ export default function App() {
         <Section
           id="roadmap"
           eyebrow="Roadmap"
-          title="Built in the open, in order of risk."
-          lede="Each phase leaves a runnable slice. Here is where things stand."
+          title="Built. Proven. Still pushing forward."
+          lede="Delivered capability is not the same as complete verification. Here is what runs, what is still being proved, and what is deliberately deferred."
         >
+          <div className="road__review"><span>Evidence reviewed <time dateTime={roadmapReviewedAt}>{new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${roadmapReviewedAt}T00:00:00Z`))}</time></span><a href={`${REPO_URL}/blob/main/TODO.md`} target="_blank" rel="noreferrer">Acceptance backlog <ArrowRight size={14} aria-hidden /></a></div>
           <div className="road">
             {roadmap.map((col) => (
               <div key={col.status} className={`road__col road__col--${col.status}`} data-reveal>
                 <h3>
-                  <span className="road__dot" /> {col.label}
+                  <span className="road__dot" /> {col.label}<span className="road__count" aria-label={`${col.items.length} items`}>{col.items.length}</span>
                 </h3>
                 <ul>
                   {col.items.map((it) => (
@@ -343,17 +344,6 @@ export default function App() {
               Full roadmap →
             </a>
           </p>
-        </Section>
-
-        <Section id="faq" eyebrow="FAQ" title="Straight answers.">
-          <div className="faq" data-reveal>
-            {faqs.map((f) => (
-              <details key={f.q} className="faq__item">
-                <summary>{f.q}</summary>
-                <p>{f.a}</p>
-              </details>
-            ))}
-          </div>
         </Section>
 
         <section className="final" data-reveal>
@@ -375,7 +365,7 @@ export default function App() {
       <footer className="footer">
         <div>
           <strong>JARVIS</strong>
-          <p>A local-first personal AI operating system. No licence has been chosen yet; distribution is paused until the owner decides.</p>
+          <p>A local-first personal AI operating system.</p>
         </div>
         <nav aria-label="Footer">
           <a href={REPO_URL} target="_blank" rel="noreferrer">GitHub</a>

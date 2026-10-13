@@ -4,7 +4,7 @@ import { REPO_URL } from "../config";
 
 const sections = [
   ["capabilities", "Capabilities"], ["trust", "Why JARVIS"],
-  ["install", "Install"], ["roadmap", "Roadmap"], ["faq", "FAQ"],
+  ["architecture", "Architecture"], ["install", "Install"], ["roadmap", "Roadmap"],
 ];
 
 export default function Nav() {
