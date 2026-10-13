@@ -81,6 +81,21 @@ test("policy inspection preserves gate order and accessible labelled controls", 
   assert.doesNotMatch(component, /setInterval|setTimeout|onMouseEnter/);
 });
 
+test("mobile navigation retains dismissal, focus and bounded-layout contracts", () => {
+  const navigation = read("src/components/Nav.tsx");
+  assert.match(navigation, /aria-expanded=\{open\}/);
+  assert.match(navigation, /querySelector<HTMLAnchorElement>\("a"\)\?\.focus/);
+  assert.match(navigation, /addEventListener\("pointerdown", outside\)/);
+  assert.match(navigation, /addEventListener\("focusin", outside\)/);
+  assert.match(navigation, /removeEventListener\("pointerdown", outside\)/);
+  assert.match(navigation, /removeEventListener\("focusin", outside\)/);
+  assert.match(navigation, /desktop\.addEventListener\("change", resize\)/);
+  assert.match(navigation, /target\?\.focus\(\{ preventScroll: true \}\)/);
+  const styles = read("src/styles.css");
+  assert.match(styles, /\.nav__actions \.nav__menu \{ display: inline-grid/);
+  assert.match(styles, /max-height: calc\(100dvh - 96px - env\(safe-area-inset-bottom\)\)/);
+});
+
 const tick = (state) => demoReducer(state, { type: "tick", runId: state.runId, step: state.step });
 
 test("illustrative workflows cannot advance through an approval without an owner decision", () => {

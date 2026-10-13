@@ -11,6 +11,8 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
+  const header = useRef<HTMLElement>(null);
+  const links = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -20,23 +22,53 @@ export default function Nav() {
   }, []);
 
   useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1021px)");
+    const resize = () => {
+      setOpen(false);
+      if (!desktop.matches && links.current?.contains(document.activeElement)) menuButton.current?.focus({ preventScroll: true });
+    };
+    desktop.addEventListener("change", resize);
+    return () => desktop.removeEventListener("change", resize);
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
+    if (links.current) links.current.scrollTop = 0;
+    links.current?.querySelector<HTMLAnchorElement>("a")?.focus({ preventScroll: true });
     const close = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
+      event.preventDefault();
       setOpen(false);
-      menuButton.current?.focus();
+      menuButton.current?.focus({ preventScroll: true });
+    };
+    const outside = (event: Event) => {
+      if (event.target instanceof Node && !header.current?.contains(event.target)) setOpen(false);
     };
     window.addEventListener("keydown", close);
-    return () => window.removeEventListener("keydown", close);
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("focusin", outside);
+    return () => {
+      window.removeEventListener("keydown", close);
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("focusin", outside);
+    };
   }, [open]);
 
+  const selectSection = (id: string) => {
+    setOpen(false);
+    if (!window.matchMedia("(max-width: 1020px)").matches) return;
+    const target = document.getElementById(id);
+    target?.setAttribute("tabindex", "-1");
+    target?.focus({ preventScroll: true });
+  };
+
   return (
-    <header className={`nav ${scrolled || open ? "nav--solid" : ""}`}>
-      <a className="nav__brand" href="#top" aria-label="JARVIS home" onClick={() => setOpen(false)}>
+    <header ref={header} className={`nav ${scrolled || open ? "nav--solid" : ""}`}>
+      <a className="nav__brand" href="#top" aria-label="JARVIS home" onClick={() => selectSection("top")}>
         <span className="nav__mark" aria-hidden /> JARVIS
       </a>
-      <nav id="site-navigation" className={`nav__links ${open ? "nav__links--open" : ""}`} aria-label="Sections">
-        {sections.map(([id, label]) => <a key={id} href={`#${id}`} onClick={() => setOpen(false)}>{label}</a>)}
+      <nav ref={links} id="site-navigation" className={`nav__links ${open ? "nav__links--open" : ""}`} aria-label="Sections">
+        {sections.map(([id, label]) => <a key={id} href={`#${id}`} onClick={() => selectSection(id)}>{label}</a>)}
       </nav>
       <div className="nav__actions">
         <button type="button" className="icon-button nav__menu" ref={menuButton}
