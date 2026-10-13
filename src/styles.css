@@ -1107,8 +1107,8 @@ h4 {
   .mission__run { justify-self: start; }
   .mission__progress { padding-inline: 16px; }
   .mission__workspace { grid-template-columns: minmax(0, 1fr); padding: 24px 16px; }
-  .mission__activity { border-right: 0; padding-right: 0; }
-  .mission__outcome { padding: 24px 0 0; border-top: 1px solid var(--line); margin-top: 24px; }
+  .mission__activity { border-right: 0; padding-right: 0; margin-top: 24px; }
+  .mission__outcome { order: -1; padding: 0 0 24px; border-bottom: 1px solid var(--line); }
   .mission__result { min-height: 280px; padding-block: 24px; }
   .mission__result h4 { font-size: 1.3rem; }
   .mission__steps strong { font-size: 0.84rem; }
