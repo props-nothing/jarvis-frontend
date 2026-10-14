@@ -41,7 +41,7 @@ function fixture(t) {
     JARVIS_REF: "main", JARVIS_SERVICE: "0", JARVIS_INSTALL_RUST: "0", JARVIS_TEST_LOG: log,
     JARVIS_TEST_BUILD_FAILURE: "0", JARVIS_TEST_INSTALL_FAILURE: "0", JARVIS_TEST_MISSING: "",
     JARVIS_TEST_OS: "Linux", JARVIS_TEST_DEVELOPER_TOOLS_FAILURE: "0", JARVIS_TEST_VS_DISCOVERY: "",
-    "ProgramFiles(x86)": join(base, "Program Files (x86)") };
+    JARVIS_TEST_PROGRAM_FILES: join(base, "Program Files (x86)") };
   return { base, source, remote, git, first, repo, log, env,
     checkout: () => command("git", ["clone", "-q", repo, source]),
     head: () => command("git", ["-C", source, "rev-parse", "HEAD"]),
@@ -102,19 +102,22 @@ function runInstaller(kind, f, overrides = {}) {
       { env: { ...env, JARVIS_TEST_CS: fixtureCs, JARVIS_TEST_EXE: fixtureExe } });
   }
   if (env.JARVIS_TEST_VS_DISCOVERY) {
-    const vsDir = join(env["ProgramFiles(x86)"], "Microsoft Visual Studio", "Installer");
+    const vsDir = join(env.JARVIS_TEST_PROGRAM_FILES, "Microsoft Visual Studio", "Installer");
     mkdirSync(vsDir, { recursive: true });
     copyFileSync(fixtureExe, join(vsDir, "vswhere.exe"));
   }
   const harness = join(f.base, "run.ps1");
   writeFileSync(harness, `
 $ErrorActionPreference = 'Stop'
+\${env:ProgramFiles(x86)} = $env:JARVIS_TEST_PROGRAM_FILES
 function rustup { }
-function cl { }
 function Get-Command {
-  param([string]$Name, [string]$ErrorAction)
-  Write-Host "fixture lookup: name=$Name missing=$env:JARVIS_TEST_MISSING"
+  param([string]$Name, [string]$ErrorAction, [string]$CommandType)
   if ($Name -eq $env:JARVIS_TEST_MISSING) { return }
+  if ($Name -eq 'cl') {
+    if ($CommandType -ne 'Application') { throw 'Compiler discovery must exclude aliases and functions.' }
+    return [pscustomobject]@{ Name = 'cl.exe' }
+  }
   Microsoft.PowerShell.Core\\Get-Command -Name $Name -ErrorAction SilentlyContinue
 }
 function cargo {

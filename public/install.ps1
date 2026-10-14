@@ -57,7 +57,7 @@ Need 'cargo' $RustHint
 Need 'rustup' $RustHint
 
 # Ordinary PowerShell need not have cl on PATH; Cargo can discover an installed VS toolchain.
-if (-not (Get-Command cl -ErrorAction SilentlyContinue)) {
+if (-not (Get-Command cl -CommandType Application -ErrorAction SilentlyContinue)) {
   $VsWhere = if (${env:ProgramFiles(x86)}) { Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe' } else { $null }
   $VsInstall = @()
   if ($VsWhere -and (Test-Path -LiteralPath $VsWhere)) {
