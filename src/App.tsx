@@ -1,11 +1,11 @@
 import { lazy, Suspense, useState } from "react";
-import { ArrowDown, ArrowRight, BookOpen, Brain, CalendarDays, Code2, Database, FileText, Globe, LockKeyhole, Mic, OctagonX, Pause, Play, Plug, Send, ShieldCheck, TerminalSquare, UserCheck } from "lucide-react";
+import { ArrowDown, ArrowRight, BookOpen, Brain, CalendarDays, Code2, ContactRound, Database, FileSpreadsheet, FileText, Globe, LockKeyhole, Mic, OctagonX, Pause, Play, Plug, Send, ShieldCheck, TerminalSquare, UserCheck } from "lucide-react";
 import Nav from "./components/Nav";
 import InstallBox from "./components/InstallBox";
 import WorkflowDemo from "./components/Terminal";
 import Pipeline from "./components/Pipeline";
 import Architecture from "./components/Architecture";
-import { features, platforms, roadmap, roadmapReviewedAt } from "./content";
+import { features, platforms, projectLicense, roadmap, roadmapReviewedAt } from "./content";
 import {
   ADR_URL,
   ARCHITECTURE_URL,
@@ -18,7 +18,7 @@ import {
 } from "./config";
 
 const JarvisMask = lazy(() => import("./components/JarvisMask"));
-const featureIcons = [FileText, Globe, CalendarDays, TerminalSquare, Code2, Mic, Brain, Plug, Send];
+const featureIcons = [FileText, Globe, CalendarDays, TerminalSquare, Code2, Mic, Brain, Plug, Send, FileSpreadsheet, ContactRound, Code2];
 
 const commands: [string, string][] = [
   ["jarvis", "First run: set up, start and open the console"],
@@ -29,7 +29,8 @@ const commands: [string, string][] = [
   ["jarvis cancel", "The kill switch for running work"],
   ["jarvis keys set voice --from-env ELEVENLABS_API_KEY", "Add a natural voice"],
   ["jarvis mcp list", "Abilities and where each one stands"],
-  ["jarvis stop && jarvis service install", "Start at login and restart if it stops"],
+  ["jarvis stop", "Stop the manually started daemon before installing its service"],
+  ["jarvis service install", "Install per-user startup; service behavior depends on the OS"],
   ["jarvis eval run evals/basics.toml", "Measure a change to a prompt, tool or model"],
 ];
 
@@ -127,7 +128,7 @@ export default function App() {
         <Hero />
         <section className="quick-install" aria-label="Quick install">
           <InstallBox />
-          <a className="hero__source" href={REPO_URL} target="_blank" rel="noreferrer">Built in Rust. Developed in the open. <ArrowRight size={14} aria-hidden /></a>
+          <a className="hero__source" href={REPO_URL} target="_blank" rel="noreferrer">Built in Rust. Open source under Apache-2.0. <ArrowRight size={14} aria-hidden /></a>
         </section>
         <Stats />
 
@@ -139,7 +140,7 @@ export default function App() {
               Less chatting. More doing.
             </>
           }
-          lede="Everything JARVIS reads and every tool it calls shows up live in the console. Anything that matters waits for your yes or no."
+          lede="Follow activity, sources, tool calls and approvals in the console. Policy asks for your yes or no when required; only you can grant standing trust. The examples below are illustrative, not live runs."
         >
           <WorkflowDemo />
         </Section>
@@ -229,7 +230,7 @@ export default function App() {
               Make it yours.
             </>
           }
-          lede="You need a model: Ollama on this machine is the easiest, or any OpenAI-compatible key. Docker (code sandbox) and Node.js (built-in browser) are optional."
+          lede="Choose a local or hosted OpenAI-compatible model. Installation currently builds from source and needs Git, Rust and native build tools. Docker (container code execution) and Node.js (browser and optional agent adapters) are additional, optional dependencies; no signed public download is offered yet."
         >
           <ol className="steps">
             <li className="step" data-reveal>
@@ -361,14 +362,15 @@ export default function App() {
       <footer className="footer">
         <div>
           <strong>JARVIS</strong>
-          <p>A local-first personal AI operating system.</p>
+          <p>A local-first personal AI operating system. Open source, {projectLicense.spdx}.</p>
         </div>
         <nav aria-label="Footer">
           <a href={REPO_URL} target="_blank" rel="noreferrer">GitHub</a>
           <a href={DOCS_URL} target="_blank" rel="noreferrer">Docs</a>
           <a href={SECURITY_URL} target="_blank" rel="noreferrer">Security</a>
           <a href={ROADMAP_URL} target="_blank" rel="noreferrer">Roadmap</a>
-          <a href="/licenses/notice.txt" target="_blank" rel="noreferrer">Licenses</a>
+          <a href={projectLicense.path} target="_blank" rel="noreferrer">{projectLicense.spdx}</a>
+          <a href="/licenses/notice.txt" target="_blank" rel="noreferrer">Third-party notices</a>
         </nav>
       </footer>
     </>

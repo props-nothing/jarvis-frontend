@@ -11,7 +11,7 @@ export function installCommands(origin: string, repo: string, windows: boolean):
     source: [
       `git clone ${repo}`,
       "cd jarvis-core",
-      "cargo build --release -p jarvis-cli",
+      "cargo build --release -p jarvis-cli --locked",
       windows ? ".\\target\\release\\jarvis.exe install" : "./target/release/jarvis install",
     ].join("\n"),
   };

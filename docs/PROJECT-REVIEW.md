@@ -1,10 +1,10 @@
 # Project review: what JARVIS is
 
-Product scope reconciled 2026-10-13 against the main repository's architecture, requirements and roadmap. Website design and interaction review: [DESIGN.md](DESIGN.md).
+Product scope reconciled 2026-10-14 against the main repository's architecture, requirements, delivery ledger and actual daemon/tool code (core baseline `3dd1096`). Website design and interaction review: [DESIGN.md](DESIGN.md).
 
 ## One sentence
 
-JARVIS is a persistent, installable personal AI service that reasons, remembers, uses tools, runs durable workflows and reacts to events, controlled by deterministic policy and owner approvals rather than by the model.
+JARVIS is an open-source, installable personal AI service that reasons, remembers, uses tools, schedules work and reacts to events, controlled by deterministic policy and owner approvals rather than by the model. A general multi-step workflow engine remains deferred.
 
 ## Shape of the product
 
@@ -16,16 +16,16 @@ JARVIS is a persistent, installable personal AI service that reasons, remembers,
 
 ## What works today
 
-Files and documents (incl. OCR), web search and fetch, a built-in browser and docs lookup (MCP), Gmail and Calendar, projects with caps and a digest, schedules and triggers, sub-agents, code in a container, memory and skills proposed by the model and approved by the owner, voice in the browser, Telegram, MCP host and server ("connect apps"), kill switch, audit trail, token accounting, and `jarvis eval`.
+Granted-folder files and documents (OCR needs Tesseract), new document creation and bounded existing-XLSX cell editing, recoverable single-file and Gmail trash, contact CSV import/merge with suppression preserved, web search with a key and fetch, a browser/docs lookup (MCP needs Node), Gmail and Calendar, project caps/digests, schedules/triggers, sub-agents, optional Docker code execution, approved memory/skills, browser voice, Telegram, authenticated MCP app access, cancellation, audit, token accounting and evaluations. Restart recovery starts bounded new continuations, not exact replay.
 
 ## What does not exist yet
 
-Public downloads, signed installers, a distribution licence, a Tauri desktop client, browser-independent local speech and the server profile. ACP/Codex tasks are built with recorded evidence; console sign-in and cancellation need live verification. Owner outbound calls have reported evidence, but broader call paths remain unverified. Windows and Ubuntu 24.04 have end-to-end records; other targets still need clean-machine tests.
+Published downloads, signed installers, a Tauri desktop client, browser-independent local speech and the server profile. Apache-2.0 is now selected for original platform and website code/docs; dependency notices and release verification are still needed. ACP/Codex tasks are built with recorded evidence; console sign-in and real-agent cancellation need live verification. Owner outbound calls have reported evidence, but broader call paths remain unverified. Windows and Ubuntu 24.04 have end-to-end records; other targets still need clean-machine tests.
 
 ## Consequences for the website
 
 1. The most important claim is trust, not capability: "models suggest, policy decides, you approve".
-2. Install commands must be real. They build from source today; prebuilt binaries come after a licence decision.
+2. Install commands must be real. They still build from source; Apache-2.0 is selected but signed public binaries need the remaining release gates.
 3. Platform status is stated plainly.
 4. The site uses the actual HUD face geometry over graphite, with cyan, white, amber and red accents. Screenshot-dependent presentation is removed.
 5. Comparable reference: openclaw.ai for direct installation and concrete capabilities. JARVIS retains its own identity and owner-policy story.

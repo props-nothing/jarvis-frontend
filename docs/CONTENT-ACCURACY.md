@@ -1,6 +1,6 @@
 # Content accuracy
 
-Every factual statement on the site comes from the JARVIS repository. When these sources change, update `src/content.ts` and the matching copy in `src/App.tsx`.
+Every factual statement on the site must agree with reachable JARVIS code, not just its design docs. Reviewed **2026-10-14**, core baseline `3dd1096`: daemon composition (`apps/jarvisd/src/lib.rs`), file/Google/contact/document contracts, restart continuation and coding-agent review were checked alongside `TODO.md` and the user guides. This is not a fresh live-provider or clean-machine run. When these sources change, update `src/content.ts`, `src/App.tsx` and the content regressions.
 
 | Claim on the site | Source in the JARVIS repository |
 | --- | --- |
@@ -11,18 +11,23 @@ Every factual statement on the site comes from the JARVIS repository. When these
 | Build command `cargo build --release -p jarvis-cli` | quick-start |
 | Models: Ollama, OpenAI, Gemini, Anthropic compatible, any OpenAI-compatible, fallback provider | `README.md` |
 | Files, documents, OCR, web, Gmail, Calendar, projects, digest, push | `README.md` |
-| Browser and docs lookup abilities; clicking and typing ask first | `docs/user/abilities.md` |
-| Schedules, triggers, sub-agents, container code, shell held by default | `README.md`, `ROADMAP.md` |
-| Voice: push-to-talk, wake word, interruption, spoken stop, ElevenLabs optional | `ROADMAP.md` hallmarks table |
+| Browser and docs lookup; acting asks by default, not regardless of owner permission settings; web search needs a key | `docs/user/abilities.md`, `apps/jarvisd/src/lib.rs` search composition, `mcp_abilities.rs` and workspace policy |
+| Schedules, triggers, sub-agents; container execution is optional and needs Docker/configuration | `README.md`, `ROADMAP.md`, `apps/jarvisd/src/lib.rs` tool composition |
+| Restart recovery starts one new continuation for eligible recent requests; it is not exact replay or a general durable workflow engine | `apps/jarvisd/src/resume.rs`, `lib.rs` recovery/composition; at most three continuations, newest requests within two hours, never recursive |
+| Single-file recovery, Gmail Trash and Google reauthorization | `crates/jarvis-tools/src/files.rs` delete contract, daemon composition, `apps/jarvisd/src/google_tools.rs` trash contract; `docs/user/files.md`, `google.md`, `TODO.md` P11-025 |
+| New XLSX/CSV/DOCX/PDF and existing XLSX literal-cell editing | `apps/jarvisd/src/document_write_tool.rs`, `xlsx_workbook.rs`, `lib.rs`; formula/protected/macro/signed targets refused, no formula calculation |
+| Contact CSV import, merge and suppression-preserving deletion | `apps/jarvisd/src/contacts_tool.rs`, `lib.rs`, `crates/jarvis-storage/src/contact_repository.rs`; import needs granted roots and model deletion refuses suppressed contacts |
+| MCP interoperability is not universal server authentication | `docs/user/mcp.md`, `abilities.md`, `connect-apps.md`; server credentials and remote login are not shipped |
+| Browser voice, wake word, interruption, spoken stop, ElevenLabs optional; browser support/services are not offline local speech | `apps/jarvisd/src/hud/hud.js` browser speech APIs, `ROADMAP.md` hallmarks table and `docs/user/settings.md` |
 | Telegram built and configured in Settings | `ROADMAP.md` item 5 |
 | Connect apps: Claude Code, Cursor, VS Code, scripts | `ROADMAP.md` item 2b, `docs/user/connect-apps.md` |
 | Policy pipeline (schema, authentication, authorization, risk, approval, timeout, idempotency, audit) | `AGENTS.md` architecture boundaries |
 | Approvals are one yes or no | ADR-0136 |
 | Platform status table | `docs/user/platforms.md` |
-| No licence, no public downloads, no signed installers | `README.md` licence status, `docs/user/platforms.md` known gaps |
-| Roadmap columns, reviewed 2026-10-13 | `ROADMAP.md`, current acceptance ledger `TODO.md`, `docs/user/code-agents.md`, `docs/user/phone.md` |
+| Original platform and website code/docs: Apache-2.0; third-party terms separate; no published/signed downloads yet | Core `LICENSE`, `NOTICE`, workspace Cargo metadata, website `LICENSE`, `NOTICE`, npm metadata and served `/licenses/jarvis.txt`; core `P9-017b` |
+| Roadmap columns, reviewed 2026-10-14 | `ROADMAP.md`, current acceptance ledger `TODO.md`, `docs/user/code-agents.md`, `docs/user/phone.md` |
 | Tool discovery and per-task model routing are built | `ROADMAP.md`, ADR-0176 and ADR-0196 |
-| ACP/Codex tasks are experimental; ordinary/background tasks have recorded proof, sign-in/cancellation need verification | `TODO.md` item 8, `docs/user/code-agents.md`; the older README handshake-only statement is stale relative to these records |
+| ACP/Codex tasks are experimental; ordinary/background tasks have recorded proof, console review/activity are not independent test results, sign-in/real-agent cancellation need verification | `TODO.md` item 8, `docs/user/code-agents.md`, `apps/jarvisd/src/hud/settings.js`, `code_delegate_async.rs`, `code_delegate.rs`; README wording reconciled to these records |
 | Full-text knowledge search is a delivered first slice | `TODO.md` P11-014, ADR-0206; vector retrieval is not claimed |
 | Owner outbound calls have owner-reported evidence, not general telephony verification | `TODO.md` item 10, `docs/user/phone.md` |
 | Local voice, desktop, distribution, server profile and multi-step workflows remain unshipped or deferred | `ROADMAP.md`, `TODO.md` parked scope and distribution gates |
@@ -39,4 +44,4 @@ Every factual statement on the site comes from the JARVIS repository. When these
 
 ## Not claimed
 
-General telephony availability, desktop app, signed installers, prebuilt downloads, a hosted service, any assistant benchmark or performance figure. Owner outbound-call evidence is distinguished from broader unverified call paths. No licence decision was made here.
+General telephony availability, desktop app, signed installers, published prebuilt downloads, a hosted service, any assistant benchmark or performance figure. Owner outbound-call evidence is distinguished from broader unverified call paths. Selecting Apache-2.0 does not complete distribution gates, relicense third-party code or grant rights to the removed CC BY-NC 4.0 prototype.

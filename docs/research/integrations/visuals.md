@@ -51,7 +51,7 @@ The cheapest falsifier is parsing the bundled OBJ with the installed loader and 
 
 ## Unresolved Questions
 
-No blocking API uncertainty. Integrated Chromium validation is not evidence of native Safari/iOS behavior. The main project's distribution license remains an owner decision and is unchanged here.
+No blocking API uncertainty. Integrated Chromium validation is not evidence of native Safari/iOS behavior. At the visual-research baseline the project license was undecided; **resolved 2026-10-14:** original platform and website code/docs now use Apache-2.0. MediaPipe and all other third-party notices remain separate; no geometry or provider contract changed.
 
 ## Design References
 

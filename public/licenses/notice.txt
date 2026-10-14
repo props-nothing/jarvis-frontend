@@ -1,4 +1,9 @@
-JARVIS website visual dependencies
+JARVIS website
+Copyright 2026 JARVIS contributors
+
+Original website code and documentation: Apache License 2.0.
+License text: /licenses/jarvis.txt
+Third-party materials listed below retain their own terms.
 
 Canonical face geometry: Copyright 2019-2023 The MediaPipe Authors.
 Apache License 2.0: /licenses/mediapipe.txt
@@ -6,8 +11,13 @@ The geometry is downloaded unchanged from google-ai-edge/mediapipe at
 a908d668c730da128dfa8d9f6bd25d519d006692. The website's rendering is new.
 No MediaPipe SDK, tracking, camera, microphone or face recognition is used.
 
+React 19.3.0, React DOM 19.3.0 and Scheduler 0.28.0:
+Copyright (c) Meta Platforms, Inc. and affiliates.
+MIT License: /licenses/react.txt
+
 Three.js 0.186.1: /licenses/three.txt
 Lucide React 1.56.0: /licenses/lucide.txt
 
-These licenses cover the named third-party materials only. They do not
-choose or change the JARVIS project's own distribution license.
+These third-party licenses cover the named materials only. Original JARVIS
+and website code are Apache-2.0 licensed; the former CC BY-NC 4.0 Python
+prototype and historical source are not relicensed.

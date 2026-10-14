@@ -2,3 +2,6 @@
 *.sh text eol=lf
 *.ps1 text eol=crlf
 *.obj text eol=lf
+/LICENSE text eol=lf
+/NOTICE text eol=lf
+public/licenses/*.txt text eol=lf

@@ -18,7 +18,7 @@ No accounts, analytics, tracking, cookies or third-party fonts and scripts. The 
 | Quick install | OS-aware commands, clipboard feedback and source-install prerequisites |
 | Principles | Your machine, model, memory and decision |
 | See it work | Three illustrative mission workflows with trace inspection, pause/resume/stop, connected approvals and outcome previews |
-| Capabilities | Nine cards, each backed by a documented feature |
+| Capabilities | Twelve cards, checked against reachable tool code; coding delegation is labelled experimental |
 | Trust | Keyboard-accessible seven-gate inspector and four ownership guarantees |
 | Architecture | Rust-centered system blueprint; available interfaces, replaceable adapters, local data and explicit experimental/unshipped states |
 | Install | Three steps, handy commands, headless-server tunnel, platform status |
@@ -31,7 +31,7 @@ No accounts, analytics, tracking, cookies or third-party fonts and scripts. The 
 | `curl -fsSL <host>/install.sh \| bash` | Works once the site is hosted | Clones, `cargo build --release -p jarvis-cli`, `jarvis install`; `JARVIS_SERVICE=1` adds `--service` (off by default, see "Server test findings" in DEPLOY.md) |
 | `irm <host>/install.ps1 \| iex` | Same | Windows, per-user, no administrator rights |
 | From source | Works now | Plain git and cargo commands, no hosting needed |
-| Prebuilt archive | Blocked | Needs a licence ([P9-004 to P9-007]); switch the scripts to download and verify the SHA-256 when it exists |
+| Prebuilt archive | Not published | Apache-2.0 is selected; dependency notices, signing/notarization and clean-machine checks remain ([P9-017b], [P9-004 to P9-007]). Switch the scripts only after a verified release exists |
 
 The scripts never use `sudo`, never run as administrator and never touch settings or memory. `scripts/check-install.mjs` fails closed on missing safety properties.
 

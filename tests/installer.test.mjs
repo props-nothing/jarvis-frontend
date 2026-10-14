@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, existsSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, existsSync, rmSync, copyFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { spawnSync } from "node:child_process";
@@ -21,7 +20,7 @@ function command(exe, args, options = {}) {
 }
 
 function fixture(t) {
-  const base = mkdtempSync(join(tmpdir(), "jarvis installer test "));
+  const base = mkdtempSync(join(root, ".installer-test-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
   const remote = join(base, "remote");
   const source = join(base, "checkout with spaces");
@@ -40,7 +39,9 @@ function fixture(t) {
   const log = join(base, "effects.log");
   const env = { ...process.env, HOME: home, USERPROFILE: home, JARVIS_REPO: repo, JARVIS_SRC: source,
     JARVIS_REF: "main", JARVIS_SERVICE: "0", JARVIS_INSTALL_RUST: "0", JARVIS_TEST_LOG: log,
-    JARVIS_TEST_BUILD_FAILURE: "0", JARVIS_TEST_INSTALL_FAILURE: "0" };
+    JARVIS_TEST_BUILD_FAILURE: "0", JARVIS_TEST_INSTALL_FAILURE: "0", JARVIS_TEST_MISSING: "",
+    JARVIS_TEST_OS: "Linux", JARVIS_TEST_DEVELOPER_TOOLS_FAILURE: "0", JARVIS_TEST_VS_DISCOVERY: "",
+    "ProgramFiles(x86)": join(base, "Program Files (x86)") };
   return { base, source, remote, git, first, repo, log, env,
     checkout: () => command("git", ["clone", "-q", repo, source]),
     head: () => command("git", ["-C", source, "rev-parse", "HEAD"]),
@@ -53,8 +54,15 @@ if command -v cygpath >/dev/null 2>&1; then
   export JARVIS_TEST_INSTALLER="$(cygpath -u "$JARVIS_TEST_INSTALLER")"
   export JARVIS_TEST_LOG="$(cygpath -u "$JARVIS_TEST_LOG")"
 fi
-uname() { printf 'Linux\n'; }
+uname() { printf '%s\n' "$JARVIS_TEST_OS"; }
 cc() { :; }
+rustup() { :; }
+xcode-select() { [ "$JARVIS_TEST_DEVELOPER_TOOLS_FAILURE" != 1 ]; }
+apt-get() { :; }
+command() {
+  if [ "$1" = -v ] && [ "$2" = "$JARVIS_TEST_MISSING" ]; then return 1; fi
+  builtin command "$@"
+}
 cargo() {
   printf 'build %s\n' "$*" >> "$JARVIS_TEST_LOG"
   [ "$JARVIS_TEST_BUILD_FAILURE" = 1 ] && return 42
@@ -73,6 +81,10 @@ BIN
 // A tiny native test executable records installer arguments; it never installs anything.
 const nativeFixtureSource = `using System; using System.IO; public class InstallerFixture {
  public static int Main(string[] args) {
+  if (args.Length > 0 && args[0] == "-latest") {
+   if (Environment.GetEnvironmentVariable("JARVIS_TEST_VS_DISCOVERY") == "installed") Console.WriteLine("fixture C++ installation");
+   return 0;
+  }
   File.AppendAllText(Environment.GetEnvironmentVariable("JARVIS_TEST_LOG"), "binary " + string.Join(" ", args) + "\\n");
   return Environment.GetEnvironmentVariable("JARVIS_TEST_INSTALL_FAILURE") == "1" ? 43 : 0;
  }
@@ -89,9 +101,22 @@ function runInstaller(kind, f, overrides = {}) {
       "Add-Type -TypeDefinition ([IO.File]::ReadAllText($env:JARVIS_TEST_CS)) -OutputAssembly $env:JARVIS_TEST_EXE -OutputType ConsoleApplication"],
       { env: { ...env, JARVIS_TEST_CS: fixtureCs, JARVIS_TEST_EXE: fixtureExe } });
   }
+  if (env.JARVIS_TEST_VS_DISCOVERY) {
+    const vsDir = join(env["ProgramFiles(x86)"], "Microsoft Visual Studio", "Installer");
+    mkdirSync(vsDir, { recursive: true });
+    copyFileSync(fixtureExe, join(vsDir, "vswhere.exe"));
+  }
   const harness = join(f.base, "run.ps1");
   writeFileSync(harness, `
 $ErrorActionPreference = 'Stop'
+function rustup { }
+function cl { }
+function Get-Command {
+  param([string]$Name, [string]$ErrorAction)
+  Write-Host "fixture lookup: name=$Name missing=$env:JARVIS_TEST_MISSING"
+  if ($Name -eq $env:JARVIS_TEST_MISSING) { return }
+  Microsoft.PowerShell.Core\\Get-Command -Name $Name -ErrorAction SilentlyContinue
+}
 function cargo {
   [IO.File]::AppendAllText($env:JARVIS_TEST_LOG, "build $($args -join ' ')
 ")
@@ -112,8 +137,14 @@ for (const kind of ["bash", ...(process.platform === "win32" ? ["powershell"] : 
     let result = runInstaller(kind, f);
     assert.equal(result.status, 0, result.stdout + result.stderr);
     assert.equal(f.head(), f.first);
+    assert.match(f.effects(), /build build --release -p jarvis-cli --locked\r?\n/);
     assert.match(f.effects(), /binary install\r?\n/);
     assert.doesNotMatch(f.effects(), /--service/);
+    assert.match(result.stdout, /Setup has not run/);
+    assert.match(result.stdout, /jarvis init .*--voice-key-file ABSOLUTE_VOICE_KEY_FILE/);
+    assert.match(result.stdout, /Only after setup succeeds: jarvis start/);
+    assert.match(result.stdout, /jarvis doctor --live/);
+    assert.doesNotMatch(f.effects(), /binary (?:init|start|doctor)/);
     writeFileSync(join(f.remote, "source.txt"), "second\n");
     f.git("add", "."); f.git("commit", "-q", "-m", "second");
     const second = f.git("rev-parse", "HEAD");
@@ -188,15 +219,63 @@ for (const kind of ["bash", ...(process.platform === "win32" ? ["powershell"] : 
     }
   });
 
+  test(`${kind}: missing source prerequisites fail before clone or build`, (t) => {
+    const f = fixture(t);
+    for (const missing of ["cargo", "rustup", kind === "bash" ? "cc" : "cl"]) {
+      const result = runInstaller(kind, f, { JARVIS_TEST_MISSING: missing });
+      assert.notEqual(result.status, 0, result.stdout + result.stderr);
+      assert.match(result.stdout + result.stderr, missing === "cl" ? /Windows C\+\+ build tools/ : missing === "cc" ? /build-essential/ : /rustup/);
+      assert.equal(f.effects(), "");
+      assert.equal(existsSync(f.source), false);
+    }
+  });
+
+  test(`${kind}: piped handoff neither exposes keys nor runs setup`, (t) => {
+    const f = fixture(t);
+    const result = runInstaller(kind, f, { ELEVENLABS_API_KEY: "fixture-private-voice-value" });
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    assert.match(result.stdout, /requires your ElevenLabs API key/);
+    assert.match(result.stdout, /--voice-key-file ABSOLUTE_VOICE_KEY_FILE/);
+    assert.doesNotMatch(result.stdout + result.stderr, /fixture-private-voice-value/);
+    assert.doesNotMatch(f.effects(), /binary (?:init|start|doctor)/);
+  });
+
   test(`${kind}: build and install errors do not report success`, (t) => {
     const f = fixture(t);
     let result = runInstaller(kind, f, { JARVIS_TEST_BUILD_FAILURE: "1" });
     assert.notEqual(result.status, 0);
     assert.doesNotMatch(result.stdout, /JARVIS is installed/);
+    assert.match(result.stdout + result.stderr, /Source build failed/);
     assert.doesNotMatch(f.effects(), /binary/);
     result = runInstaller(kind, f, { JARVIS_TEST_INSTALL_FAILURE: "1" });
     assert.notEqual(result.status, 0);
     assert.doesNotMatch(result.stdout, /JARVIS is installed/);
+  });
+}
+
+test("bash: macOS developer tools must be selected before cloning", (t) => {
+  const f = fixture(t);
+  let result = runInstaller("bash", f, { JARVIS_TEST_OS: "Darwin", JARVIS_TEST_DEVELOPER_TOOLS_FAILURE: "1" });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stdout + result.stderr, /xcode-select --install/);
+  assert.equal(existsSync(f.source), false);
+  assert.equal(f.effects(), "");
+  result = runInstaller("bash", f, { JARVIS_TEST_OS: "Darwin" });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(f.effects(), /--locked/);
+});
+
+if (process.platform === "win32") {
+  test("powershell: discover C++ outside PATH and refuse an empty VS locator result", (t) => {
+    const f = fixture(t);
+    let result = runInstaller("powershell", f, { JARVIS_TEST_MISSING: "cl", JARVIS_TEST_VS_DISCOVERY: "empty" });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stdout + result.stderr, /Windows C\+\+ build tools/);
+    assert.equal(existsSync(f.source), false);
+    assert.equal(f.effects(), "");
+    result = runInstaller("powershell", f, { JARVIS_TEST_MISSING: "cl", JARVIS_TEST_VS_DISCOVERY: "installed" });
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    assert.match(f.effects(), /--locked/);
   });
 }
 

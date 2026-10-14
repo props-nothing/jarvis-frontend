@@ -124,7 +124,12 @@ export default function InstallBox({ compact = false }: { compact?: boolean }) {
         {copyState === "copied" ? "Install command copied." : copyState === "failed" ? "Clipboard unavailable. Select and copy the command above." : ""}
       </p>
       <p className="install__note">
-        Builds from source (needs Git, Rust and C/C++ build tools). Then run <code>jarvis</code>.{" "}
+        Source build, not a signed binary download: Git, Rust via rustup and{" "}
+        {tab === "windows" || (tab === "source" && windowsHost())
+          ? "C++ Build Tools with a Windows SDK."
+          : "Xcode command-line tools on macOS, or build-essential on Ubuntu."}{" "}
+        Rust is not needed to run the installed program. Open a new terminal and run <code>jarvis</code>;
+        new setup requires an ElevenLabs API key and explicit folder grants.{" "}
         <a href={tab === "source" ? REPO_URL : `${siteOrigin()}/install.${tab === "windows" ? "ps1" : "sh"}`} target="_blank" rel="noreferrer">
           {tab === "source" ? "View source" : "Inspect installer"}
         </a>

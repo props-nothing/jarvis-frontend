@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
-import { pipeline, roadmap, roadmapReviewedAt } from "../src/content.ts";
+import { features, pipeline, projectLicense, roadmap, roadmapReviewedAt } from "../src/content.ts";
 import { demoReducer, demoScenarios, initialDemoState } from "../src/demoFlow.ts";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
@@ -54,16 +54,60 @@ test("the public site uses bounded type and does not hide content behind animati
 });
 
 test("roadmap distinguishes delivered capability, limited proof and deliberate deferral", () => {
-  assert.equal(roadmapReviewedAt, "2026-10-13");
+  assert.equal(roadmapReviewedAt, "2026-10-14");
   assert.deepEqual(roadmap.map((section) => section.status), ["built", "experimental", "next", "planned"]);
   const section = (status) => roadmap.find((entry) => entry.status === status).items;
   assert.ok(section("built").some((item) => /knowledge search/i.test(item.name)));
-  assert.match(section("experimental").find((item) => /ACP/.test(item.name)).note, /Codex tasks verified.*sign-in.*cancellation/);
+  assert.match(section("experimental").find((item) => /ACP/.test(item.name)).note, /Codex tasks have recorded verification.*scripted tests.*sign-in.*cancellation/);
   assert.match(section("experimental").find((item) => /calls/.test(item.name)).note, /Owner outbound.*Inbound.*broader proof/);
   assert.match(section("planned").find((item) => /workflow engine/.test(item.name)).note, /Parked/);
-  assert.match(section("planned").find((item) => /downloads/.test(item.name)).note, /licence/);
+  assert.match(section("built").find((item) => /Open-source/.test(item.name)).note, /Apache-2\.0/);
+  assert.match(section("planned").find((item) => /downloads/.test(item.name)).note, /License selected.*Dependency notices.*signing/);
   assert.match(read("src/components/Architecture.tsx"), /Worktrees, not OS isolation/);
   assert.doesNotMatch(read("src/components/Architecture.tsx"), /planned:\s*true/);
+});
+
+test("capability copy preserves tool limits and does not promise universal access or exact recovery", () => {
+  const feature = (tag) => features.find((entry) => entry.tag === tag);
+  assert.equal(features.length, 12);
+  assert.match(feature("Files").body, /recoverable \.jarvis-trash.*never a permanent purge/);
+  assert.match(feature("Web").body, /configured key.*ask by default/);
+  assert.match(feature("Google").body, /Gmail Trash.*new sign-in/);
+  assert.match(feature("Autonomy").body, /one new continuation.*not exact replay.*Docker/);
+  assert.match(feature("MCP").body, /credential-free.*remote login remain gaps/);
+  assert.match(feature("Voice").body, /browser support.*not offline local voice/);
+  assert.match(feature("Documents").body, /existing XLSX.*formulas are not recalculated/);
+  assert.match(feature("Contacts").body, /do-not-contact.*cannot delete a suppressed contact/);
+  assert.match(feature("Experimental").body, /not a sandbox.*not proof that tests passed/);
+  const app = read("src/App.tsx");
+  const icons = app.match(/const featureIcons = \[([^\]]+)\]/)[1].split(",");
+  assert.equal(icons.length, features.length);
+  assert.doesNotMatch(read("src/content.ts"), /Add any MCP server|always ask you first|resume after a restart|Blocked on the owner choosing/);
+  assert.match(app, /illustrative, not live runs/);
+  assert.doesNotMatch(app, /jarvis stop && jarvis service install/);
+});
+
+test("Apache-2.0 metadata and served notices remain consistent without relicensing third parties", () => {
+  assert.equal(projectLicense.spdx, "Apache-2.0");
+  assert.equal(JSON.parse(read("package.json")).license, projectLicense.spdx);
+  assert.equal(JSON.parse(read("package-lock.json")).packages[""].license, projectLicense.spdx);
+  const license = read("LICENSE");
+  assert.equal(createHash("sha256").update(license).digest("hex"), "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30");
+  assert.equal(read(`public${projectLicense.path}`), license);
+  assert.match(read(".gitattributes"), /\/LICENSE text eol=lf/);
+  assert.match(read(".gitattributes"), /public\/licenses\/\*\.txt text eol=lf/);
+  assert.match(read("src/App.tsx"), /href=\{projectLicense.path\}/);
+  const notice = read("public/licenses/notice.txt");
+  for (const [, path] of notice.matchAll(/\/licenses\/([\w.-]+\.txt)/g)) {
+    assert.ok(read(`public/licenses/${path}`).length > 500, `missing license text: ${path}`);
+  }
+  assert.match(notice, /React.*React DOM.*Scheduler/);
+  const react = read("node_modules/react/LICENSE");
+  assert.equal(read("public/licenses/react.txt"), react);
+  assert.equal(read("node_modules/react-dom/LICENSE"), react);
+  assert.equal(read("node_modules/scheduler/LICENSE"), react);
+  assert.match(read("NOTICE"), /CC BY-NC 4\.0.*prototype/);
+  assert.match(read("README.md"), /Third-party|third-party|respective licenses/);
 });
 
 test("policy inspection preserves gate order and accessible labelled controls", () => {

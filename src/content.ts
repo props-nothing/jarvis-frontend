@@ -1,4 +1,4 @@
-/** Every claim here is sourced from the JARVIS repository docs; see docs/CONTENT-ACCURACY.md. */
+/** Claims are checked against JARVIS implementation and delivery evidence; see docs/CONTENT-ACCURACY.md. */
 
 export type Feature = { icon: string; title: string; body: string; tag: string };
 
@@ -7,19 +7,19 @@ export const features: Feature[] = [
     icon: "◈",
     tag: "Files",
     title: "Reads your documents",
-    body: "Read, search, write, edit and move files in the folders you grant. PDF, Word, spreadsheets and slides. Photos and scans too, when tesseract is installed.",
+    body: "Read, search, write, edit and move files in granted folders. Read PDF, Word, spreadsheets and slides; OCR needs Tesseract. File deletion moves one file into recoverable .jarvis-trash, never a permanent purge.",
   },
   {
     icon: "◎",
     tag: "Web",
     title: "Browses and researches",
-    body: "Searches, fetches pages and PDFs with sources shown, and drives a private browser window. Clicking, typing and uploading always ask you first.",
+    body: "Fetch pages and PDFs, search with a configured key, and read JavaScript pages in an isolated browser session. Clicking, typing and uploading ask by default; your permission settings decide.",
   },
   {
     icon: "✉",
     tag: "Google",
     title: "Mail and calendar",
-    body: "Sign in once from Settings. It searches and reads mail, drafts, replies, sends with attachments and manages events. Anything that reaches another person asks first.",
+    body: "Connect Google from Settings for mail, drafts, replies, attachments and calendar events. Sending asks first. Mail cleanup moves a message to Gmail Trash; existing accounts need a new sign-in for that scope.",
   },
   {
     icon: "▣",
@@ -31,13 +31,13 @@ export const features: Feature[] = [
     icon: "⟳",
     tag: "Autonomy",
     title: "Works while you are away",
-    body: "Time-zone schedules, triggers on new mail, files or requests, sub-agents, and resume after a restart. Code runs in a throwaway container.",
+    body: "Time-zone schedules, mail/file/webhook triggers and sub-agents. Eligible recent interrupted requests get one new continuation after restart, not exact replay. Optional container code execution needs Docker and a configured image.",
   },
   {
     icon: "◉",
     tag: "Voice",
     title: "Talk to it",
-    body: "Push-to-talk, a wake word, spoken answers you can interrupt, and a spoken \u201cJarvis, stop\u201d. A neural voice when you add an ElevenLabs key.",
+    body: "Browser push-to-talk, a wake word, interruptible answers and a spoken \u201cJarvis, stop\u201d. Optional ElevenLabs synthesis. Recognition depends on browser support and may use its speech service; this is not offline local voice.",
   },
   {
     icon: "❖",
@@ -48,14 +48,32 @@ export const features: Feature[] = [
   {
     icon: "⌘",
     tag: "MCP",
-    title: "Plugs into everything",
-    body: "Add any MCP server from Settings. Or let Claude Code, Cursor, VS Code or your own scripts use JARVIS with one switch and one key.",
+    title: "Connect tools and apps",
+    body: "Manage credential-free MCP programs and compatible remote servers from Settings. Server keys and remote login remain gaps. Opt-in authenticated MCP access lets other apps use JARVIS; approvals stay with you.",
   },
   {
     icon: "✈",
     tag: "Telegram",
     title: "Reach it from your phone",
-    body: "Configured in Settings, with no tunnel and no public port. Answers are formatted for chat.",
+    body: "Configured in Settings, with no tunnel and no public daemon port. Answers and approval decisions travel through Telegram, not an offline local channel.",
+  },
+  {
+    icon: "▤",
+    tag: "Documents",
+    title: "Creates useful documents",
+    body: "Create new Word, PDF, CSV and Excel files. Edit literal cells in an existing XLSX while preserving untouched formatting and formulas. Protected, macro and signed workbooks are refused; formulas are not recalculated.",
+  },
+  {
+    icon: "♙",
+    tag: "Contacts",
+    title: "Keeps a contact list",
+    body: "Save, search, import CSV, find duplicates and merge JARVIS contacts. Imports use a granted folder and preserve do-not-contact suppression. A model cannot delete a suppressed contact, even with approval.",
+  },
+  {
+    icon: "⌥",
+    tag: "Experimental",
+    title: "Delegates coding tasks",
+    body: "Choose an ACP coding agent for ordinary or background work, then inspect its activity, branch and diff in the console. No automatic merge or push. Worktrees are not a sandbox; completion is not proof that tests passed.",
   },
 ];
 
@@ -70,7 +88,8 @@ export const pipeline = [
 ];
 
 export type RoadmapItem = { name: string; note: string };
-export const roadmapReviewedAt = "2026-10-13";
+export const roadmapReviewedAt = "2026-10-14";
+export const projectLicense = { spdx: "Apache-2.0", name: "Apache License 2.0", path: "/licenses/jarvis.txt" } as const;
 
 export const roadmap: { status: "built" | "experimental" | "next" | "planned"; label: string; items: RoadmapItem[] }[] = [
   {
@@ -78,8 +97,9 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
     label: "Available now",
     items: [
       { name: "Console, CLI & Telegram", note: "Text, browser voice, live activity and authenticated app access" },
-      { name: "Files & knowledge search", note: "Granted folders, documents and a first full-text knowledge index" },
-      { name: "Google, web & MCP", note: "Gmail, Calendar, browser tools and managed MCP servers" },
+      { name: "Files & knowledge search", note: "Granted folders, document creation, XLSX cell editing, recoverable file trash and a full-text index" },
+      { name: "Google, contacts, web & MCP", note: "Gmail and Calendar, Gmail Trash, contact CSV import and merge, browser tools and managed MCP servers" },
+      { name: "Open-source platform & website", note: "Apache-2.0 for original code and docs; third-party notices and prototype restrictions remain separate" },
       { name: "Memory, skills & projects", note: "Owner-approved learning, project journals, digests and budgets" },
       { name: "Triggers & model routing", note: "Time-zone schedules, quiet hours, per-task models and spend guards" },
       { name: "Policy & oversight", note: "Durable approvals, cancellation, audit, usage and evaluation suites" },
@@ -89,7 +109,7 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
     status: "experimental",
     label: "Experimental",
     items: [
-      { name: "ACP coding agents", note: "Ordinary and background Codex tasks verified; console sign-in and real-agent cancellation remain open. Worktrees are not a sandbox." },
+      { name: "ACP coding agents", note: "Ordinary and background Codex tasks have recorded verification; live activity and startup cancellation have scripted tests. Console sign-in and real-agent cancellation remain open. Worktrees are not a sandbox." },
       { name: "Provider-backed calls", note: "Owner outbound calls reported working. Inbound and third-party configurations still need broader proof." },
     ],
   },
@@ -99,7 +119,7 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
     items: [
       { name: "Owner-account verification", note: "OCR, fallback provider, push, replies and saved provider changes" },
       { name: "MCP credentials & remote use", note: "Credential-bearing servers, remote servers and apply-without-restart checks" },
-      { name: "First-run polish", note: "A clearer first five minutes; licence and clean-machine gates stay explicit" },
+      { name: "First-run polish", note: "A clearer first five minutes; clean-machine installation and service handoff checks remain open" },
       { name: "Retrieval & safety evaluation", note: "Measure knowledge-search quality, tool ranking and hostile-page behavior" },
     ],
   },
@@ -109,7 +129,7 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
     items: [
       { name: "Local voice", note: "Browser-independent recognition and synthesis without the cloud" },
       { name: "Desktop client", note: "Tauri is parked until there is a named requirement" },
-      { name: "Signed installers and public downloads", note: "Blocked on the owner choosing a licence" },
+      { name: "Signed installers and public downloads", note: "License selected. Dependency notices, signing/notarization, release publication and clean-machine verification still needed" },
       { name: "Server profile", note: "PostgreSQL + pgvector; multi-device requires proven ownership semantics" },
       { name: "Multi-step workflow engine", note: "Parked until ordinary runs and schedules cannot express the job" },
     ],

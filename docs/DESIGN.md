@@ -39,7 +39,7 @@ Install, workflow and policy tabs support arrow-key wrapping, Home/End and label
 
 Mobile navigation uses ordinary links and a disclosure button, not a modal or fake menubar. Opening resets the dropdown scroll and focuses the first link. Escape restores toggle focus; outside pointer/focus dismisses; selecting an anchor closes and focuses its section. Breakpoint changes clear expanded state. Icons stay centered, safe-area insets are respected, and a bounded dropdown scrolls on short screens. No body-scroll lock or focus trap was added to this nonmodal menu.
 
-The platform table includes recorded Ubuntu evidence. Tool discovery and model routing are no longer presented as unbuilt; ACP sign-in/cancellation and broader call verification remain clearly unverified. Source-install prerequisites and the unresolved JARVIS distribution licence remain visible. Screenshot social metadata is removed.
+The platform table includes recorded Ubuntu evidence. Tool discovery and model routing are no longer presented as unbuilt; ACP sign-in/cancellation and broader call verification remain clearly unverified. Source-install prerequisites remain visible. Apache-2.0 is selected for original code/docs; signed public downloads still need dependency notices and verification. Screenshot social metadata is removed.
 
 ## Performance And Verification
 
