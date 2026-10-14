@@ -13,7 +13,7 @@
 #   JARVIS_SRC      where the source lives (default: ~/.local/src/jarvis-core)
 #   JARVIS_SERVICE  set to 1 to also start at login; off by default because a service started before `jarvis init`
 #                   runs without the console and `jarvis restart` cannot replace it (default: 0)
-#   JARVIS_INSTALL_RUST  set to 1 to install Rust with rustup when cargo is missing (default: 0)
+#   JARVIS_INSTALL_RUST  set to 1 to install Rust when cargo or rustup is missing (default: 0)
 set -euo pipefail
 
 REPO="${JARVIS_REPO:-https://github.com/props-nothing/jarvis-core.git}"
