@@ -1,6 +1,6 @@
 # Project review: what JARVIS is
 
-Product scope reconciled 2026-10-14 against the main repository's architecture, requirements, delivery ledger and actual daemon/tool code (core baseline `3dd1096`). Website design and interaction review: [DESIGN.md](DESIGN.md).
+Product scope reconciled 2026-10-16 against the main repository's architecture, requirements, delivery ledger and actual daemon/tool code (core baseline `b930f73` plus the review-correction working tree). Website design and interaction review: [DESIGN.md](DESIGN.md).
 
 ## One sentence
 
@@ -16,7 +16,7 @@ JARVIS is an open-source, installable personal AI service that reasons, remember
 
 ## What works today
 
-Granted-folder files and documents (OCR needs Tesseract), new document creation and bounded existing-XLSX cell editing, recoverable single-file and Gmail trash, contact CSV import/merge with suppression preserved, web search with a key and fetch, a browser/docs lookup (MCP needs Node), Gmail and Calendar, project caps/digests, schedules/triggers, sub-agents, optional Docker code execution, approved memory/skills, browser voice, Telegram, authenticated MCP app access, cancellation, audit, token accounting and evaluations. Restart recovery starts bounded new continuations, not exact replay.
+Granted-folder files and documents (OCR needs Tesseract), new document creation and bounded existing-XLSX cell editing, recoverable single-file and Gmail trash, contact CSV import/merge with suppression preserved, web search with a key and fetch, a browser/docs lookup (MCP needs Node), Gmail and Calendar, project caps/digests, schedules/triggers, sub-agents, optional Docker code execution, approved memory/skills, browser voice, Telegram, authenticated MCP app access, cancellation, audit, token accounting and evaluations. Authorized contact deletion removes its suppression under normal policy. MCP has named keys and pre-registered OAuth; provider/browser acceptance remains open. Coding jobs default in-place, with optional worktrees, independent checks, skill bundles and managed previews. Restart recovery starts bounded new continuations, not exact replay.
 
 ## What does not exist yet
 

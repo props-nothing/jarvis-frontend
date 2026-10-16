@@ -49,7 +49,7 @@ export const features: Feature[] = [
     icon: "⌘",
     tag: "MCP",
     title: "Connect tools and apps",
-    body: "Manage credential-free MCP programs and compatible remote servers from Settings. Server keys and remote login remain gaps. Opt-in authenticated MCP access lets other apps use JARVIS; approvals stay with you.",
+    body: "Manage local and remote MCP servers from Settings, with named keys or browser sign-in using a registered provider app. Provider compatibility still needs verification. Opt-in authenticated app access keeps approvals with you.",
   },
   {
     icon: "✈",
@@ -67,13 +67,13 @@ export const features: Feature[] = [
     icon: "♙",
     tag: "Contacts",
     title: "Keeps a contact list",
-    body: "Save, search, import CSV, find duplicates and merge JARVIS contacts. Imports use a granted folder and preserve do-not-contact suppression. A model cannot delete a suppressed contact, even with approval.",
+    body: "Save, search, import CSV, find duplicates and merge JARVIS contacts. Imports use a granted folder and preserve do-not-contact suppression. Authorized deletion removes the contact and its suppression together under your permission policy.",
   },
   {
     icon: "⌥",
     tag: "Experimental",
     title: "Delegates coding tasks",
-    body: "Choose an ACP coding agent for ordinary or background work, then inspect its activity, branch and diff in the console. No automatic merge or push. Worktrees are not a sandbox; completion is not proof that tests passed.",
+    body: "Run background coding jobs in a permitted folder, with optional Git worktrees, skill bundles and managed previews. Independent checks report separately from task completion. Host processes are not a sandbox; no automatic commit, merge or push.",
   },
 ];
 
@@ -88,7 +88,7 @@ export const pipeline = [
 ];
 
 export type RoadmapItem = { name: string; note: string };
-export const roadmapReviewedAt = "2026-10-14";
+export const roadmapReviewedAt = "2026-10-16";
 export const projectLicense = { spdx: "Apache-2.0", name: "Apache License 2.0", path: "/licenses/jarvis.txt" } as const;
 
 export const roadmap: { status: "built" | "experimental" | "next" | "planned"; label: string; items: RoadmapItem[] }[] = [
@@ -109,7 +109,7 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
     status: "experimental",
     label: "Experimental",
     items: [
-      { name: "ACP coding agents", note: "Ordinary and background Codex tasks have recorded verification; live activity and startup cancellation have scripted tests. Console sign-in and real-agent cancellation remain open. Worktrees are not a sandbox." },
+      { name: "ACP coding agents", note: "In-place jobs, optional worktrees, independent checks and managed previews are built. A real Codex dependency-install check passed; full website delivery, console sign-in and real-agent cancellation remain open. Host processes are not a sandbox." },
       { name: "Provider-backed calls", note: "Owner outbound calls reported working. Inbound and third-party configurations still need broader proof." },
     ],
   },
@@ -118,7 +118,7 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
     label: "Up next",
     items: [
       { name: "Owner-account verification", note: "OCR, fallback provider, push, replies and saved provider changes" },
-      { name: "MCP credentials & remote use", note: "Credential-bearing servers, remote servers and apply-without-restart checks" },
+      { name: "MCP account verification", note: "Named keys and pre-registered OAuth are built; real-provider consent, native acceptance and apply-without-restart remain open" },
       { name: "First-run polish", note: "A clearer first five minutes; clean-machine installation and service handoff checks remain open" },
       { name: "Retrieval & safety evaluation", note: "Measure knowledge-search quality, tool ranking and hostile-page behavior" },
     ],
@@ -138,7 +138,7 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
 
 export const platforms = [
   { os: "Windows 10/11", state: "Run end to end by a person", level: "verified" as const, service: "Per-user Run entry at login" },
-  { os: "Linux x86_64 / aarch64", state: "Ubuntu 24.04 verified; other targets CI-tested", level: "verified" as const, service: "systemd user unit" },
-  { os: "macOS Apple silicon / Intel", state: "Compiles, lints and tests in CI", level: "ci" as const, service: "launchd agent" },
+  { os: "Linux x86_64 / aarch64", state: "Ubuntu 24.04 recorded; aarch64 acceptance pending", level: "verified" as const, service: "systemd user unit" },
+  { os: "macOS Apple silicon / Intel", state: "Native CI and clean-machine acceptance pending", level: "ci" as const, service: "launchd agent" },
 ];
 

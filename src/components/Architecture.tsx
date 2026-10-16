@@ -9,7 +9,7 @@ const clients = [
 ];
 const reasoning: ArchitectureNode[] = [
   { name: "Models", note: "Local or hosted. Replaceable.", icon: Brain },
-  { name: "ACP agents", note: "Worktrees, not OS isolation. Codex tasks verified; sign-in and cancellation checks remain.", icon: Code2, status: "experimental" },
+  { name: "ACP agents", note: "In-place or worktree jobs, without OS isolation. Independent checks; sign-in and cancellation proof remain.", icon: Code2, status: "experimental" },
   { name: "Phone provider", note: "Owner reports working outbound calls. Broader paths need proof.", icon: Phone, status: "experimental" },
 ];
 const capabilities: ArchitectureNode[] = [

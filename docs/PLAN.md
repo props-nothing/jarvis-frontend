@@ -38,7 +38,7 @@ The scripts never use `sudo`, never run as administrator and never touch setting
 ## Milestones
 
 1. **M1 (done):** scaffold, content, hero, install box, scripts, docs.
-2. **M2:** host the site and the scripts; verify `install.sh` on a clean Linux and macOS machine and `install.ps1` on a clean Windows machine (not yet run end to end).
+2. **M2 (partly delivered):** the site and scripts are hosted, and an Ubuntu 24.04 source-install run is recorded in [DEPLOY.md](DEPLOY.md). Clean macOS, Windows, other Linux distributions and aarch64 acceptance remain open; frontend CI fixtures do not close those gates.
 3. **M3:** when releases exist, add a download tab with checksums and a version badge fetched at build time.
 4. **M4 (revised 2026-10-13):** the actual HUD face geometry replaces the decorative orb; the screenshot section and asset are removed. Illustrative examples remain clearly labelled and never simulate a live assistant connection.
 5. **M5:** a docs section rendered from the main repository's `docs/user`.

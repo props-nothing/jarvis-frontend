@@ -54,16 +54,16 @@ test("the public site uses bounded type and does not hide content behind animati
 });
 
 test("roadmap distinguishes delivered capability, limited proof and deliberate deferral", () => {
-  assert.equal(roadmapReviewedAt, "2026-10-14");
+  assert.equal(roadmapReviewedAt, "2026-10-16");
   assert.deepEqual(roadmap.map((section) => section.status), ["built", "experimental", "next", "planned"]);
   const section = (status) => roadmap.find((entry) => entry.status === status).items;
   assert.ok(section("built").some((item) => /knowledge search/i.test(item.name)));
-  assert.match(section("experimental").find((item) => /ACP/.test(item.name)).note, /Codex tasks have recorded verification.*scripted tests.*sign-in.*cancellation/);
+  assert.match(section("experimental").find((item) => /ACP/.test(item.name)).note, /In-place jobs.*independent checks.*real Codex dependency-install check passed.*sign-in.*cancellation/);
   assert.match(section("experimental").find((item) => /calls/.test(item.name)).note, /Owner outbound.*Inbound.*broader proof/);
   assert.match(section("planned").find((item) => /workflow engine/.test(item.name)).note, /Parked/);
   assert.match(section("built").find((item) => /Open-source/.test(item.name)).note, /Apache-2\.0/);
   assert.match(section("planned").find((item) => /downloads/.test(item.name)).note, /License selected.*Dependency notices.*signing/);
-  assert.match(read("src/components/Architecture.tsx"), /Worktrees, not OS isolation/);
+  assert.match(read("src/components/Architecture.tsx"), /In-place or worktree jobs, without OS isolation/);
   assert.doesNotMatch(read("src/components/Architecture.tsx"), /planned:\s*true/);
 });
 
@@ -74,11 +74,11 @@ test("capability copy preserves tool limits and does not promise universal acces
   assert.match(feature("Web").body, /configured key.*ask by default/);
   assert.match(feature("Google").body, /Gmail Trash.*new sign-in/);
   assert.match(feature("Autonomy").body, /one new continuation.*not exact replay.*Docker/);
-  assert.match(feature("MCP").body, /credential-free.*remote login remain gaps/);
+  assert.match(feature("MCP").body, /named keys.*browser sign-in.*registered provider app.*compatibility still needs verification/);
   assert.match(feature("Voice").body, /browser support.*not offline local voice/);
   assert.match(feature("Documents").body, /existing XLSX.*formulas are not recalculated/);
-  assert.match(feature("Contacts").body, /do-not-contact.*cannot delete a suppressed contact/);
-  assert.match(feature("Experimental").body, /not a sandbox.*not proof that tests passed/);
+  assert.match(feature("Contacts").body, /do-not-contact.*Authorized deletion removes the contact and its suppression.*permission policy/);
+  assert.match(feature("Experimental").body, /Independent checks report separately.*not a sandbox.*no automatic commit, merge or push/);
   const app = read("src/App.tsx");
   const icons = app.match(/const featureIcons = \[([^\]]+)\]/)[1].split(",");
   assert.equal(icons.length, features.length);

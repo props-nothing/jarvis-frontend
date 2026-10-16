@@ -23,7 +23,7 @@ npm test               # offline real-Git regressions; no Rust build or service 
 
 ## Source install prerequisites
 
-All three install tabs build from source with the checkout's pinned Rust toolchain and `Cargo.lock` (`--locked`), then run `jarvis install`. Git and Rust via rustup are needed to build, not to run the installed executable. Native tools are Xcode command-line tools on macOS, `build-essential` on Ubuntu, or Visual Studio C++ Build Tools plus a Windows SDK on Windows. See the [platform prerequisite commands](../docs/development/getting-started.md#build-from-source) and [research evidence](../docs/research/integrations/source-install-prerequisites.md).
+All three install tabs build from source with the checkout's pinned Rust toolchain and `Cargo.lock` (`--locked`), then run `jarvis install`. Git and Rust via rustup are needed to build, not to run the installed executable. Native tools are Xcode command-line tools on macOS, `build-essential` on Ubuntu, or Visual Studio C++ Build Tools plus a Windows SDK on Windows. See the [platform prerequisite commands](https://github.com/props-nothing/jarvis-core/blob/main/docs/development/getting-started.md#build-from-source) and [research evidence](https://github.com/props-nothing/jarvis-core/blob/main/docs/research/integrations/source-install-prerequisites.md).
 
 Scripts refuse dirty or foreign source checkouts and never install system packages. The existing Bash `JARVIS_INSTALL_RUST=1` override explicitly opts into per-user rustup installation; it is off by default. Services are also off by default. A normal Windows terminal may use Visual Studio discovery instead of having `cl` on PATH; Cargo remains the definitive SDK/linker check.
 
