@@ -5,7 +5,7 @@ This folder is its own git repository, separate from the Rust platform repositor
 
 - **Stack:** Vite, React 19, TypeScript, plain CSS, named Lucide icons and a lazy Three.js face scene. The mask uses the same official canonical geometry as the JARVIS HUD, with a static canvas fallback. No external asset requests or model connection.
 - **Install commands:** the page shows `curl … | bash`, `irm … | iex` and a from-source tab. The commands use whichever host serves the site, and `public/install.sh` and `public/install.ps1` are served from the same host.
-- **Honest by design:** original platform and website code are Apache-2.0 licensed. A [public unsigned prerelease](https://github.com/props-nothing/jarvis-core/releases/tag/ci-c48da8880e20304da4b13e4016d896ad22fc2e04) has verified archives and checksums; a generated dependency-license inventory, signing/notarization and clean-machine checks remain gates. Website installers still build from source. See [docs/CONTENT-ACCURACY.md](docs/CONTENT-ACCURACY.md).
+- **Honest by design:** original platform and website code are Apache-2.0 licensed. The [public unsigned lifecycle prerelease](https://github.com/props-nothing/jarvis-core/releases/tag/ci-dd65479d988ebf7caa9bddfb803c13cae1b0ddbf) has verified archives and checksums; a generated dependency-license inventory, signing/notarization and clean-machine checks remain gates. Website installers still build from source. See [docs/CONTENT-ACCURACY.md](docs/CONTENT-ACCURACY.md).
 
 ## Run
 
