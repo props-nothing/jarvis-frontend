@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
-import { features, pipeline, projectLicense, roadmap, roadmapReviewedAt } from "../src/content.ts";
+import { features, pipeline, platforms, projectLicense, roadmap, roadmapReviewedAt } from "../src/content.ts";
 import { demoReducer, demoScenarios, initialDemoState } from "../src/demoFlow.ts";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
@@ -58,12 +58,14 @@ test("roadmap distinguishes delivered capability, limited proof and deliberate d
   assert.deepEqual(roadmap.map((section) => section.status), ["built", "experimental", "next", "planned"]);
   const section = (status) => roadmap.find((entry) => entry.status === status).items;
   assert.ok(section("built").some((item) => /knowledge search/i.test(item.name)));
-  assert.match(section("experimental").find((item) => /ACP/.test(item.name)).note, /In-place jobs.*independent checks.*real Codex dependency-install check passed.*sign-in.*cancellation/);
+  assert.match(section("experimental").find((item) => /ACP/.test(item.name)).note, /In-place jobs.*independent checks.*real Codex dependency-install check passed.*Windows Codex cancellation is verified.*full website delivery, fresh sign-in and other-agent\/platform cancellation remain open/);
   assert.match(section("experimental").find((item) => /calls/.test(item.name)).note, /Owner outbound.*Inbound.*broader proof/);
   assert.match(section("planned").find((item) => /workflow engine/.test(item.name)).note, /Parked/);
   assert.match(section("built").find((item) => /Open-source/.test(item.name)).note, /Apache-2\.0/);
-  assert.match(section("planned").find((item) => /downloads/.test(item.name)).note, /License selected.*Dependency notices.*signing/);
+  assert.match(section("planned").find((item) => /Signed distribution/.test(item.name)).note, /Public unsigned prerelease archives are verified.*dependency-license inventory.*signing\/notarization.*clean-machine.*website installers still build from source/);
+  assert.match(platforms.find((platform) => /macOS/.test(platform.os)).state, /Native CI passed.*Intel runtime smoke and clean-machine acceptance pending/);
   assert.match(read("src/components/Architecture.tsx"), /In-place or worktree jobs, without OS isolation/);
+  assert.match(read("src/components/Architecture.tsx"), /Windows Codex cancellation verified.*fresh sign-in and other agents\/platforms need proof/);
   assert.doesNotMatch(read("src/components/Architecture.tsx"), /planned:\s*true/);
 });
 

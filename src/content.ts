@@ -109,7 +109,7 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
     status: "experimental",
     label: "Experimental",
     items: [
-      { name: "ACP coding agents", note: "In-place jobs, optional worktrees, independent checks and managed previews are built. A real Codex dependency-install check passed; full website delivery, console sign-in and real-agent cancellation remain open. Host processes are not a sandbox." },
+      { name: "ACP coding agents", note: "In-place jobs, optional worktrees, independent checks and managed previews are built. A real Codex dependency-install check passed. Windows Codex cancellation is verified; full website delivery, fresh sign-in and other-agent/platform cancellation remain open. Host processes are not a sandbox." },
       { name: "Provider-backed calls", note: "Owner outbound calls reported working. Inbound and third-party configurations still need broader proof." },
     ],
   },
@@ -129,7 +129,7 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
     items: [
       { name: "Local voice", note: "Browser-independent recognition and synthesis without the cloud" },
       { name: "Desktop client", note: "Tauri is parked until there is a named requirement" },
-      { name: "Signed installers and public downloads", note: "License selected. Dependency notices, signing/notarization, release publication and clean-machine verification still needed" },
+      { name: "Signed distribution", note: "Public unsigned prerelease archives are verified. A generated dependency-license inventory, signing/notarization and clean-machine verification remain; website installers still build from source" },
       { name: "Server profile", note: "PostgreSQL + pgvector; multi-device requires proven ownership semantics" },
       { name: "Multi-step workflow engine", note: "Parked until ordinary runs and schedules cannot express the job" },
     ],
@@ -139,6 +139,6 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
 export const platforms = [
   { os: "Windows 10/11", state: "Run end to end by a person", level: "verified" as const, service: "Per-user Run entry at login" },
   { os: "Linux x86_64 / aarch64", state: "Ubuntu 24.04 recorded; aarch64 acceptance pending", level: "verified" as const, service: "systemd user unit" },
-  { os: "macOS Apple silicon / Intel", state: "Native CI and clean-machine acceptance pending", level: "ci" as const, service: "launchd agent" },
+  { os: "macOS Apple silicon / Intel", state: "Native CI passed; Intel runtime smoke and clean-machine acceptance pending", level: "ci" as const, service: "launchd agent" },
 ];
 

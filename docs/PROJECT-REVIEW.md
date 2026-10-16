@@ -2,6 +2,8 @@
 
 Product scope reconciled 2026-10-16 against the main repository's architecture, requirements, delivery ledger and actual daemon/tool code (core baseline `b930f73` plus the review-correction working tree). Website design and interaction review: [DESIGN.md](DESIGN.md).
 
+Release/cancellation evidence updated later on 2026-10-16 from the [core acceptance ledger](https://github.com/props-nothing/jarvis-core/blob/main/TODO.md): the [unsigned c48 prerelease](https://github.com/props-nothing/jarvis-core/releases/tag/ci-c48da8880e20304da4b13e4016d896ad22fc2e04) has verified public archives. A separate later Windows `codex-acp 2.2.2` cancellation test passed; it does not imply that the new lifecycle changes are in c48.
+
 ## One sentence
 
 JARVIS is an open-source, installable personal AI service that reasons, remembers, uses tools, schedules work and reacts to events, controlled by deterministic policy and owner approvals rather than by the model. A general multi-step workflow engine remains deferred.
@@ -20,7 +22,7 @@ Granted-folder files and documents (OCR needs Tesseract), new document creation 
 
 ## What does not exist yet
 
-Published downloads, signed installers, a Tauri desktop client, browser-independent local speech and the server profile. Apache-2.0 is now selected for original platform and website code/docs; dependency notices and release verification are still needed. ACP/Codex tasks are built with recorded evidence; console sign-in and real-agent cancellation need live verification. Owner outbound calls have reported evidence, but broader call paths remain unverified. Windows and Ubuntu 24.04 have end-to-end records; other targets still need clean-machine tests.
+Signed installers, a Tauri desktop client, browser-independent local speech and the server profile. Public unsigned prerelease archives exist; a generated dependency-license inventory, signing/notarization and clean-machine release verification remain. ACP/Codex tasks have recorded dependency-install and Windows `codex-acp 2.2.2` cancellation evidence using existing authentication; fresh console sign-in, other-agent/platform cancellation and complete website delivery still need live verification. Owner outbound calls have reported evidence, but broader call paths remain unverified. Windows and Ubuntu 24.04 have end-to-end records. Native CI passed for c48; Intel macOS was cross-built without a runtime smoke, and clean-machine tests remain open.
 
 ## Consequences for the website
 
