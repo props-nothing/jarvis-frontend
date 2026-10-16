@@ -23,6 +23,8 @@ Ubuntu 24.04 has been run end to end (see below). Still to do: AlmaLinux, macOS 
 
 ## Server test findings (Ubuntu 24.04.5, 1 vCPU, 4 GB, fresh non-root user, 2026-10-11)
 
+These are the observations from the dated source-install run, retained unchanged below. Later setup policy requires an ElevenLabs TTS key/test for new profiles; this earlier run does not prove that new onboarding flow. Track current core lifecycle repairs and remaining clean-machine acceptance in the [core backlog](https://github.com/props-nothing/jarvis-core/blob/main/TODO.md), rather than inferring current failures from this historical run.
+
 Run end to end with `JARVIS_INSTALL_RUST=1 bash install.sh`:
 
 | Step | Result |

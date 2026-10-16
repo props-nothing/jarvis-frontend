@@ -3,7 +3,7 @@
 ## Goals
 
 1. Make a visitor understand in ten seconds what JARVIS is and why it is safe to leave running.
-2. Get them from the page to a working `jarvis` with one copied command.
+2. Give them a clear source-install command and a separate setup handoff; document build prerequisites and the required model/ElevenLabs checks before calling the assistant ready.
 3. Never claim something the platform does not do.
 
 ## Non-goals
@@ -28,8 +28,8 @@ No accounts, analytics, tracking, cookies or third-party fonts and scripts. The 
 
 | Method | State | Notes |
 | --- | --- | --- |
-| `curl -fsSL <host>/install.sh \| bash` | Works once the site is hosted | Clones, `cargo build --release -p jarvis-cli`, `jarvis install`; `JARVIS_SERVICE=1` adds `--service` (off by default, see "Server test findings" in DEPLOY.md) |
-| `irm <host>/install.ps1 \| iex` | Same | Windows, per-user, no administrator rights |
+| `curl -fsSL <host>/install.sh \| bash` | Hosted source bootstrap; clean-platform acceptance remains incomplete | Clones, `cargo build --release -p jarvis-cli --locked`, `jarvis install`; `JARVIS_SERVICE=1` adds `--service` (off by default; see [dated server findings](DEPLOY.md#server-test-findings-ubuntu-24045-1-vcpu-4-gb-fresh-non-root-user-2026-10-11)) |
+| `irm <host>/install.ps1 \| iex` | Hosted source bootstrap; clean-Windows acceptance remains open | Windows, per-user, no administrator rights; same setup handoff |
 | From source | Works now | Plain git and cargo commands, no hosting needed |
 | Prebuilt archive | Not published | Apache-2.0 is selected; dependency notices, signing/notarization and clean-machine checks remain ([P9-017b], [P9-004 to P9-007]). Switch the scripts only after a verified release exists |
 

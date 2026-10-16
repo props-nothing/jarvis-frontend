@@ -1,6 +1,6 @@
 # Content accuracy
 
-Every factual statement on the site must agree with reachable JARVIS code, not just its design docs. Reviewed **2026-10-16**, core baseline `b930f73` plus the review-correction working tree: current MCP credentials/OAuth, contact deletion, in-place coding delivery and recorded acceptance were checked alongside the earlier tool contracts. The preserved macOS fixture repair does not establish a successful native rerun. Provider/browser and clean-machine gaps remain explicit. When these sources change, update `src/content.ts`, `src/App.tsx` and the content regressions.
+Every factual statement on the site must agree with reachable JARVIS code, not just its design docs. The **2026-10-16** review at core baseline `b930f73` plus the review-correction working tree checked MCP credentials/OAuth, contact deletion, in-place coding delivery and recorded acceptance alongside earlier tool contracts. Subsequent native CI results belong in the core [active acceptance ledger](https://github.com/props-nothing/jarvis-core/blob/main/TODO.md); the preserved repair notes are dated evidence, not today's runner status. Provider/browser and clean-machine gaps remain explicit. When these sources change, update `src/content.ts`, `src/App.tsx` and the content regressions.
 
 | Claim on the site | Source in the JARVIS repository |
 | --- | --- |
@@ -18,10 +18,10 @@ Every factual statement on the site must agree with reachable JARVIS code, not j
 | New XLSX/CSV/DOCX/PDF and existing XLSX literal-cell editing | `apps/jarvisd/src/document_write_tool.rs`, `xlsx_workbook.rs`, `lib.rs`; formula/protected/macro/signed targets refused, no formula calculation |
 | Contact CSV import/merge preserves suppression; authorized deletion removes the record and its suppression | `docs/user/contacts.md`, ADR-0218, `apps/jarvisd/src/contacts_tool.rs`, `crates/jarvis-storage/src/contact_repository.rs`; normal deterministic policy decides whether approval is needed |
 | MCP named local/remote credentials and pre-registered browser OAuth exist, with remaining provider acceptance | `docs/user/mcp.md`, `connections.md`, ADR-0216/0217/0219/0220; private profile files, one-time app registration and explicit restart for tool registration; automatic client registration/hot apply remain open |
-| Browser voice, wake word, interruption, spoken stop, ElevenLabs optional; browser support/services are not offline local speech | `apps/jarvisd/src/hud/hud.js` browser speech APIs, `ROADMAP.md` hallmarks table and `docs/user/settings.md` |
-| Telegram built and configured in Settings | `ROADMAP.md` item 5 |
-| Connect apps: Claude Code, Cursor, VS Code, scripts | `ROADMAP.md` item 2b, `docs/user/connect-apps.md` |
-| Policy pipeline (schema, authentication, authorization, risk, approval, timeout, idempotency, audit) | `AGENTS.md` architecture boundaries |
+| Browser voice, wake word, interruption, spoken stop; ElevenLabs is optional at runtime but required by new CLI setup; browser speech is not browser-independent local voice | `apps/jarvisd/src/hud/hud.js` speech APIs; [voice setup and runtime limits](https://github.com/props-nothing/jarvis-core/blob/main/docs/user/settings.md#voice); ADR-0214 |
+| Telegram built and configured in Settings | [Telegram guide and limits](https://github.com/props-nothing/jarvis-core/blob/main/docs/user/telegram.md); `P11-005` |
+| External access: eligible tools for Claude Code, Cursor, VS Code and scripts; the endpoint filters tools and applies policy | [External-access guide](https://github.com/props-nothing/jarvis-core/blob/main/docs/user/connect-apps.md); `apps/jarvisd/src/mcp_serve.rs` |
+| JARVIS-owned tools use canonical policy; approved host-agent native tools are not all intercepted, and direct external MCP calls lack the complete durable native-run tool ledger | [Current architecture boundary](https://github.com/props-nothing/jarvis-core/blob/main/docs/architecture/overview.md); ADR-0222; `apps/jarvisd/src/mcp_serve.rs` |
 | Approvals are one yes or no | ADR-0136 |
 | Platform status table | `docs/user/platforms.md` |
 | Original platform and website code/docs: Apache-2.0; third-party terms separate; no published/signed downloads yet | Core `LICENSE`, `NOTICE`, workspace Cargo metadata, website `LICENSE`, `NOTICE`, npm metadata and served `/licenses/jarvis.txt`; core `P9-017b` |
@@ -29,7 +29,7 @@ Every factual statement on the site must agree with reachable JARVIS code, not j
 | Tool discovery and per-task model routing are built | `ROADMAP.md`, ADR-0176 and ADR-0196 |
 | ACP jobs default in-place with optional worktrees, independent checks and managed previews; host processes are not sandboxed | `docs/user/code-agents.md`, ADR-0222/0224, `code_delegate_async.rs`, `code_delegate.rs`; real Codex dependency-install check is recorded, while full website/browser delivery, sign-in and real-agent cancellation remain unverified |
 | Full-text knowledge search is a delivered first slice | `TODO.md` P11-014, `docs/user/files.md`; vector retrieval is not claimed |
-| Owner outbound calls have owner-reported evidence, not general telephony verification | `TODO.md` item 10, `docs/user/phone.md` |
+| Owner outbound calls have owner-reported evidence, not general telephony verification | [Phone setup and verification limits](https://github.com/props-nothing/jarvis-core/blob/main/docs/user/phone.md); `P8-007`, ADR-0200 |
 | Local voice, desktop, distribution, server profile and multi-step workflows remain unshipped or deferred | `ROADMAP.md`, `TODO.md` parked scope and distribution gates |
 | Windows and Ubuntu have end-to-end evidence; other targets need clean-machine checks | Platform documentation and this site's `docs/DEPLOY.md` |
 
