@@ -5,7 +5,8 @@ import InstallBox from "./components/InstallBox";
 import WorkflowDemo from "./components/Terminal";
 import Pipeline from "./components/Pipeline";
 import Architecture from "./components/Architecture";
-import { features, platforms, projectLicense, roadmap, roadmapReviewedAt } from "./content";
+import Film from "./components/Film";
+import { features, film, platforms, projectLicense, roadmap, roadmapReviewedAt } from "./content";
 import {
   ADR_URL,
   ARCHITECTURE_URL,
@@ -69,6 +70,7 @@ function Hero() {
             <BookOpen size={17} aria-hidden /> Read the docs
           </a>
         </div>
+        <a className="hero__film" href="#film"><Play size={14} aria-hidden /> Watch it work <span>{film.durationSeconds} s</span></a>
       </div>
     </section>
   );
@@ -131,6 +133,15 @@ export default function App() {
           <a className="hero__source" href={REPO_URL} target="_blank" rel="noreferrer">Built in Rust. Open source under Apache-2.0. <ArrowRight size={14} aria-hidden /></a>
         </section>
         <Stats />
+
+        <Section
+          id="film"
+          eyebrow="Watch it work"
+          title={<>One request.<br /> Everything it can do.</>}
+          lede="The web, your inbox and calendar, your files, its memory, agents, schedules, an approval and its voice: one run, seen through the console's live mission view."
+        >
+          <Film />
+        </Section>
 
         <Section
           id="demo"

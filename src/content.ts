@@ -142,3 +142,25 @@ export const platforms = [
   { os: "macOS Apple silicon / Intel", state: "Native CI passed; Intel runtime smoke and clean-machine acceptance pending", level: "ci" as const, service: "launchd agent" },
 ];
 
+
+/**
+ * The film in "Watch it work". It is rendered offline from the console's own face (hud/head.js) and live mission view
+ * (hud/mission.js), driven by a scripted run that uses JARVIS's real tool names. The request, files and messages are examples;
+ * it is a visualization of the console, not a recording of a live session. Chapter times are seconds into the film.
+ */
+export const film = {
+  durationSeconds: 59,
+  disclosure:
+    "Rendered from the console's own face and live mission-view code, driven by a scripted run. The tool names are JARVIS's real ones; the request, files and messages are examples. It is a visualization, not a recording of a live session.",
+  chapters: [
+    { at: 3.6, label: "One request", detail: "You ask once" },
+    { at: 7.0, label: "Web", detail: "Searches and reads pages" },
+    { at: 12.6, label: "Inbox & calendar", detail: "Mail, events, drafts" },
+    { at: 18.6, label: "Files", detail: "Searches, reads, edits" },
+    { at: 24.2, label: "Memory", detail: "Recalls and proposes" },
+    { at: 28.8, label: "Agents", detail: "Sub-agent and coding agent" },
+    { at: 35.0, label: "Schedules", detail: "Projects, journals, timers" },
+    { at: 40.4, label: "Approval", detail: "Waits for your yes" },
+    { at: 45.4, label: "Voice", detail: "Answers out loud" },
+  ],
+};

@@ -3,7 +3,7 @@ import { ArrowUpRight, Menu, X } from "lucide-react";
 import { REPO_URL } from "../config";
 
 const sections = [
-  ["capabilities", "Capabilities"], ["trust", "Why JARVIS"],
+  ["film", "Watch"], ["capabilities", "Capabilities"], ["trust", "Why JARVIS"],
   ["architecture", "Architecture"], ["install", "Install"], ["roadmap", "Roadmap"],
 ];
 
