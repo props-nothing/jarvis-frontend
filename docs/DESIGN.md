@@ -27,6 +27,12 @@ The loop stops under reduced motion, on explicit pause, off-screen and in hidden
 
 The mission demo starts only when requested. Progress animation is confined to its running state, with pause and stop controls; reduced motion uses fast, unanimated transitions. No example can progress past its owner decision on a timer. The policy inspector and architecture connection wires do not animate continuously. Scroll reveals cannot hide page content.
 
+## Film
+
+Added 2026-10-17. "Watch it work" sits directly after the stats: a 59-second film of one request moving through the web, mail and calendar, files, memory, agents, schedules, an approval and voice. It is rendered offline from the production console's own `head.js` face and `mission.js` live mission view, driven by a scripted run with JARVIS's real tool names. The request, files and messages are examples, and the section says so in plain text under the player. It is a visualization, not a recording, and is not presented as one.
+
+Nothing is requested until the section is within 600 px of the viewport; only the poster frame loads with the page. In view it plays muted and loops; out of view it pauses. Reduced motion never autoplays, and a manual pause is respected until the visitor presses play. Wide screens (1100 px and up) get the 1080p file, others the 720p file. Nine chapter buttons seek to each capability and mark the current one with `aria-current`. Play/pause and sound are 44x44 labelled buttons; sound is off until asked. A browser that cannot decode H.264 is offered the MP4 link instead of an empty player. Media are self-hosted under `public/media/` and allowed by the existing `default-src 'self'` policy.
+
 ## Interactive Sections
 
 The mission view replaces the disconnected terminal/approval examples with three selectable workflows: email, read-only research and files. A deterministic reducer owns progress and decisions. One pending tick carries a run ID and step index; old ticks cannot resume an interrupted or replaced example. A trace row exposes example context and sources. Email/file approvals gate the final step; research has no external effect. Outcomes, denial and stopped states are explicit, and replay resets the decision. On phones the outcome/question precedes the trace. No model, account or filesystem is connected.
@@ -42,6 +48,8 @@ Mobile navigation uses ordinary links and a disclosure button, not a modal or fa
 The platform table includes recorded Ubuntu evidence. Tool discovery and model routing are no longer presented as unbuilt. The 2026-10-16 evidence update distinguishes passed Windows `codex-acp 2.2.2` cancellation from still-open fresh sign-in, other-agent/platform cancellation and complete website delivery. Broader call verification remains open. Source-install prerequisites remain visible. Apache-2.0 is selected for original code/docs; [public unsigned c48 archives](https://github.com/props-nothing/jarvis-core/releases/tag/ci-c48da8880e20304da4b13e4016d896ad22fc2e04) are verified, while a generated dependency-license inventory, signing/notarization and clean-machine distribution checks remain. Screenshot social metadata is removed. The dated design/browser measurements below retain their original scope.
 
 ## Performance And Verification
+
+The film adds no script weight beyond its component. The poster is about 75 kB and loads with the page; the 720p film (about 6 MB) or 1080p film (about 11.5 MB) loads only near the section. Size budgets are enforced by a Node test.
 
 The main script is about 88 kB gzip and CSS about 7 kB. The lazy face scene adds about 153 kB gzip, including geometry. This is an intentional cost for a real interactive face; install controls do not wait for it. Vite reports the scene's minified chunk above 500 kB. No remote textures, asset CDN, telemetry or provider calls were added. Third-party licenses ship under `public/licenses/`.
 

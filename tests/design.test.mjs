@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { features, pipeline, platforms, projectLicense, roadmap, roadmapReviewedAt } from "../src/content.ts";
@@ -183,4 +183,26 @@ test("a read-only illustrative workflow completes without an approval or persist
   }
   assert.equal(state.status, "completed");
   assert.equal(state.decision, null);
+});
+
+test("the capability film is lazy, honest about being a rendered visualization, and respects reduced motion", async () => {
+  const { film } = await import("../src/content.ts");
+  const component = read("src/components/Film.tsx");
+  const app = read("src/App.tsx");
+  assert.match(app, /id="film"/);
+  assert.match(read("src/components/Nav.tsx"), /\["film",\s*"Watch"\]/);
+  assert.match(component, /preload="none"/);
+  assert.match(component, /prefers-reduced-motion: reduce/);
+  assert.match(component, /userPaused/);
+  assert.match(component, /muted=\{muted\}/);
+  assert.match(film.disclosure, /scripted run/);
+  assert.match(film.disclosure, /not a recording of a live session/);
+  assert.equal(film.chapters.length, 9);
+  for (let i = 1; i < film.chapters.length; i += 1) assert.ok(film.chapters[i].at > film.chapters[i - 1].at);
+  assert.ok(film.chapters.at(-1).at < film.durationSeconds);
+  for (const [file, limit] of [["jarvis-film.mp4", 12e6], ["jarvis-film-720.mp4", 7e6], ["jarvis-film-poster.jpg", 2e5]]) {
+    const url = new URL(`../public/media/${file}`, import.meta.url);
+    assert.ok(existsSync(url), `missing ${file}`);
+    assert.ok(statSync(url).size < limit, `${file} exceeds its size budget`);
+  }
 });
