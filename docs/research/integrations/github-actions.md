@@ -1,7 +1,7 @@
 ---
 integration: frontend-github-actions
 status: researched
-last_verified: 2026-10-13
+last_verified: 2026-10-18
 selected_spec_version: GitHub Actions workflow YAML
 selected_sdk: actions/checkout v6 and actions/setup-node v6 (commit pinned)
 ---
@@ -9,6 +9,33 @@ selected_sdk: actions/checkout v6 and actions/setup-node v6 (commit pinned)
 # Frontend regression CI
 
 ## Scope
+
+2026-10-18 continuation: the owner requested direct pushes to main, native website
+CI, fixes and production deployment only after success. The signed-install job now
+tests the exact public pin on Windows x86_64, macOS ARM64 and Linux x86_64/ARM64;
+the three existing build/fixture jobs remain. Unlike the historical source fixtures
+below, these four jobs contact public GitHub/Sigstore endpoints without credentials.
+
+Official contracts refreshed 2026-10-18 UTC:
+
+- [GitHub workflow runs](https://docs.github.com/en/rest/actions/workflow-runs?apiVersion=2022-11-28)
+  provides public read-only run/job status for the exact commit (REST version
+  2022-11-28 remains accepted; current examples advertise 2026-03-10).
+- [Vercel Git configuration](https://vercel.com/docs/project-configuration/git-configuration)
+  documents `git.deploymentEnabled.main=false`: a commit on that branch does not
+  create an automatic deployment. Other project settings remain unchanged.
+- [Vercel GitHub integration](https://vercel.com/docs/git/vercel-for-github)
+  and [official index](https://vercel.com/llms.txt) establish production deployment
+  from the configured production branch. No SDK or dependency change.
+
+Operational sequence: push the candidate on main with an explicit deployment hold,
+wait for all seven jobs at that SHA, fix failures on main, then remove only the hold
+to publish the tested application through the existing integration. No new branch
+or release-discovery API is introduced. Git push uses the existing scoped GitHub
+credential; public CI reads require none. No secret is logged or committed. The hold
+must be removed after success; failure leaves the existing production site intact.
+GitHub/Vercel concurrency and billing remain account-dependent. Verify the deployed
+script bytes and content types, and record the final commit/run URLs.
 
 Run the website build, shell syntax checks and offline installer tests on native Windows, Ubuntu and macOS runners. No release, deployment API, cloud account, paid model or credential is required.
 

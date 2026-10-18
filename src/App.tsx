@@ -241,7 +241,7 @@ export default function App() {
               Make it yours.
             </>
           }
-          lede="Choose a local or hosted OpenAI-compatible model. Installation currently builds from source and needs Git, Rust and native build tools. Docker (container code execution) and Node.js (browser and optional agent adapters) are additional, optional dependencies; no signed public download is offered yet."
+          lede="Choose a local or hosted OpenAI-compatible model. The default installer downloads a signed prerelease without a development toolchain. Docker for container code execution and Node.js for browser or optional agent adapters are separate, optional dependencies."
         >
           <ol className="steps">
             <li className="step" data-reveal>

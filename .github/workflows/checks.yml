@@ -10,6 +10,20 @@ permissions:
   contents: read
 
 jobs:
+  published-install:
+    name: Signed website install (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, windows-2025, macos-15]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Verify the pinned signed release through the website installer
+        run: node scripts/test-published-install.mjs
   check:
     name: Checks (${{ matrix.os }})
     runs-on: ${{ matrix.os }}

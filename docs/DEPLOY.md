@@ -4,6 +4,12 @@ The production site is **https://www.jarvisd.dev/** on Vercel. The apex `https:/
 
 The output is static: `npm run build` writes `dist/`, which includes `install.sh` and `install.ps1` copied from `public/`. `vercel.json` forces both installers to `text/plain; charset=utf-8`, prevents MIME sniffing, and adds security headers to all responses.
 
+## Signed default revision (2026-10-18)
+
+The working tree replaces both source builders with standalone signed prebuilt installers for core a176e79843a22eae2802d97aafba74a0bf6e282f, package 0.1.0. The historical source-run findings below remain evidence for that older installer. Source-only environment overrides now fail with migration guidance; the From source tab retains manual build commands.
+
+Local checks: 19 frontend tests, both shell parsers and production build pass. Real Windows signed installation with a restricted PATH passes version/daemon version, fresh-profile diagnosis and repeat-install refusal. Signature-call removal is caught by each shell's fixture suite. Native website CI, hosted byte checks and deployment of this revision are not yet claimed. The four-platform signed-install CI job must pass before calling this native website acceptance complete.
+
 ## Requirements
 
 - Serve over HTTPS. The install commands embed the page's own origin, so `curl … | bash` is only as safe as the transport.

@@ -1,119 +1,147 @@
 #!/usr/bin/env bash
-# JARVIS installer for macOS and Linux.
-#
-# There is no public signed binary download. This builds the single `jarvis` program from source
-# and then runs `jarvis install`, which copies it to your own folder and puts it on your PATH.
-# Rust and native build tools are source-only requirements, not requirements to run the installed
-# program. The per-user install needs no administrator rights and leaves settings and memory alone.
-# Setup is a separate command: never prompt for keys through this installer's piped stdin.
-#
-# Environment overrides:
-#   JARVIS_REPO     git URL to clone      (default: https://github.com/props-nothing/jarvis-core.git)
-#   JARVIS_REF      branch, tag or commit (default: main)
-#   JARVIS_SRC      where the source lives (default: ~/.local/src/jarvis-core)
-#   JARVIS_SERVICE  set to 1 to also start at login; off by default because a service started before `jarvis init`
-#                   runs without the console and `jarvis restart` cannot replace it (default: 0)
-#   JARVIS_INSTALL_RUST  set to 1 to install Rust when cargo or rustup is missing (default: 0)
+# JARVIS signed first install for macOS/Linux. No development toolchain required.
+# Based on jarvis-core a176e79843a22eae2802d97aafba74a0bf6e282f (ADRs 0239/0240/0244).
+# Usage: bash install.sh [--dir ABSOLUTE_DIR] [--no-path]
+# Setup is separate; never collect keys from piped stdin.
 set -euo pipefail
 
-REPO="${JARVIS_REPO:-https://github.com/props-nothing/jarvis-core.git}"
-REF="${JARVIS_REF:-main}"
-SRC="${JARVIS_SRC:-$HOME/.local/src/jarvis-core}"
-SERVICE="${JARVIS_SERVICE:-0}"
-INSTALL_RUST="${JARVIS_INSTALL_RUST:-0}"
+die() { printf 'jarvis installer: %s\n' "$*" >&2; exit 1; }
 
-say() { printf '\033[36m▸\033[0m %s\n' "$*"; }
-die() { printf '\033[31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
-need() { command -v "$1" >/dev/null 2>&1 || die "$1 is required. $2"; }
-
-# The owner renamed the official repository; allow its previous HTTPS origin only.
-canonical_repo() {
-  case "${1%/}" in
-    https://github.com/props-nothing/jarvisv2.git) printf '%s' 'https://github.com/props-nothing/jarvis-core.git' ;;
-    *) printf '%s' "${1%/}" ;;
+platform() {
+  case "$1/$2" in
+    Linux/x86_64) printf linux-x86_64 ;;
+    Linux/aarch64|Linux/arm64) printf linux-aarch64 ;;
+    Darwin/x86_64) printf macos-x86_64 ;;
+    Darwin/arm64|Darwin/aarch64) printf macos-aarch64 ;;
+    *) die "Unsupported platform: $1/$2. Windows uses install.ps1." ;;
   esac
 }
 
-# Suggest the right package command for this distribution.
-pkg_hint() {
-  if [ "$(uname -s)" = "Darwin" ]; then echo "xcode-select --install"
-  elif command -v dnf >/dev/null 2>&1; then echo "sudo dnf install -y git gcc make"
-  elif command -v apt-get >/dev/null 2>&1; then echo "sudo apt-get update && sudo apt-get install git build-essential curl"
-  elif command -v zypper >/dev/null 2>&1; then echo "sudo zypper install -y git gcc make"
-  elif command -v pacman >/dev/null 2>&1; then echo "sudo pacman -S --needed git base-devel"
-  else echo "install git and a C compiler with your package manager"
-  fi
+download() {
+  # -q must be first: a curlrc must not change the verification/transport contract.
+  local info major minor
+  info=$(curl -q --version) || die 'curl is required.'
+  [[ "$info" =~ ^curl\ ([0-9]+)\.([0-9]+)\. ]] || die 'Could not identify curl.'
+  major=${BASH_REMATCH[1]}; minor=${BASH_REMATCH[2]}
+  (( major > 8 || (major == 8 && minor >= 4) )) || die 'curl 8.4 or newer is required for bounded downloads.'
+  curl -q --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
+    --tlsv1.2 --max-redirs 5 --connect-timeout 15 --max-time 120 --max-filesize "${3:-268435456}" \
+    --output "$2" "$1" || die 'Download failed; installation was not run.'
 }
 
-case "$(uname -s)" in
-  Linux | Darwin) ;;
-  *) die "This installer is for macOS and Linux. On Windows use install.ps1." ;;
-esac
+verify_release_signature() (
+  local stage=$1 label=$2 tag=$3 verifier pin actual ref
+  case "$label" in
+    linux-x86_64) verifier=cosign-linux-amd64; pin=4629c757b7618056f8ddd7e2625ae9fdd94c0372a65049520bc7d9df9efc7f71 ;;
+    linux-aarch64) verifier=cosign-linux-arm64; pin=c5d324e091826b0d7a78eb16fef316450b4eb9aaec045611c08ba06f5e73220a ;;
+    macos-x86_64) verifier=cosign-darwin-amd64; pin=2347488e5d5b25336644024dfeca5601b190e91197a71a917bda44744aff106c ;;
+    macos-aarch64) verifier=cosign-darwin-arm64; pin=5cf948c2f4dfe59687bdd0b8523709067383e03982cc543475c8a7dc70e92a76 ;;
+    *) die 'No verifier for this platform.' ;;
+  esac
+  download "https://github.com/sigstore/cosign/releases/download/v3.1.3/$verifier" "$stage/cosign"
+  actual=$("${hash[@]}" "$stage/cosign"); actual=${actual%% *}
+  [ "$actual" = "$pin" ] || die 'Signature verifier checksum mismatch.'
+  chmod 700 "$stage/cosign"
+  ref=refs/heads/main; [[ "$tag" != v* ]] || ref="refs/tags/$tag"
+  mkdir "$stage/trust-home"
+  # Isolate trust configuration/cache from ambient Cosign/Sigstore overrides.
+  env -i PATH="$PATH" HOME="$stage/trust-home" XDG_CACHE_HOME="$stage/trust-home" TMPDIR="$stage" \
+    "$stage/cosign" verify-blob --timeout 2m --bundle "$stage/release-manifest.sigstore.json" \
+    --certificate-identity "https://github.com/props-nothing/jarvis-core/.github/workflows/release.yml@$ref" \
+    --certificate-oidc-issuer https://token.actions.githubusercontent.com "$stage/release-manifest.txt" \
+    || die 'Release signature verification failed.'
+)
 
-case "$SERVICE" in 0 | 1) ;; *) die "JARVIS_SERVICE must be 0 or 1." ;; esac
-case "$INSTALL_RUST" in 0 | 1) ;; *) die "JARVIS_INSTALL_RUST must be 0 or 1." ;; esac
-case "$REF" in -*) die "JARVIS_REF must be a branch, tag or commit, not an option." ;; esac
+manifest_digest() {
+  local file=$1 tag=$2 version=$3 label=$4 line n=0 commit platform name size digest extra extension found=''
+  local expected=(linux-x86_64 linux-aarch64 macos-aarch64 macos-x86_64 windows-x86_64)
+  while IFS= read -r line || [ -n "$line" ]; do
+    n=$((n + 1))
+    case "$n" in
+      1) [ "$line" = JARVIS-RELEASE-1 ] || die 'Unsupported release manifest.' ;;
+      2) [ "$line" = repository=props-nothing/jarvis-core ] || die 'Manifest repository mismatch.' ;;
+      3) [ "$line" = "tag=$tag" ] || die 'Manifest release tag mismatch.' ;;
+      4) commit=${line#commit=}; [[ "$line" = commit=* && "$commit" =~ ^[0-9a-f]{40}$ ]] || die 'Invalid manifest commit.'
+         [[ "$tag" != ci-* || "$tag" = "ci-$commit" ]] || die 'Manifest commit mismatch.' ;;
+      5) [ "$line" = "version=$version" ] || die 'Manifest version mismatch.'
+         [[ "$tag" != v* || "$tag" = "v$version" ]] || die 'Version tag mismatch.' ;;
+      6|7|8|9|10)
+        IFS=$'\t' read -r platform name size digest extra <<< "$line"
+        [ "$platform" = "${expected[$((n - 6))]}" ] || die 'Manifest platform order/membership mismatch.'
+        extension=tar.gz; [ "$platform" != windows-x86_64 ] || extension=zip
+        [ "$name" = "jarvis-$version-$platform.$extension" ] || die 'Manifest archive name mismatch.'
+        [[ "$size" =~ ^[1-9][0-9]{0,8}$ && "$digest" =~ ^[0-9a-f]{64}$ ]] || die 'Invalid manifest size/digest.'
+        [ "$size" -le 268435456 ] || die 'Manifest archive exceeds download limit.'
+        [ "$line" = "$(printf '%s\t%s\t%s\t%s' "$platform" "$name" "$size" "$digest")" ] || die 'Malformed manifest row.'
+        [ "$platform" != "$label" ] || found=$digest ;;
+      *) die 'Unexpected manifest content.' ;;
+    esac
+  done < "$file"
+  [ "$n" -eq 10 ] && [ -n "$found" ] || die 'Incomplete release manifest.'
+  printf '%s' "$found"
+}
 
-say "Source install: Rust via rustup and native build tools are required only to build JARVIS."
-if [ "$(uname -s)" = "Darwin" ]; then
-  need xcode-select "Install Apple's command-line developer tools: xcode-select --install"
-  xcode-select --print-path >/dev/null 2>&1 || die "macOS developer tools are not selected. Run xcode-select --install, finish installation, then retry."
-fi
-need git "Try: $(pkg_hint)"
-need cc "Try: $(pkg_hint)"
+main() (
+  local tag='ci-a176e79843a22eae2802d97aafba74a0bf6e282f' version='0.1.0' digest='' dir=${HOME:-}/.local/share/jarvis no_path=0 label name stage actual listing bytes reported
+  local legacy
+  for legacy in JARVIS_REPO JARVIS_REF JARVIS_SRC JARVIS_SERVICE JARVIS_INSTALL_RUST; do
+    [ -z "${!legacy:-}" ] || die "$legacy belongs to the old source installer. Unset it for signed installation, or use the From source tab."
+  done
+  unset TAR_OPTIONS GZIP
+  [[ "$tag" =~ ^ci-[0-9a-f]{40}$ || "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || die 'Choose an exact ci-<commit> or vMAJOR.MINOR.PATCH release tag.'
+  [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die 'Version must be MAJOR.MINOR.PATCH.'
+  [ -n "${HOME:-}" ] || die 'HOME is required.'
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --dir) [ "$#" -ge 2 ] || die '--dir requires an absolute directory.'; dir=$2; shift 2 ;;
+      --no-path) no_path=1; shift ;;
+      *) die "Unknown option: $1" ;;
+    esac
+  done
+  [[ "$dir" = /* && "$dir" != *$'\n'* && "$dir" != *$'\r'* ]] || die '--dir must be an absolute directory.'
+  [ ! -e "$dir/jarvis" ] && [ ! -L "$dir/jarvis" ] || die 'An installation already exists there. This first-install bootstrap does not update it.'
+  label=$(platform "$(uname -s)" "$(uname -m)")
+  for tool in curl tar gzip head wc chmod mktemp tr; do command -v "$tool" >/dev/null || die "$tool is required."; done
+  if command -v sha256sum >/dev/null; then hash=(sha256sum); else command -v shasum >/dev/null || die 'shasum or sha256sum is required.'; hash=(shasum -a 256); fi
+  name="jarvis-$version-$label"
+  umask 077
+  stage=$(mktemp -d "${TMPDIR:-/tmp}/jarvis-prebuilt.XXXXXXXX")
+  trap 'rm -rf -- "$stage"' EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
+  printf 'Verifying signed release: %s, %s.\n' "$tag" "$label"
+  download "https://github.com/props-nothing/jarvis-core/releases/download/$tag/release-manifest.txt" "$stage/release-manifest.txt" 8192
+  download "https://github.com/props-nothing/jarvis-core/releases/download/$tag/release-manifest.sigstore.json" "$stage/release-manifest.sigstore.json" 1048576
+  verify_release_signature "$stage" "$label" "$tag"
+  digest=$(manifest_digest "$stage/release-manifest.txt" "$tag" "$version" "$label")
+  download "https://github.com/props-nothing/jarvis-core/releases/download/$tag/$name.tar.gz" "$stage/archive.tar.gz"
+  actual=$("${hash[@]}" "$stage/archive.tar.gz")
+  actual=${actual%% *}
+  digest=$(printf '%s' "$digest" | tr 'A-F' 'a-f')
+  [ "$actual" = "$digest" ] || die 'SHA-256 mismatch; installation was not run.'
 
-if [ -e "$SRC/.git" ]; then
-  ORIGIN=$(git -C "$SRC" remote get-url origin) || die "Could not read the source repository's origin."
-  [ "$(canonical_repo "$ORIGIN")" = "$(canonical_repo "$REPO")" ] || die "Source origin does not match JARVIS_REPO. Choose another JARVIS_SRC; nothing was changed."
-  CHANGES=$(git -C "$SRC" status --porcelain=v1 --untracked-files=all --ignore-submodules=none) || die "Could not inspect source changes."
-  [ -z "$CHANGES" ] || die "Source has local changes. Save them or choose another JARVIS_SRC; nothing was changed."
-elif [ -e "$SRC" ]; then
-  die "JARVIS_SRC already exists but is not a Git checkout. Choose another directory; nothing was changed."
-fi
-
-# rustup puts cargo in ~/.cargo/bin, which a fresh shell may not have on PATH yet.
-[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-if ! command -v cargo >/dev/null 2>&1 || ! command -v rustup >/dev/null 2>&1; then
-  if [ "$INSTALL_RUST" = "1" ]; then
-    need curl "Try: $(pkg_hint)"
-    say "Installing Rust with rustup (JARVIS_INSTALL_RUST=1)"
-    curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs | sh -s -- -y --profile minimal
-    . "$HOME/.cargo/env"
+  # Bound decompression as well as transfer. Never unpack archive-controlled paths.
+  gzip -dc "$stage/archive.tar.gz" | head -c 536870913 > "$stage/payload.tar" || die 'Archive decompression failed or exceeded its limit.'
+  bytes=$(wc -c < "$stage/payload.tar")
+  [ "$bytes" -le 536870912 ] || die 'Uncompressed archive exceeds 512 MiB.'
+  listing=$(LC_ALL=C tar -tvf "$stage/payload.tar" "$name/jarvis" | head -c 4097) || die 'Archive executable is missing or invalid.'
+  [[ "$listing" = -* && "$listing" != *$'\n'* && ${#listing} -le 4096 ]] || die 'Archive must contain exactly one regular executable.'
+  tar -xOf "$stage/payload.tar" "$name/jarvis" | head -c 268435457 > "$stage/jarvis" || die 'Executable extraction failed or exceeded its limit.'
+  bytes=$(wc -c < "$stage/jarvis")
+  [ "$bytes" -gt 0 ] && [ "$bytes" -le 268435456 ] || die 'Executable is empty or exceeds 256 MiB.'
+  chmod 700 "$stage/jarvis"
+  reported=$("$stage/jarvis" version) || die 'The downloaded program could not run on this OS.'
+  [ "$reported" = "jarvis-cli $version" ] || die 'Downloaded program version does not match the requested package.'
+  [ ! -e "$dir/jarvis" ] && [ ! -L "$dir/jarvis" ] || die 'An installation appeared at the destination; refusing to replace it.'
+  if [ "$no_path" = 1 ]; then
+    "$stage/jarvis" install --dir "$dir" --no-path || die 'Installation failed.'
   else
-    die "Source builds require cargo and rustup. Install Rust from https://rustup.rs and open a new terminal, or explicitly re-run with JARVIS_INSTALL_RUST=1. The checkout selects its pinned Rust toolchain; an installed JARVIS needs no Rust."
+    "$stage/jarvis" install --dir "$dir" || die 'Installation failed.'
   fi
-fi
+  printf 'JARVIS is installed. Setup has not run. Run: %q\n' "$dir/jarvis"
+  printf 'New setup chooses a model, requires your ElevenLabs API key and asks which folders to grant.\n'
+  printf 'Without prompts: jarvis init --base-url URL --model NAME --api-key-file ABSOLUTE_MODEL_KEY_FILE --voice-key-file ABSOLUTE_VOICE_KEY_FILE\n'
+  printf 'After setup succeeds: %q start; %q doctor --live\n' "$dir/jarvis" "$dir/jarvis"
+)
 
-if [ -e "$SRC/.git" ]; then
-  say "Updating source in $SRC"
-else
-  say "Cloning $REPO into $SRC"
-  mkdir -p "$(dirname "$SRC")"
-  git clone --quiet -- "$REPO" "$SRC"
-fi
-
-git -C "$SRC" fetch --quiet "$REPO" "$REF" || die "Could not fetch the requested JARVIS_REF; no build was started."
-git -C "$SRC" checkout --quiet --detach FETCH_HEAD
-
-say "Building jarvis with the checkout's pinned Rust toolchain and Cargo.lock (first build takes a few minutes)"
-if ! (cd "$SRC" && cargo build --release -p jarvis-cli --locked); then
-  die "Source build failed; installation and setup were not run. Check Rust via https://rustup.rs, native build tools ($(pkg_hint)), network access and the checkout's Cargo.lock. Do not remove --locked to bypass a lockfile error."
-fi
-
-BIN="$SRC/target/release/jarvis"
-[ -x "$BIN" ] || die "Build finished but $BIN is missing."
-
-say "Installing for the current user"
-if [ "$SERVICE" = "1" ]; then
-  "$BIN" install --service
-else
-  "$BIN" install
-fi
-
-printf '\n\033[32m✓ JARVIS is installed.\033[0m Setup has not run. Open a new terminal (or log in again over SSH) and run: jarvis\n'
-printf '  New setup chooses a model, requires your ElevenLabs API key and asks which folders to grant.\n'
-printf '  Without prompts: jarvis init --base-url URL --model NAME --api-key-file ABSOLUTE_MODEL_KEY_FILE --voice-key-file ABSOLUTE_VOICE_KEY_FILE\n'
-printf '  Use private key files, or a privately supplied ELEVENLABS_API_KEY with --elevenlabs; never put the key value in arguments.\n'
-printf '  Only after setup succeeds: jarvis start && jarvis doctor --live\n'
-printf '  Then, to start it at login: jarvis stop && jarvis service install\n'
-printf '  Remove it again with: jarvis uninstall\n'
+if [ -z "${BASH_SOURCE[0]:-}" ] || [ "${BASH_SOURCE[0]:-}" = "$0" ]; then main "$@"; fi

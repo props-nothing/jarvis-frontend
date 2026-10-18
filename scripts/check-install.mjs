@@ -9,10 +9,8 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const sh = readFileSync(join(root, "public", "install.sh"), "utf8");
 const ps1 = readFileSync(join(root, "public", "install.ps1"), "utf8");
 const errors = validateInstallerText(sh, ps1);
-if (!/cargo build --release -p jarvis-cli --locked/.test(sh)) errors.push("install.sh must build with Cargo.lock (--locked)");
-if (!/Run cargo @\([^\r\n]*'--locked'/.test(ps1)) errors.push("install.ps1 must build with Cargo.lock (--locked)");
 for (const [name, text] of [["install.sh", sh], ["install.ps1", ps1]]) {
-  if (!text.includes("Setup has not run") || !text.includes("--voice-key-file ABSOLUTE_VOICE_KEY_FILE") || !text.includes("jarvis doctor --live")) {
+  if (!text.includes("Setup has not run") || !text.includes("--voice-key-file ABSOLUTE_VOICE_KEY_FILE") || !text.includes("doctor --live")) {
     errors.push(`${name} must print the separate, key-safe setup handoff`);
   }
 }

@@ -6,6 +6,8 @@ Later evidence on **2026-10-16**: the [public unsigned c48 prerelease](https://g
 
 Release follow-up on **2026-10-17**: the [public unsigned lifecycle prerelease](https://github.com/props-nothing/jarvis-core/releases/tag/ci-dd65479d988ebf7caa9bddfb803c13cae1b0ddbf) resolves to `dd65479d988ebf7caa9bddfb803c13cae1b0ddbf` and includes the cancellation and process-ownership changes. All ten [native CI jobs](https://github.com/props-nothing/jarvis-core/actions/runs/38976054653) passed, including the coding lifecycle gate on Windows, macOS and Linux. All five [package jobs and automatic publication](https://github.com/props-nothing/jarvis-core/actions/runs/38977383098) passed; the exact tag target, ten assets, archive checksums and matching public downloads were verified. Four native archive smokes passed; Intel macOS was cross-built with its runtime smoke skipped. These scripted native lifecycle gates complement the recorded real Windows Codex cancellation check; fresh sign-in, other-agent/platform cancellation, complete website delivery, signing and clean-machine acceptance remain open. The c48 record above remains historical evidence. Website source installers and their default ref are unchanged.
 
+Current installer change, **2026-10-18**: default scripts now pin signed prerelease a176e79. Local Windows public installation with a restricted PATH and offline Bash/PowerShell fixtures pass. Native website CI and production deployment remain pending; the dated source-installer evidence above is historical. See [the contract](research/integrations/signed-install.md).
+
 | Claim on the site | Source in the JARVIS repository |
 | --- | --- |
 | One program; `jarvis daemon` is the same file | `README.md`, `docs/user/quick-start.md` |
@@ -29,13 +31,13 @@ Release follow-up on **2026-10-17**: the [public unsigned lifecycle prerelease](
 | Approvals are one yes or no | ADR-0136 |
 | Film: one request across web, mail/calendar, files, memory, sub-agent and coding agent, schedules/projects, an approval and voice; rendered from the console face and mission view with real tool names; request, files and messages are examples | Rendered from core `apps/jarvisd/src/hud/head.js` and `mission.js` (tool names and effects in its `TOOLS` table); capabilities per `README.md` capability table, `docs/user/code-agents.md`, `docs/user/settings.md#voice`; disclosure text in `src/content.ts` `film` |
 | Platform status table | `docs/user/platforms.md` |
-| Original platform and website code/docs: Apache-2.0; public unsigned prerelease archives exist; signed distribution remains open | Core `LICENSE`, `NOTICE`, workspace Cargo metadata, website `LICENSE`, `NOTICE`, npm metadata and served `/licenses/jarvis.txt`; verified `dd65479` release above; core `P9-017b` and distribution gates |
+| Original platform and website code/docs: Apache-2.0; signed prebuilt website installation exists; native OS signing remains open | Core `LICENSE`, `NOTICE`, workspace Cargo metadata, website `LICENSE`, `NOTICE`, npm metadata and served `/licenses/jarvis.txt`; verified `dd65479` release above; core `P9-017b` and distribution gates |
 | Roadmap columns, reviewed 2026-10-16 | `ROADMAP.md`, current acceptance ledger `TODO.md`, `docs/user/code-agents.md`, `docs/user/phone.md` |
 | Tool discovery and per-task model routing are built | `ROADMAP.md`, ADR-0176 and ADR-0196 |
 | ACP jobs default in-place with optional worktrees, independent checks and managed previews; host processes are not sandboxed | `docs/user/code-agents.md`, ADR-0222/0224/0233, `code_delegate_async.rs`, `code_delegate.rs`; real Codex dependency-install and Windows `codex-acp 2.2.2` cancellation checks passed; full website/browser delivery, fresh sign-in and other-agent/platform cancellation remain open |
 | Full-text knowledge search is a delivered first slice | `TODO.md` P11-014, `docs/user/files.md`; vector retrieval is not claimed |
 | Owner outbound calls have owner-reported evidence, not general telephony verification | [Phone setup and verification limits](https://github.com/props-nothing/jarvis-core/blob/main/docs/user/phone.md); `P8-007`, ADR-0200 |
-| Local voice, desktop, signed distribution, server profile and multi-step workflows remain unshipped or deferred | `ROADMAP.md`, `TODO.md` parked scope and distribution gates |
+| Local voice, desktop, complete distribution acceptance, server profile and multi-step workflows remain unshipped or deferred | `ROADMAP.md`, `TODO.md` parked scope and distribution gates |
 | Windows and Ubuntu have end-to-end evidence; `dd65479` native CI passed; clean-machine checks remain | Platform documentation, core acceptance ledger and this site's `docs/DEPLOY.md`; Intel macOS archive runtime smoke was skipped |
 
 ## Deliberately illustrative
@@ -49,4 +51,4 @@ Release follow-up on **2026-10-17**: the [public unsigned lifecycle prerelease](
 
 ## Not claimed
 
-General telephony availability, desktop app, signed installers, stable release or clean-machine acceptance, a hosted assistant service, any assistant benchmark or performance figure. Public unsigned prerelease archives exist; the website installers still build from source. Owner outbound-call evidence is distinguished from broader unverified call paths. Selecting Apache-2.0 does not complete distribution gates, relicense third-party code or grant rights to the removed CC BY-NC 4.0 prototype.
+General telephony availability, desktop app, native OS-signed installers, stable release or clean-machine acceptance, a hosted assistant service, any assistant benchmark or performance figure. Website scripts install a pinned prerelease after publisher verification; production deployment is separate evidence. Owner outbound-call evidence is distinguished from broader unverified call paths. Selecting Apache-2.0 does not complete distribution gates, relicense third-party code or grant rights to the removed CC BY-NC 4.0 prototype.

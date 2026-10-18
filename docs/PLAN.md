@@ -28,22 +28,21 @@ No accounts, analytics, tracking, cookies or third-party fonts and scripts. The 
 
 | Method | State | Notes |
 | --- | --- | --- |
-| `curl -fsSL <host>/install.sh \| bash` | Hosted source bootstrap; clean-platform acceptance remains incomplete | Clones, `cargo build --release -p jarvis-cli --locked`, `jarvis install`; `JARVIS_SERVICE=1` adds `--service` (off by default; see [dated server findings](DEPLOY.md#server-test-findings-ubuntu-24045-1-vcpu-4-gb-fresh-non-root-user-2026-10-11)) |
-| `irm <host>/install.ps1 \| iex` | Hosted source bootstrap; clean-Windows acceptance remains open | Windows, per-user, no administrator rights; same setup handoff |
-| From source | Works now | Plain git and cargo commands, no hosting needed |
-| Prebuilt archive | Public unsigned prerelease | [c48 archives and checksums are verified](https://github.com/props-nothing/jarvis-core/releases/tag/ci-c48da8880e20304da4b13e4016d896ad22fc2e04). A generated dependency-license inventory, signing/notarization and clean-machine checks remain (`P9-017b`, `P9-004` to `P9-007`). Website scripts still build from source |
+| Default Unix/Windows commands | Pinned signed prerelease; deployment/native website acceptance tracked separately | Verify publisher, manifest and archive before per-user installation; no source build or service startup |
+| From source | Explicit alternative | Git, pinned Rust toolchain and native build tools; locked build |
+| Prebuilt archive | Signed release a176e79, version 0.1.0 | Native certificates, complete dependency notices/SBOM and clean-machine acceptance remain separate |
 
-The scripts never use `sudo`, never run as administrator and never touch settings or memory. `scripts/check-install.mjs` fails closed on missing safety properties.
+The scripts never use `sudo`, never request administrator elevation and never touch settings or memory. `scripts/check-install.mjs` fails closed on missing safety properties.
 
 ## Milestones
 
 1. **M1 (done):** scaffold, content, hero, install box, scripts, docs.
 2. **M2 (partly delivered):** the site and scripts are hosted, and an Ubuntu 24.04 source-install run is recorded in [DEPLOY.md](DEPLOY.md). Clean macOS, Windows, other Linux distributions and aarch64 acceptance remain open; frontend CI fixtures do not close those gates.
-3. **M3:** public unsigned prerelease archives now exist. After the remaining distribution gates, separately accept a download tab with checksums and a version badge fetched at build time; retain source installation and its `main` default meanwhile.
+3. **M3 (implemented locally, 2026-10-18):** signed-only website installers pin an accepted public release. Native website CI and deployment remain separate evidence; source installation remains explicit.
 4. **M4 (revised 2026-10-13):** the actual HUD face geometry replaces the decorative orb; the screenshot section and asset are removed. Illustrative examples remain clearly labelled and never simulate a live assistant connection.
 5. **M5:** a docs section rendered from the main repository's `docs/user`.
 
 ## Risks
 
 - Copy drifts from the product. Mitigation: all factual copy lives in `src/content.ts` and is mapped to sources in CONTENT-ACCURACY.md.
-- `curl | bash` is a trust trade-off. Mitigation: the script is short, readable, source-build only and linked from the page.
+- `curl | bash` is a trust trade-off. Mitigation: scripts are inspectable, pinned to a reviewed release and verify publisher signatures before execution; the website HTTPS origin remains the bootstrap trust root.

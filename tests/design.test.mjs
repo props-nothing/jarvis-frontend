@@ -62,7 +62,7 @@ test("roadmap distinguishes delivered capability, limited proof and deliberate d
   assert.match(section("experimental").find((item) => /calls/.test(item.name)).note, /Owner outbound.*Inbound.*broader proof/);
   assert.match(section("planned").find((item) => /workflow engine/.test(item.name)).note, /Parked/);
   assert.match(section("built").find((item) => /Open-source/.test(item.name)).note, /Apache-2\.0/);
-  assert.match(section("planned").find((item) => /Signed distribution/.test(item.name)).note, /Public unsigned prerelease archives are verified.*dependency-license inventory.*signing\/notarization.*clean-machine.*website installers still build from source/);
+  assert.match(section("planned").find((item) => /Distribution acceptance/.test(item.name)).note, /publisher signature.*Native signing\/notarization.*dependency-license inventory.*clean-machine/);
   assert.match(platforms.find((platform) => /macOS/.test(platform.os)).state, /Native CI passed.*Intel runtime smoke and clean-machine acceptance pending/);
   assert.match(read("src/components/Architecture.tsx"), /In-place or worktree jobs, without OS isolation/);
   assert.match(read("src/components/Architecture.tsx"), /Windows Codex cancellation verified.*fresh sign-in and other agents\/platforms need proof/);

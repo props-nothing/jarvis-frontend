@@ -129,7 +129,7 @@ export const roadmap: { status: "built" | "experimental" | "next" | "planned"; l
     items: [
       { name: "Local voice", note: "Browser-independent recognition and synthesis without the cloud" },
       { name: "Desktop client", note: "Tauri is parked until there is a named requirement" },
-      { name: "Signed distribution", note: "Public unsigned prerelease archives are verified. A generated dependency-license inventory, signing/notarization and clean-machine verification remain; website installers still build from source" },
+      { name: "Distribution acceptance", note: "Website installers verify a pinned prerelease's publisher signature. Native signing/notarization, a complete dependency-license inventory and clean-machine verification remain" },
       { name: "Server profile", note: "PostgreSQL + pgvector; multi-device requires proven ownership semantics" },
       { name: "Multi-step workflow engine", note: "Parked until ordinary runs and schedules cannot express the job" },
     ],

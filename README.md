@@ -5,7 +5,7 @@ This folder is its own git repository, separate from the Rust platform repositor
 
 - **Stack:** Vite, React 19, TypeScript, plain CSS, named Lucide icons and a lazy Three.js face scene. The mask uses the same official canonical geometry as the JARVIS HUD, with a static canvas fallback. A self-hosted, lazily loaded film shows one request across every capability, rendered from the console's own face and mission-view code and labelled as a visualization. No external asset requests or model connection.
 - **Install commands:** the page shows `curl … | bash`, `irm … | iex` and a from-source tab. The commands use whichever host serves the site, and `public/install.sh` and `public/install.ps1` are served from the same host.
-- **Honest by design:** original platform and website code are Apache-2.0 licensed. The [public unsigned lifecycle prerelease](https://github.com/props-nothing/jarvis-core/releases/tag/ci-dd65479d988ebf7caa9bddfb803c13cae1b0ddbf) has verified archives and checksums; a generated dependency-license inventory, signing/notarization and clean-machine checks remain gates. Website installers still build from source. See [docs/CONTENT-ACCURACY.md](docs/CONTENT-ACCURACY.md).
+- **Signed default:** both website scripts pin public prerelease `ci-a176e79843a22eae2802d97aafba74a0bf6e282f` (0.1.0), verify its publisher signature and archive hash, and install without Git, Rust, Node or Python. Native OS signing/notarization, complete notices/SBOM and clean-machine acceptance remain separate. Deployment of this website revision is not implied. See [the installer contract](docs/research/integrations/signed-install.md).
 
 ## Run
 
@@ -16,18 +16,21 @@ npm ci
 npm run dev            # http://localhost:5173
 npm run build          # typecheck and production build into dist/
 npm run check:install  # parse both installers without executing them
-npm test               # offline real-Git regressions; no Rust build or service install
+npm test               # offline signed-installer/archive fixtures; no host installation
+npm run test:install:live # real public release, isolated install/profile and restricted PATH
 ```
 
-[Frontend checks](.github/workflows/checks.yml) run on native Ubuntu, macOS and Windows runners. The tests use disposable repositories inside this folder, a stand-in build command and an inert test executable; they do not claim a clean-machine JARVIS install on every OS.
+[Frontend checks](.github/workflows/checks.yml) run syntax, fixture tests and builds on native Ubuntu, macOS and Windows. A separate four-platform job runs the pinned public installer on Windows x86_64, macOS ARM64 and Linux x86_64/ARM64 with developer tools hidden from PATH. Hosted checks are not clean-machine or live-provider onboarding acceptance.
 
-## Source install prerequisites
+## Installation contract
 
-All three install tabs build from source with the checkout's pinned Rust toolchain and `Cargo.lock` (`--locked`), then run `jarvis install`. Git and Rust via rustup are needed to build, not to run the installed executable. Native tools are Xcode command-line tools on macOS, `build-essential` on Ubuntu, or Visual Studio C++ Build Tools plus a Windows SDK on Windows. See the [platform prerequisite commands](https://github.com/props-nothing/jarvis-core/blob/main/docs/development/getting-started.md#build-from-source) and [research evidence](https://github.com/props-nothing/jarvis-core/blob/main/docs/research/integrations/source-install-prerequisites.md).
+Default tabs download a fixed signed prerelease with curl >=8.4 and native OS utilities. No source checkout, compiler, runtime SDK, administrator elevation, setup prompts or service startup is involved. Signature, publisher identity, manifest selectors and archive bytes are checked before execution. An existing installation is refused without replacing it; use the [core update guide](https://github.com/props-nothing/jarvis-core/blob/main/docs/operations/binary-update.md) to update.
 
-Scripts refuse dirty or foreign source checkouts and never install system packages. The existing Bash `JARVIS_INSTALL_RUST=1` override explicitly opts into per-user rustup installation; it is off by default. Services are also off by default. A normal Windows terminal may use Visual Studio discovery instead of having `cl` on PATH; Cargo remains the definitive SDK/linker check.
+Download/review the script to use Bash `--dir ABSOLUTE_DIR --no-path` or PowerShell `-Dir ABSOLUTE_DIR -NoPath`. There is no unsigned mode or mutable latest release. Legacy `JARVIS_REPO`, `JARVIS_REF`, `JARVIS_SRC`, `JARVIS_SERVICE` and `JARVIS_INSTALL_RUST` overrides are refused; unset them for signed installation or use From source. Maintainers update both script pins and `scripts/installer-release.json` together, then run the native/public acceptance jobs before deployment.
 
-Setup is not run inside the installer. In a new terminal run `jarvis`, choose a model, supply the required ElevenLabs API key privately and grant only the folders you choose. Piped/scripted installs print explicit `jarvis init` instructions using absolute key-file paths, followed by `jarvis start` and `jarvis doctor --live` only after setup succeeds. Do not put key values in command arguments. No published signed binary download or clean-machine platform verification is implied.
+Only the From source tab requires Git, Rust via rustup and native build tools. It builds the checkout with Cargo.lock (`--locked`) and invokes the per-user installer.
+
+Setup remains separate. Open a new terminal, run `jarvis`, choose a model, supply the required ElevenLabs key privately and grant folders. The bootstrap prints a noninteractive key-file example; start the daemon and run `doctor --live` only after setup succeeds. Installation success alone is not provider acceptance.
 
 ## Docs
 
