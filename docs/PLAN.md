@@ -38,7 +38,7 @@ The scripts never use `sudo`, never request administrator elevation and never to
 
 1. **M1 (done):** scaffold, content, hero, install box, scripts, docs.
 2. **M2 (partly delivered):** the site and scripts are hosted, and an Ubuntu 24.04 source-install run is recorded in [DEPLOY.md](DEPLOY.md). Clean macOS, Windows, other Linux distributions and aarch64 acceptance remain open; frontend CI fixtures do not close those gates.
-3. **M3 (implemented locally, 2026-10-18):** signed-only website installers pin an accepted public release. Native website CI and deployment remain separate evidence; source installation remains explicit.
+3. **M3 (deployed, 2026-10-18):** signed-only website installers pin an accepted public release. All seven native website jobs and hosted byte/header checks pass; [delivery evidence](DEPLOY.md#signed-default-revision-2026-10-18) is separate from clean-machine onboarding. Source installation remains explicit.
 4. **M4 (revised 2026-10-13):** the actual HUD face geometry replaces the decorative orb; the screenshot section and asset are removed. Illustrative examples remain clearly labelled and never simulate a live assistant connection.
 5. **M5:** a docs section rendered from the main repository's `docs/user`.
 

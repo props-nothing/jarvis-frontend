@@ -5,7 +5,7 @@ This folder is its own git repository, separate from the Rust platform repositor
 
 - **Stack:** Vite, React 19, TypeScript, plain CSS, named Lucide icons and a lazy Three.js face scene. The mask uses the same official canonical geometry as the JARVIS HUD, with a static canvas fallback. A self-hosted, lazily loaded film shows one request across every capability, rendered from the console's own face and mission-view code and labelled as a visualization. No external asset requests or model connection.
 - **Install commands:** the page shows `curl … | bash`, `irm … | iex` and a from-source tab. The commands use whichever host serves the site, and `public/install.sh` and `public/install.ps1` are served from the same host.
-- **Signed default:** both website scripts pin public prerelease `ci-a176e79843a22eae2802d97aafba74a0bf6e282f` (0.1.0), verify its publisher signature and archive hash, and install without Git, Rust, Node or Python. Native OS signing/notarization, complete notices/SBOM and clean-machine acceptance remain separate. Deployment of this website revision is not implied. See [the installer contract](docs/research/integrations/signed-install.md).
+- **Signed default:** both website scripts pin public prerelease `ci-a176e79843a22eae2802d97aafba74a0bf6e282f` (0.1.0), verify its publisher signature and archive hash, and install without Git, Rust, Node or Python. All seven native website jobs passed before production deployment; hosted installer bytes and headers are verified in [the deployment record](docs/DEPLOY.md#signed-default-revision-2026-10-18). Native OS signing/notarization, complete notices/SBOM and clean-machine acceptance remain separate. See [the installer contract](docs/research/integrations/signed-install.md).
 
 ## Run
 

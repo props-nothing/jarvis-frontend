@@ -6,14 +6,14 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 
 - [x] Replace default source builders with pinned signed-only downloads, preserve the explicit source tab and separate setup, and update current copy/contracts.
 - [x] Pass Bash/Windows PowerShell archive fixtures, both parsers, 19 frontend tests, production build, signature-guard falsification and real isolated Windows public installation without development tools on PATH.
-- [ ] Run the new website revision's native CI and deploy it; verify hosted script bytes and content types. Clean-machine onboarding/logon and native certificates remain core gates.
+- [x] Run the new website revision's native CI and deploy it; verify hosted script bytes and content types. All seven jobs in [run 39131200970](https://github.com/props-nothing/jarvis-frontend/actions/runs/39131200970) passed before deployment `11d7a1f`; both hosted installers match Git checkout bytes and are served as plain text with nosniff. [Deployment evidence](docs/DEPLOY.md#signed-default-revision-2026-10-18). Clean-machine onboarding/logon and native certificates remain core gates.
 
 ## Next, in order
 
 - [ ] **1. Core: stop, restart and `service install` when a daemon already owns the profile.** Found on Ubuntu 24.04 (three variants), recorded under `P9-022` in the main `TODO.md` with a suggested fix. This remains core lifecycle acceptance (`P9-003`/`P9-022`); the new active-work stop/restart guard does not establish service-ownership handoff. Installers leave service startup opt-in; the page still says to run `jarvis stop` before `jarvis service install`.
 - [ ] **2. Test AlmaLinux 10** (the dnf hint and the rustup path in `install.sh` are unrun on a real box; the rustup path is verified on Ubuntu), aarch64 Linux, macOS (`install.sh`) and a clean Windows machine (`install.ps1`).
 - [x] **3. Mask-led website redesign and complete frontend review.** Replaced the decorative orb with the official HUD face geometry, removed the screenshot section/asset/social references, redesigned desktop/mobile layouts, fixed motion and interaction risks and reconciled platform/roadmap claims. 24 Node tests, typecheck/build, installer syntax contracts and integrated Chromium checks pass; native mobile/Safari and live deployment are not claimed. See `docs/DESIGN.md` and `docs/PROJECT-REVIEW.md`.
-- [ ] **4. Website binary-download acceptance:** implementation and local Windows acceptance are recorded above; native website CI and deployment remain. Source-build implementation notes below are dated history.
+- [x] **4. Website binary-download acceptance:** signed-only implementation, native website CI and production byte/header verification are complete as recorded above. Clean-machine lifecycle remains separate. Source-build implementation notes below are dated history.
 
 ## Polish
 

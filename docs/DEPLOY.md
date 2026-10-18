@@ -6,9 +6,15 @@ The output is static: `npm run build` writes `dist/`, which includes `install.sh
 
 ## Signed default revision (2026-10-18)
 
-The working tree replaces both source builders with standalone signed prebuilt installers for core a176e79843a22eae2802d97aafba74a0bf6e282f, package 0.1.0. The historical source-run findings below remain evidence for that older installer. Source-only environment overrides now fail with migration guidance; the From source tab retains manual build commands.
+Production now uses standalone signed prebuilt installers for core a176e79843a22eae2802d97aafba74a0bf6e282f, package 0.1.0. The historical source-run findings below remain evidence for that older installer. Source-only environment overrides now fail with migration guidance; the From source tab retains manual build commands.
 
-Local checks: 19 frontend tests, both shell parsers and production build pass. Real Windows signed installation with a restricted PATH passes version/daemon version, fresh-profile diagnosis and repeat-install refusal. Signature-call removal is caught by each shell's fixture suite. Native website CI, hosted byte checks and deployment of this revision are not yet claimed. The four-platform signed-install CI job must pass before calling this native website acceptance complete.
+Local checks: 19 frontend tests, both shell parsers and production build pass. Real Windows signed installation with a restricted PATH passes version/daemon version, fresh-profile diagnosis and repeat-install refusal. Signature-call removal is caught by each shell's fixture suite.
+
+All seven jobs in [native CI 39131200970](https://github.com/props-nothing/jarvis-frontend/actions/runs/39131200970) passed for `66915f1`: syntax/fixtures/build on Ubuntu 24.04, Windows 2025 and macOS 15; real signed public installation on Linux x86_64/ARM64, Windows x86_64 and macOS ARM64. No CI repairs were needed. A temporary `git.deploymentEnabled.main=false` held production while those jobs ran. Only that hold was removed in [deployment commit `11d7a1f`](https://github.com/props-nothing/jarvis-frontend/commit/11d7a1f02c87147e1af42b63d6e798552f014747); all pushes went directly to main.
+
+Vercel reported successful production deployment on 2026-10-18. HTTPS verification at 13:24 UTC confirmed both scripts match the committed checkout bytes, including `.gitattributes` LF for Bash and CRLF for PowerShell, with `text/plain; charset=utf-8` and `X-Content-Type-Options: nosniff`. SHA-256: Bash `90fc9dcf37b7aebabad7bc2f40f9ee55a3c1057b883848df292383441d22605b`; PowerShell `13933867a15c126956553bfeddaeed955b53779663b05f9342c1ededa6164e5c`. Production JavaScript/CSS match the local tested build exactly; HTML matches after build-host line-ending normalization. The apex returns HTTP 308 to `https://www.jarvisd.dev/`.
+
+This verifies website delivery and fresh-profile public installation on native hosted runners. Clean-machine provider onboarding/logon, Intel macOS runtime acceptance and native certificates remain separate gates.
 
 ## Requirements
 
@@ -25,7 +31,7 @@ npm test
 curl -fsSL https://YOUR-HOST/install.sh | head -n 3     # must print the bash shebang, not HTML
 ```
 
-Ubuntu 24.04 has been run end to end (see below). Still to do: AlmaLinux, macOS and Windows clean-machine runs, and `install.sh` through `curl | bash` from the hosted site.
+Native signed installation is recorded above. Full clean-machine onboarding/logon remains separate. All sections below preserve historical source-installer behavior and results through 2026-10-16; their environment overrides are no longer accepted by the default installer.
 
 ## Server test findings (Ubuntu 24.04.5, 1 vCPU, 4 GB, fresh non-root user, 2026-10-11)
 

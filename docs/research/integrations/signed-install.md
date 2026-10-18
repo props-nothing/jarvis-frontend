@@ -43,8 +43,11 @@ preservation, cleanup and piped entry. Copies with the signature call removed
 fail those assertions; production scripts stay unchanged during falsification.
 `npm run test:install:live` exercises the real signed public archive with a fresh
 profile, no PATH modification and developer tools hidden from PATH. Local Windows
-passed; native website CI for Windows/macOS/Linux x86_64/ARM64 is configured but
-not yet run for this revision. Production deployment is also separate.
+passed. All seven jobs in [native website CI 39131200970](https://github.com/props-nothing/jarvis-frontend/actions/runs/39131200970)
+passed, including real signed installations on Windows x86_64, macOS ARM64 and
+Linux x86_64/ARM64. Production was held until success, then deployed as `11d7a1f`.
+Hosted installer checkout bytes, content types and built assets are verified in
+[the deployment record](../../DEPLOY.md#signed-default-revision-2026-10-18).
 
 Update `public/install.sh`, `public/install.ps1` and
 `scripts/installer-release.json` together after reviewing a newly accepted public

@@ -45,4 +45,4 @@ Fixed in this redesign, ordered by impact:
 
 Residual risks: the optional Three.js scene adds about 153 kB gzip; integrated Chromium checks do not establish native Safari/iOS or Android behavior; public signed distribution and clean-machine installer gates are not completed by a website redesign. No Rust authority, provider protocol or installer execution behavior was changed.
 
-Installer update, 2026-10-18: the current website code uses pinned signed prebuilt installers. Local shell fixtures and real Windows public installation pass; native website CI and deployment remain pending. Source-installer statements in the dated review below describe the earlier revision. See [signed installation](research/integrations/signed-install.md).
+Installer update, 2026-10-18: production uses pinned signed prebuilt installers. Local shell fixtures, all seven native website jobs and hosted byte/header verification pass; see [deployment evidence](DEPLOY.md#signed-default-revision-2026-10-18). Source-installer statements in the dated review above describe the earlier revision. See [signed installation](research/integrations/signed-install.md).
