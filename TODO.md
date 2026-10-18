@@ -4,17 +4,18 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 
 ## Owner-selected hero refresh (2026-10-18)
 
-- [x] Enlarge the face on desktop/mobile; replace pointer tracking with autonomous movement and a click/keyboard energy response; remove face badges, pause/greeting controls, repeated ownership copy, duplicate installers and the entire workflow-demo section. Nineteen frontend tests, production build, installer syntax, documentation links and Chromium responsive/motion/fallback checks pass; see `docs/DESIGN.md` for evidence and the separate proposed multipage structure. Native-device verification and deployment remain open.
+- [x] Enlarge the face on desktop/mobile; replace pointer tracking with autonomous movement and a click/keyboard energy response; remove face badges, pause/greeting controls, repeated ownership copy, duplicate installers and the entire workflow-demo section. Nineteen frontend tests, production build, installer syntax, documentation links and Chromium responsive/motion/fallback checks pass; see `docs/DESIGN.md` for evidence. Deployed with the multipage revision below; native-device verification remains open.
 
 ## Owner-selected multipage structure (2026-10-18)
 
-- [x] Inner-page refinement: command-first Install, shorter Product and Integrations summaries, plain-language How it works, and a compact Roadmap. Detailed requirements and capability limits remain in accessible disclosures. All 22 frontend tests, build, HTTP contracts, documentation/whitespace checks and responsive/keyboard checks pass. Core baseline also passes: formatting, strict Clippy and 3,305 tests with 8 ignored. See `docs/DESIGN.md`; deployment remains open.
+- [x] Inner-page refinement: command-first Install, shorter Product and Integrations summaries, plain-language How it works, and a compact Roadmap. Detailed requirements and capability limits remain in accessible disclosures. All 22 frontend tests, build, HTTP contracts, documentation/whitespace checks and responsive/keyboard checks pass. Core baseline also passes: formatting, strict Clippy and 3,305 tests with 8 ignored. See `docs/DESIGN.md`; deployment is verified below.
 
 - [x] Follow-up: place a compact installer directly beneath the hero text, with only macOS/Linux and Windows tabs, one command and copy. No explanatory note or multiline source tab on home. Keyboard/copy and 320–1440 pixel layout checks pass; focused tests, TypeScript/build and production URL checks pass. The detailed Install guide and big animated face remain.
 
 - [x] Implement Home, Product, Integrations, How it works, Install and Roadmap as real document URLs. Preserve the large autonomous face, reduce the homepage to three use cases and a manual film, use quieter reading layouts, and retain capability limits and installer contracts. Unique metadata/sitemap, historical section redirects, mobile/keyboard navigation, refresh/history and all six layouts at 320–1440 pixels are verified.
 - [x] Pass all 22 frontend tests, TypeScript/production build, local HTTP page/asset/404/installer-byte checks, installer syntax, documentation links and whitespace checks. Required core baseline also passes: formatting, strict Clippy and 3,304 tests with 8 ignored. See `docs/DESIGN.md` and `docs/research/integrations/multipage-site.md`.
-- [ ] Native Safari/iOS/Android verification, pushed CI and deployment of this multipage revision.
+- [x] Push and deploy the owner-approved multipage revision (`9633c0a`). All seven [native CI jobs](https://github.com/props-nothing/jarvis-frontend/actions/runs/39156419522) pass; Vercel deployment, all six HTTPS routes, metadata/assets, sitemap, unknown-route 404, apex redirect, security headers and installer bytes are verified. Live Chromium checks cover the hero, OS tabs, Install navigation/refresh, copy feedback and disclosure. [Deployment evidence](docs/DEPLOY.md#multipage-revision-2026-10-18).
+- [ ] Native Safari/iOS/Android verification of this multipage revision.
 
 ## Owner-selected signed website default (2026-10-18)
 
@@ -33,7 +34,7 @@ Ledger for the website repository. Owner decisions are marked **needs owner**. C
 
 - [x] The hero uses the actual canonical HUD face with autonomous movement, click/keyboard energy response, reduced-motion handling and static fallback. Desktop/mobile screenshots and nonblank canvas checks pass.
 - [x] Canonical Open Graph/Twitter metadata remains configured; screenshot-dependent previews are removed in the local redesign.
-- [ ] Verify the redesigned site on native Safari/iOS and Android devices, then deploy it. The optional face scene adds about 153 kB gzip; retain that budget explicitly.
+- [ ] Verify the deployed redesign on native Safari/iOS and Android devices. The optional face scene adds about 153 kB gzip; retain that budget explicitly.
 - [ ] A `/docs` page rendered from the main repository's `docs/user`.
 - [x] Syntax validation now finds working Git Bash on Windows, rejects broken/missing interpreters, and parses both scripts without executing them.
 - [ ] Re-verify every claim in `docs/CONTENT-ACCURACY.md` whenever the main repository's `README.md`, `ROADMAP.md` or `docs/user/platforms.md` changes. The website face is decorative, not a live assistant connection.

@@ -1,6 +1,6 @@
 ---
 integration: multipage-site
-status: locally-verified
+status: production-verified
 last_verified: 2026-10-18
 selected_spec_version: Vite 8.3.4 / Vercel static configuration
 selected_sdk: existing Vite 8.3.4 and React plugin 6.1.2
@@ -44,9 +44,10 @@ Disprove the central routing assumption by building and serving the output with 
 
 ## Unresolved questions
 
-Vercel production headers and redirect behavior need verification after a separately requested deployment. Native Safari/iOS and Android verification remains open. Neither blocks a locally reviewable implementation.
+Native Safari/iOS and Android verification remains open. Production headers, clean URLs, redirects and exact build delivery are verified in the deployment record.
 
 ## Verification log
 
 - 2026-10-18: live official documentation, installed source/types and selected release checked before implementation. Existing dependency versions retained.
 - 2026-10-18: six-page build and local HTTP contract pass, including 404 and installer bytes; 22 frontend tests and installer parsers pass. Chromium layout checks cover all six destinations at 320–1440 pixels, page/history navigation, keyboard menus/tabs and manual film playback. Details in [the design record](../../DESIGN.md).
+- 2026-10-18: owner-authorized push/deployment of `9633c0a` succeeded. All seven native CI jobs passed; production HTML/assets, all six clean routes, metadata, sitemap, unknown-route 404, apex redirect, security headers and unchanged installer checkout bytes passed HTTPS verification. Live Chromium hero/installation interactions passed. See [the deployment record](../../DEPLOY.md#multipage-revision-2026-10-18).

@@ -4,12 +4,38 @@ The production site is **https://www.jarvisd.dev/** on Vercel. The apex `https:/
 
 The output is static: `npm run build` writes `dist/`, which includes `install.sh` and `install.ps1` copied from `public/`. `vercel.json` forces both installers to `text/plain; charset=utf-8`, prevents MIME sniffing, and adds security headers to all responses.
 
-The local multipage revision adds `product.html`, `integrations.html`,
+The multipage revision adds `product.html`, `integrations.html`,
 `how-it-works.html`, `install.html` and `roadmap.html`. Existing
 `cleanUrls: true` serves them at extensionless paths. Do not add a catch-all
 homepage rewrite. Run `npm run check:pages` after building; after deployment,
 check every destination directly, metadata, unknown-route 404 and installer
-headers again. The multipage revision has not been deployed by this task.
+headers again.
+
+## Multipage revision (2026-10-18)
+
+The owner-approved hero and calmer six-page site were pushed directly to `main`
+in [commit `9633c0a`](https://github.com/props-nothing/jarvis-frontend/commit/9633c0ac18f8781282ed037c78d98c21e7eb498e).
+[Vercel reported successful production deployment](https://vercel.com/wichardtoering-gmailcoms-projects/jarvis-frontend/DQMDauXD5N3rXvFZnx5hUHsxsNqv).
+All seven jobs in [native CI 39156419522](https://github.com/props-nothing/jarvis-frontend/actions/runs/39156419522)
+passed: checks/build/page contracts on Ubuntu, Windows and macOS, and signed
+website installation on Linux x86_64/ARM64, Windows x86_64 and macOS ARM64.
+Local validation also passed all 22 tests, both installer parsers, the build,
+six-page HTTP checks, documentation links and whitespace checks.
+
+Production HTTPS checks at 18:57 UTC confirmed all six clean URLs return 200
+with their distinct titles and canonical URLs. HTML matches the tested build
+after line-ending normalization; all ten JavaScript/CSS assets match exactly.
+The six-route sitemap matches, unknown routes return 404, and the apex returns
+308 to `https://www.jarvisd.dev/`. CSP, frame denial and nosniff remain present.
+Both installers retain their signed-default SHA-256 values recorded below,
+plain-text content types and prescribed Git checkout line endings (Bash LF,
+PowerShell CRLF). The workstation's PowerShell source had LF; verification
+explicitly applied `.gitattributes` before comparing production bytes.
+
+Live Chromium checks confirmed the large animated face, its click response,
+homepage OS tabs, Install navigation and direct refresh, copy success feedback,
+and requirements disclosure. No warning/error logs were observed during these
+checks. Native Safari/iOS/Android verification remains open.
 
 ## Signed default revision (2026-10-18)
 
