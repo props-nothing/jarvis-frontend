@@ -9,10 +9,12 @@
   "description": "Marketing and install site for JARVIS, the local-first personal AI operating system.",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "generate:pages": "node scripts/generate-pages.mjs",
+    "build": "node scripts/generate-pages.mjs --check && tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "check:install": "node scripts/check-install.mjs",
+    "check:pages": "node scripts/check-pages.mjs",
     "test:install:live": "node scripts/test-published-install.mjs",
     "test": "node --test tests/*.test.mjs"
   },

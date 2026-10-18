@@ -1,43 +1,57 @@
 import { useEffect, useRef } from "react";
 import {
-  BufferGeometry, Group, Mesh, MeshBasicMaterial, OrthographicCamera,
-  Scene, WebGLRenderer, DoubleSide,
+  BufferAttribute, BufferGeometry, Group, Mesh, MeshBasicMaterial, OrthographicCamera,
+  Scene, WebGLRenderer, DoubleSide, DynamicDrawUsage, Points, PointsMaterial, AdditiveBlending,
 } from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import faceSource from "../assets/canonical-face.obj?raw";
 
-export default function JarvisMask({ paused }: { paused: boolean }) {
+export default function JarvisMask() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fallbackRef = useRef<HTMLCanvasElement>(null);
-  const syncRef = useRef<(() => void) | null>(null);
-  const pausedRef = useRef(paused);
-
-  useEffect(() => {
-    pausedRef.current = paused;
-    syncRef.current?.();
-  }, [paused]);
+  const interactRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const fallback = fallbackRef.current;
     if (!canvas || !fallback) return;
+    const button = canvas.parentElement as HTMLButtonElement;
 
     const parsed = new OBJLoader().parse(faceSource);
     const source = parsed.children.find((child): child is Mesh<BufferGeometry> => child instanceof Mesh);
     if (!source) return;
     const geometry = source.geometry;
+    geometry.computeBoundingBox();
+    const centerY = (geometry.boundingBox!.min.y + geometry.boundingBox!.max.y) / 2;
     geometry.center();
+    const positions = geometry.getAttribute("position") as BufferAttribute;
+    positions.setUsage(DynamicDrawUsage);
+    const resting = Float32Array.from(positions.array);
+    // Smooth local weights keep shared triangle vertices together while blinking.
+    const eyelids = new Float32Array(positions.count);
+    const brows = new Float32Array(positions.count);
+    const jaw = new Float32Array(positions.count);
+    const colors = new BufferAttribute(new Float32Array(positions.count * 3), 3).setUsage(DynamicDrawUsage);
+    geometry.setAttribute("color", colors);
+    for (let index = 0; index < positions.count; index += 1) {
+      const x = Math.abs(positions.getX(index));
+      const y = positions.getY(index) + centerY;
+      eyelids[index] = Math.exp(-(((x - 3.15) / 1.3) ** 4) - ((y - 2.7) / 0.65) ** 4);
+      brows[index] = Math.exp(-(((x - 3.1) / 1.6) ** 4) - ((y - 4.15) / 0.7) ** 4);
+      jaw[index] = Math.max(0, Math.min(1, (-y - 3.8) / 3));
+      colors.setXYZ(index, 0.16 + eyelids[index] * 0.65, 0.5 + eyelids[index] * 0.4, 0.56 + eyelids[index] * 0.4);
+    }
     const originalMaterials = Array.isArray(source.material) ? source.material : [source.material];
     originalMaterials.forEach((material) => material.dispose());
 
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const pointer = { horizontal: 0, vertical: 0 };
     let visible = true;
     let contextLost = false;
     let width = 1;
     let height = 1;
     let lastFrame = 0;
     let elapsed = 0;
+    let reactionStart = -10;
     let renderer: WebGLRenderer | null = null;
 
     const paintFallback = () => {
@@ -49,7 +63,7 @@ export default function JarvisMask({ paused }: { paused: boolean }) {
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.clearRect(0, 0, width, height);
       const vertices = geometry.getAttribute("position");
-      const scale = Math.min(height / 23, width / 20);
+      const scale = Math.min(height / 21, width / 18);
       context.strokeStyle = "rgba(104, 231, 224, 0.65)";
       context.lineWidth = 0.65;
       context.beginPath();
@@ -66,14 +80,36 @@ export default function JarvisMask({ paused }: { paused: boolean }) {
     };
 
     const scene = new Scene();
-    const camera = new OrthographicCamera(-12, 12, 11.5, -11.5, 0.1, 100);
+    const camera = new OrthographicCamera(-12, 12, 10.5, -10.5, 0.1, 100);
     camera.position.z = 40;
     const face = new Group();
-    const surface = new MeshBasicMaterial({ color: 0x071310, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: 1 });
-    const wire = new MeshBasicMaterial({ color: 0x68e7e0, wireframe: true, transparent: true, opacity: 0.62 });
-    face.add(new Mesh(geometry, surface), new Mesh(geometry, wire));
+    const surface = new MeshBasicMaterial({ color: 0x030d10, side: DoubleSide, polygonOffset: true, polygonOffsetFactor: 1 });
+    const wire = new MeshBasicMaterial({ vertexColors: true, wireframe: true, transparent: true, opacity: 0.8 });
+    const nodes = new PointsMaterial({ color: 0xb2fffa, size: 1.3, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.65, blending: AdditiveBlending, depthWrite: false });
+    face.add(new Mesh(geometry, surface), new Mesh(geometry, wire), new Points(geometry, nodes));
     face.rotation.set(-0.04, -0.12, 0);
     scene.add(face);
+
+    // Sparse fragments give the hologram depth without a texture or postprocessing pass.
+    const fragments = new BufferGeometry();
+    const fragmentPositions = new BufferAttribute(new Float32Array(144 * 3), 3).setUsage(DynamicDrawUsage);
+    fragments.setAttribute("position", fragmentPositions);
+    const fragmentMaterial = new PointsMaterial({ color: 0x71e9ed, size: 1.4, sizeAttenuation: false, transparent: true, opacity: 0.48, blending: AdditiveBlending, depthWrite: false });
+    const cloud = new Points(fragments, fragmentMaterial);
+    cloud.frustumCulled = false;
+    scene.add(cloud);
+    const updateFragments = (time: number, energy: number) => {
+      for (let index = 0; index < fragmentPositions.count; index += 1) {
+        const angle = index * 2.39996 + time * (0.025 + index % 3 * 0.012);
+        const radius = 1 + (index % 7) * 0.035 + energy * 0.1;
+        fragmentPositions.setXYZ(index,
+          Math.cos(angle) * 7.7 * radius,
+          Math.sin(angle) * 8.7 * radius,
+          Math.sin(index * 1.73 + time * 0.18) * 3 - 1);
+      }
+      fragmentPositions.needsUpdate = true;
+    };
+    updateFragments(0, 0);
 
     try {
       const context = canvas.getContext("webgl2", { alpha: true, antialias: true, powerPreference: "low-power" });
@@ -86,27 +122,59 @@ export default function JarvisMask({ paused }: { paused: boolean }) {
       if (!renderer || contextLost) return;
       const delta = lastFrame ? Math.min((now - lastFrame) / 1000, 0.05) : 0;
       lastFrame = now;
-      if (!motion.matches && !pausedRef.current) {
+      if (!motion.matches) {
         elapsed += delta;
-        const smoothing = 1 - Math.exp(-delta * 5);
-        const horizontal = -0.12 + Math.sin(elapsed * 0.45) * 0.1 + pointer.horizontal;
-        const vertical = -0.04 + Math.sin(elapsed * 0.6) * 0.025 + pointer.vertical;
+        const smoothing = 1 - Math.exp(-delta * 4);
+        const reactionAge = elapsed - reactionStart;
+        const reaction = Math.min(Math.max(reactionAge / 3, 0), 1);
+        const acknowledgement = Math.sin(reaction * Math.PI) ** 2;
+        const horizontal = (Math.sin(elapsed * 0.42) * 0.48 + Math.sin(elapsed * 0.17 + 1) * 0.16) * (1 - acknowledgement);
+        const vertical = -0.04 + Math.sin(elapsed * 0.57) * 0.1 - Math.sin(reaction * Math.PI * 2) * acknowledgement * 0.26;
         face.rotation.y += (horizontal - face.rotation.y) * smoothing;
         face.rotation.x += (vertical - face.rotation.x) * smoothing;
+        face.rotation.z = Math.sin(elapsed * 0.31) * 0.045 * (1 - acknowledgement);
+        face.position.y = Math.sin(elapsed * 1.15) * 0.14;
+        face.scale.setScalar(1 + acknowledgement * 0.035);
+        const blinkPhase = elapsed % 11.8;
+        const blink = Math.max(0, 1 - Math.abs(blinkPhase - 3.1) / 0.14, 1 - Math.abs(blinkPhase - 8.4) / 0.17);
+        const curiosity = Math.max(0, Math.sin(elapsed * 0.7)) ** 6;
+        const scanY = 10 - (elapsed * 2.4) % 21;
+        const pulseRadius = reactionAge * 8;
+        for (let index = 0; index < positions.count; index += 1) {
+          const y = resting[index * 3 + 1];
+          const x = resting[index * 3];
+          positions.setY(index, y + (2.7 - centerY - y) * eyelids[index] * blink * 0.95
+            + brows[index] * (acknowledgement * 0.45 + curiosity * 0.2)
+            - jaw[index] * (curiosity * 0.16 + acknowledgement * 0.22));
+          const sweep = Math.exp(-((y - scanY) ** 2) * 1.8);
+          const pulse = reactionAge < 3 ? Math.exp(-((Math.hypot(x, y - 2) - pulseRadius) ** 2) * 0.6) : 0;
+          const eye = eyelids[index] * (1 - blink) * (0.45 + curiosity * 0.2);
+          const light = sweep * 0.45 + pulse * 0.65 + acknowledgement * 0.12;
+          colors.setXYZ(index, Math.min(1, 0.12 + eye + light), Math.min(1, 0.42 + eye + light), Math.min(1, 0.5 + eye + light));
+        }
+        positions.needsUpdate = true;
+        colors.needsUpdate = true;
+        wire.opacity = 0.8 + acknowledgement * 0.2;
+        nodes.size = 1.3 + acknowledgement * 0.9;
+        fragmentMaterial.opacity = 0.36 + acknowledgement * 0.32;
+        updateFragments(elapsed, acknowledgement);
       }
       renderer.render(scene, camera);
     };
 
     const sync = () => {
+      button.disabled = motion.matches || !renderer || contextLost;
       if (!renderer || contextLost) return;
       lastFrame = 0;
       renderer.setAnimationLoop(null);
       render(performance.now());
-      if (visible && !document.hidden && !motion.matches && !pausedRef.current) {
+      if (visible && !document.hidden && !motion.matches) {
         renderer.setAnimationLoop(render);
       }
     };
-    syncRef.current = sync;
+    interactRef.current = () => {
+      if (!motion.matches) reactionStart = elapsed;
+    };
 
     const resize = () => {
       const bounds = canvas.parentElement!.getBoundingClientRect();
@@ -116,22 +184,19 @@ export default function JarvisMask({ paused }: { paused: boolean }) {
       if (renderer && !contextLost) {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
         renderer.setSize(width, height, false);
-        const halfWidth = 11.5 * width / height;
+        const halfHeight = Math.max(10.5, 9 * height / width);
+        const halfWidth = halfHeight * width / height;
         camera.left = -halfWidth;
         camera.right = halfWidth;
+        camera.top = halfHeight;
+        camera.bottom = -halfHeight;
         camera.updateProjectionMatrix();
         sync();
       }
     };
-    const move = (event: PointerEvent) => {
-      if (motion.matches || pausedRef.current || event.pointerType === "touch") return;
-      const bounds = canvas.getBoundingClientRect();
-      pointer.horizontal = ((event.clientX - bounds.left) / bounds.width - 0.5) * 0.45;
-      pointer.vertical = ((event.clientY - bounds.top) / bounds.height - 0.5) * 0.18;
-    };
-    const leave = () => { pointer.horizontal = 0; pointer.vertical = 0; };
     const lose = () => {
       contextLost = true;
+      button.disabled = true;
       renderer?.setAnimationLoop(null);
       canvas.hidden = true;
       fallback.hidden = false;
@@ -146,6 +211,7 @@ export default function JarvisMask({ paused }: { paused: boolean }) {
 
     canvas.hidden = !renderer;
     fallback.hidden = Boolean(renderer);
+    button.disabled = motion.matches || !renderer;
     resize();
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(canvas.parentElement!);
@@ -156,33 +222,32 @@ export default function JarvisMask({ paused }: { paused: boolean }) {
     observer.observe(canvas.parentElement!);
     motion.addEventListener("change", sync);
     document.addEventListener("visibilitychange", sync);
-    canvas.addEventListener("pointermove", move);
-    canvas.addEventListener("pointerleave", leave);
     canvas.addEventListener("webglcontextlost", lose);
     canvas.addEventListener("webglcontextrestored", restore);
 
     return () => {
-      syncRef.current = null;
+      interactRef.current = null;
       renderer?.setAnimationLoop(null);
       resizeObserver.disconnect();
       observer.disconnect();
       motion.removeEventListener("change", sync);
       document.removeEventListener("visibilitychange", sync);
-      canvas.removeEventListener("pointermove", move);
-      canvas.removeEventListener("pointerleave", leave);
       canvas.removeEventListener("webglcontextlost", lose);
       canvas.removeEventListener("webglcontextrestored", restore);
       geometry.dispose();
       surface.dispose();
       wire.dispose();
+      nodes.dispose();
+      fragments.dispose();
+      fragmentMaterial.dispose();
       renderer?.dispose();
     };
   }, []);
 
   return (
-    <>
-      <canvas ref={canvasRef} className="mask__canvas" role="img" aria-label="JARVIS holographic face, using the console's canonical face mesh" />
-      <canvas ref={fallbackRef} className="mask__canvas" hidden role="img" aria-label="JARVIS holographic face" />
-    </>
+    <button type="button" className="mask__interact" aria-label="Animate JARVIS" onClick={() => interactRef.current?.()}>
+      <canvas ref={canvasRef} className="mask__canvas" aria-hidden />
+      <canvas ref={fallbackRef} className="mask__canvas" hidden aria-hidden />
+    </button>
   );
 }

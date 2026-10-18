@@ -1,78 +1,90 @@
 /** Claims are checked against JARVIS implementation and delivery evidence; see docs/CONTENT-ACCURACY.md. */
 
-export type Feature = { icon: string; title: string; body: string; tag: string };
+export type Feature = { icon: string; title: string; summary: string; body: string; tag: string };
 
 export const features: Feature[] = [
   {
     icon: "◈",
     tag: "Files",
     title: "Reads your documents",
+    summary: "Find, read and organise files in the folders you choose.",
     body: "Read, search, write, edit and move files in granted folders. Read PDF, Word, spreadsheets and slides; OCR needs Tesseract. File deletion moves one file into recoverable .jarvis-trash, never a permanent purge.",
   },
   {
     icon: "◎",
     tag: "Web",
     title: "Browses and researches",
+    summary: "Search the web and bring pages, PDFs and sources together.",
     body: "Fetch pages and PDFs, search with a configured key, and read JavaScript pages in an isolated browser session. Clicking, typing and uploading ask by default; your permission settings decide.",
   },
   {
     icon: "✉",
     tag: "Google",
     title: "Mail and calendar",
+    summary: "Prepare replies and work with your Google calendar. Sending asks first.",
     body: "Connect Google from Settings for mail, drafts, replies, attachments and calendar events. Sending asks first. Mail cleanup moves a message to Gmail Trash; existing accounts need a new sign-in for that scope.",
   },
   {
     icon: "▣",
     tag: "Projects",
     title: "Long-running work",
+    summary: "Give a project a goal, a journal and a daily budget.",
     body: "Each project has a goal, standing guidance and a journal, with daily caps on runs and tokens. A daily digest, and an optional push to your phone.",
   },
   {
     icon: "⟳",
     tag: "Autonomy",
     title: "Works while you are away",
+    summary: "Schedule routine work and respond to mail, file or webhook events.",
     body: "Time-zone schedules, mail/file/webhook triggers and sub-agents. Eligible recent interrupted requests get one new continuation after restart, not exact replay. Optional container code execution needs Docker and a configured image.",
   },
   {
     icon: "◉",
     tag: "Voice",
     title: "Talk to it",
+    summary: "Speak in the browser, hear an answer and interrupt when you need to.",
     body: "Browser push-to-talk, a wake word, interruptible answers and a spoken \u201cJarvis, stop\u201d. Optional ElevenLabs synthesis. Recognition depends on browser support and may use its speech service; this is not offline local voice.",
   },
   {
     icon: "❖",
     tag: "Memory",
     title: "Remembers, with your consent",
+    summary: "Keep useful preferences and procedures. You decide what is saved.",
     body: "It proposes what to remember and you confirm. It can also propose reusable skills from your procedures; you approve each one.",
   },
   {
     icon: "⌘",
     tag: "MCP",
     title: "Connect tools and apps",
+    summary: "Add local or remote MCP tools with their own permissions and setup.",
     body: "Manage local and remote MCP servers from Settings, with named keys or browser sign-in using a registered provider app. Provider compatibility still needs verification. Opt-in authenticated app access keeps approvals with you.",
   },
   {
     icon: "✈",
     tag: "Telegram",
     title: "Reach it from your phone",
+    summary: "Continue conversations and answer approvals through Telegram.",
     body: "Configured in Settings, with no tunnel and no public daemon port. Answers and approval decisions travel through Telegram, not an offline local channel.",
   },
   {
     icon: "▤",
     tag: "Documents",
     title: "Creates useful documents",
+    summary: "Turn work into Word, PDF, CSV or Excel files, and edit spreadsheet cells.",
     body: "Create new Word, PDF, CSV and Excel files. Edit literal cells in an existing XLSX while preserving untouched formatting and formulas. Protected, macro and signed workbooks are refused; formulas are not recalculated.",
   },
   {
     icon: "♙",
     tag: "Contacts",
     title: "Keeps a contact list",
+    summary: "Save contacts, import a CSV and bring duplicate entries together.",
     body: "Save, search, import CSV, find duplicates and merge JARVIS contacts. Imports use a granted folder and preserve do-not-contact suppression. Authorized deletion removes the contact and its suppression together under your permission policy.",
   },
   {
     icon: "⌥",
     tag: "Experimental",
     title: "Delegates coding tasks",
+    summary: "Hand coding work to an agent in a permitted folder, with independent checks.",
     body: "Run background coding jobs in a permitted folder, with optional Git worktrees, skill bundles and managed previews. Independent checks report separately from task completion. Host processes are not a sandbox; no automatic commit, merge or push.",
   },
 ];

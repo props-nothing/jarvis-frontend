@@ -1,7 +1,7 @@
 ---
 integration: frontend-visuals
 status: adopted
-last_verified: 2026-10-13
+last_verified: 2026-10-18
 selected_spec_version: MediaPipe a908d668c730da128dfa8d9f6bd25d519d006692
 selected_sdk: three 0.186.1; lucide-react 1.56.0; @types/three 0.186.0
 ---
@@ -29,13 +29,44 @@ Checked 2026-10-13:
 
 ## Verified Contract
 
+### Autonomous hero refresh (2026-10-18)
+
+Rechecked the official `llms.txt` and renderer docs above, plus
+https://threejs.org/docs/pages/BufferAttribute.html,
+https://threejs.org/docs/pages/OrthographicCamera.html,
+https://raw.githubusercontent.com/mrdoob/three.js/r186/src/core/BufferAttribute.js
+and https://github.com/mrdoob/three.js/releases/tag/r186.
+The installed 0.186.1 source confirms `setY`, `needsUpdate`, `setUsage` and camera
+projection updates. No relevant contract change observed; versions stay pinned.
+No repository-local llms index ships in the installed package.
+
+Update the existing position attribute for eyelids and brows, flag it for GPU
+upload, and reuse the same geometry/materials. Fit both camera axes to the scene
+so narrow screens retain the whole face. Autonomous pose and expression timing
+uses active animation time, never pointer coordinates. A native button triggers
+a short energy response; reduced motion suppresses movement. Authentication,
+privacy and limits remain as below. No new dependency or external operation.
+
+The owner's follow-up removes visible pause/greeting controls. Rechecked
+https://threejs.org/docs/pages/PointsMaterial.html and
+https://threejs.org/docs/pages/Material.html, and the installed r186 material
+source: vertex colors multiply material color; point size is in pixels and is
+hardware bounded. Use small additive points, shared face geometry, a bounded
+ambient particle buffer, and a vertex-color light sweep. No new texture or effect
+dependency. Reduced motion remains static; pointer position remains unused.
+
+Verification: check changing face pixels without pointer input, a click/keyboard
+energy response, reduced-motion stillness, responsive
+framing, and nonblank WebGL failure/context-loss fallback. Native device coverage
+remains an open limitation.
+
 Three.js uses WebGL2; WebGL1 support was removed in r163. `OBJLoader.parse` accepts local OBJ text and returns a group containing mesh geometry. `setAnimationLoop(null)` stops the renderer loop. Geometry, materials and renderer each need disposal. `setSize(width, height, false)` preserves CSS layout dimensions. The canonical face has 468 vertices and 898 triangles, with positive z pointing out of the face.
 
 Lucide supports named, tree-shakable React imports. SVG props, including `aria-hidden`, are supported. Icon-only controls need accessible names on the button.
 
 ### Authentication, Limits And Privacy
 
-No authentication, scopes, credentials, webhooks, retries, pagination, provider quotas or billing apply. Dependencies and geometry are bundled locally. No data leaves the browser. Use a pixel-ratio cap, stop off-screen and in hidden tabs, honor motion preferences and provide a pause control. A failed or lost WebGL context falls back to a local, static canvas projection.
+No authentication, scopes, credentials, webhooks, retries, pagination, provider quotas or billing apply. Dependencies and geometry are bundled locally. No data leaves the browser. Use a pixel-ratio cap, stop off-screen and in hidden tabs, honor motion preferences; visible pause controls are omitted at the owner's request. A failed or lost WebGL context falls back to a local, static canvas projection.
 
 ### Versions And Compliance
 
@@ -47,7 +78,7 @@ Presentation only, outside Rust authority and domain boundaries. The scene does 
 
 ## Verification Plan
 
-The cheapest falsifier is parsing the bundled OBJ with the installed loader and checking exactly 898 finite triangles. Node tests also verify the upstream asset digest and that screenshot references and stale navigation targets are absent. Browser checks must prove nonblank desktop/mobile canvas pixels, movement, pause, reduced-motion resize, context-loss fallback, no horizontal overflow and usable keyboard install/navigation/approval controls. Run website tests, typecheck, installer validation and production build.
+The cheapest falsifier is parsing the bundled OBJ with the installed loader and checking exactly 898 finite triangles. Node tests also verify the upstream asset digest and that screenshot references and stale navigation targets are absent. Browser checks must prove nonblank desktop/mobile canvas pixels, autonomous movement, reduced-motion resize, context-loss fallback, no horizontal overflow and usable keyboard install/navigation/approval controls. Run website tests, typecheck, installer validation and production build.
 
 ## Unresolved Questions
 

@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
-import { REPO_URL } from "../config";
+import { ArrowRight, Menu, X } from "lucide-react";
+import { DOCS_URL } from "../config";
+import { pages, type PageId } from "../site";
 
-const sections = [
-  ["film", "Watch"], ["capabilities", "Capabilities"], ["trust", "Why JARVIS"],
-  ["architecture", "Architecture"], ["install", "Install"], ["roadmap", "Roadmap"],
-];
+const navigation = pages.filter((page) => ["product", "integrations", "how-it-works"].includes(page.id));
 
-export default function Nav() {
+export default function Nav({ page }: { page: PageId }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -54,21 +52,14 @@ export default function Nav() {
     };
   }, [open]);
 
-  const selectSection = (id: string) => {
-    setOpen(false);
-    if (!window.matchMedia("(max-width: 1020px)").matches) return;
-    const target = document.getElementById(id);
-    target?.setAttribute("tabindex", "-1");
-    target?.focus({ preventScroll: true });
-  };
-
   return (
     <header ref={header} className={`nav ${scrolled || open ? "nav--solid" : ""}`}>
-      <a className="nav__brand" href="#top" aria-label="JARVIS home" onClick={() => selectSection("top")}>
+      <a className="nav__brand" href="/" aria-label="JARVIS home" aria-current={page === "home" ? "page" : undefined}>
         <span className="nav__mark" aria-hidden /> JARVIS
       </a>
-      <nav ref={links} id="site-navigation" className={`nav__links ${open ? "nav__links--open" : ""}`} aria-label="Sections">
-        {sections.map(([id, label]) => <a key={id} href={`#${id}`} onClick={() => selectSection(id)}>{label}</a>)}
+      <nav ref={links} id="site-navigation" className={`nav__links ${open ? "nav__links--open" : ""}`} aria-label="Main navigation">
+        {navigation.map((item) => <a key={item.id} href={item.path} aria-current={page === item.id ? "page" : undefined}>{item.label}</a>)}
+        <a href={DOCS_URL} target="_blank" rel="noreferrer">Docs</a>
       </nav>
       <div className="nav__actions">
         <button type="button" className="icon-button nav__menu" ref={menuButton}
@@ -76,7 +67,7 @@ export default function Nav() {
           aria-expanded={open} aria-controls="site-navigation" onClick={() => setOpen(!open)}>
           {open ? <X size={20} aria-hidden /> : <Menu size={20} aria-hidden />}
         </button>
-        <a className="btn btn--ghost btn--sm" href={REPO_URL} target="_blank" rel="noreferrer">GitHub <ArrowUpRight size={15} aria-hidden /></a>
+        <a className="btn btn--solid btn--sm" href="/install" aria-current={page === "install" ? "page" : undefined}>Install <ArrowRight size={15} aria-hidden /></a>
       </div>
     </header>
   );

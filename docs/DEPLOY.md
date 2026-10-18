@@ -4,6 +4,13 @@ The production site is **https://www.jarvisd.dev/** on Vercel. The apex `https:/
 
 The output is static: `npm run build` writes `dist/`, which includes `install.sh` and `install.ps1` copied from `public/`. `vercel.json` forces both installers to `text/plain; charset=utf-8`, prevents MIME sniffing, and adds security headers to all responses.
 
+The local multipage revision adds `product.html`, `integrations.html`,
+`how-it-works.html`, `install.html` and `roadmap.html`. Existing
+`cleanUrls: true` serves them at extensionless paths. Do not add a catch-all
+homepage rewrite. Run `npm run check:pages` after building; after deployment,
+check every destination directly, metadata, unknown-route 404 and installer
+headers again. The multipage revision has not been deployed by this task.
+
 ## Signed default revision (2026-10-18)
 
 Production now uses standalone signed prebuilt installers for core a176e79843a22eae2802d97aafba74a0bf6e282f, package 0.1.0. The historical source-run findings below remain evidence for that older installer. Source-only environment overrides now fail with migration guidance; the From source tab retains manual build commands.
@@ -26,6 +33,7 @@ This verifies website delivery and fresh-profile public installation on native h
 
 ```text
 npm run build
+npm run check:pages
 npm run check:install
 npm test
 curl -fsSL https://YOUR-HOST/install.sh | head -n 3     # must print the bash shebang, not HTML

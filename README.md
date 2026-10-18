@@ -15,12 +15,22 @@ Use Node.js 24 or newer. Installer validation also needs Bash (Git Bash on Windo
 npm ci
 npm run dev            # http://localhost:5173
 npm run build          # typecheck and production build into dist/
+npm run check:pages    # production URLs, metadata, assets, 404 and installer bytes
+npm run generate:pages # after editing the public page catalog
 npm run check:install  # parse both installers without executing them
 npm test               # offline signed-installer/archive fixtures; no host installation
 npm run test:install:live # real public release, isolated install/profile and restricted PATH
 ```
 
 [Frontend checks](.github/workflows/checks.yml) run syntax, fixture tests and builds on native Ubuntu, macOS and Windows. A separate four-platform job runs the pinned public installer on Windows x86_64, macOS ARM64 and Linux x86_64/ARM64 with developer tools hidden from PATH. Hosted checks are not clean-machine or live-provider onboarding acceptance.
+
+## Public pages
+
+Home keeps the animated face, a compact tabbed one-line installer, three practical use cases and a film that loads only after an explicit play action. The quick installer has no explanation text; source installation and setup guidance live on Install. Product, Integrations, How it works, Install and Roadmap have their own URLs and reading layouts. Docs links to the core documentation.
+
+Inner pages use compact headings and short summaries. Install leads with the command; requirements, platform support and advanced options expand on request. Product limits, integration setup, policy/architecture inspectors and roadmap evidence remain in native keyboard-accessible disclosures.
+
+The six HTML documents and sitemap are generated from `src/site.ts`. Each document loads its own React entry from `src/entries/`; only home imports the face. Vite uses MPA mode and Vercel's existing clean URLs. Direct loads and refreshes work without a catch-all rewrite. Historical homepage section links redirect to the relevant page, including architecture/trust fragments. Run `npm run generate:pages` after changing metadata; builds reject stale generated files.
 
 ## Installation contract
 
@@ -51,10 +61,13 @@ public/media/      the capability film (1080p, 720p) and its poster
 scripts/           installer contract and shell-discovery checks
 tests/             built-in Node regression tests
 src/installCommands.ts   platform-aware clone and install commands
-src/content.ts     all copy that states a fact about JARVIS
+src/content.ts     capability, roadmap, platform and film evidence
+src/site.ts        public page catalog and historical anchor destinations
+src/entries/       separate entry points for the six HTML documents
+src/pages/         Home, Product, Integrations, HowItWorks, Install, Roadmap
 src/config.ts      repository and documentation URLs
 src/assets/        pinned canonical face geometry (Apache-2.0)
-src/components/    JarvisMask, Film, InstallBox, Terminal, ApprovalDemo, Pipeline, Architecture
+src/components/    shared navigation/sections, JarvisMask, Film, InstallBox, Pipeline, Architecture
 public/licenses/   third-party attribution and license texts
 ```
 

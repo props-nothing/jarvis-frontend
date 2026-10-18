@@ -44,3 +44,4 @@ jobs:
       - run: npm run check:install
       - run: npm test
       - run: npm run build
+      - run: npm run check:pages

@@ -42,8 +42,10 @@ const tabs: { id: InstallTab; label: string }[] = [
   { id: "windows", label: "Windows" },
   { id: "source", label: "From source" },
 ];
+const quickTabs = tabs.filter((tab) => tab.id !== "source");
 
-export default function InstallBox({ compact = false }: { compact?: boolean }) {
+export default function InstallBox({ compact = false, quick = false }: { compact?: boolean; quick?: boolean }) {
+  const visibleTabs = quick ? quickTabs : tabs;
   const commands = useInstallCommands();
   const id = useId();
   const [tab, setTab] = useState<InstallTab>(() => windowsHost() ? "windows" : "unix");
@@ -66,14 +68,14 @@ export default function InstallBox({ compact = false }: { compact?: boolean }) {
   const onTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     let next: number;
     switch (event.key) {
-      case "ArrowRight": next = (index + 1) % tabs.length; break;
-      case "ArrowLeft": next = (index + tabs.length - 1) % tabs.length; break;
+      case "ArrowRight": next = (index + 1) % visibleTabs.length; break;
+      case "ArrowLeft": next = (index + visibleTabs.length - 1) % visibleTabs.length; break;
       case "Home": next = 0; break;
-      case "End": next = tabs.length - 1; break;
+      case "End": next = visibleTabs.length - 1; break;
       default: return;
     }
     event.preventDefault();
-    selectTab(tabs[next].id);
+    selectTab(visibleTabs[next].id);
     (event.currentTarget.parentElement?.children[next] as HTMLElement)?.focus();
   };
 
@@ -88,10 +90,10 @@ export default function InstallBox({ compact = false }: { compact?: boolean }) {
 
   const prompt = tab === "windows" || (tab === "source" && windowsHost()) ? "PS>" : "$";
 
-  return (
-    <div className={`install ${compact ? "install--compact" : ""}`}>
+  return <>
+    <div className={`install ${compact ? "install--compact" : ""} ${quick ? "install--quick" : ""}`}>
       <div className="install__tabs" role="tablist" aria-label="Install method">
-        {tabs.map((t, index) => (
+        {visibleTabs.map((t, index) => (
           <button
             key={t.id}
             id={`${id}-${t.id}`}
@@ -123,7 +125,10 @@ export default function InstallBox({ compact = false }: { compact?: boolean }) {
       <p className="install__feedback" role="status">
         {copyState === "copied" ? "Install command copied." : copyState === "failed" ? "Clipboard unavailable. Select and copy the command above." : ""}
       </p>
-      <p className="install__note">
+    </div>
+    {!quick && <details className="disclosure install-details">
+      <summary>Requirements and installer details</summary>
+      <p>
         {tab === "source" ? <>
           Source build: Git, Rust via rustup and {windowsHost()
             ? "C++ Build Tools with a Windows SDK."
@@ -139,6 +144,7 @@ export default function InstallBox({ compact = false }: { compact?: boolean }) {
           {tab === "source" ? "View source" : "Inspect installer"}
         </a>
       </p>
-    </div>
-  );
+      <p>Use a local or hosted OpenAI-compatible model. Docker is optional for container code execution; Node.js is optional for browser and agent adapters.</p>
+    </details>}
+  </>;
 }

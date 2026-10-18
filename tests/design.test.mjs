@@ -26,22 +26,22 @@ test("the JARVIS mask is the unmodified, pinned canonical HUD face", () => {
   assert.match(read("public/licenses/mediapipe.txt"), /Apache License/);
 });
 
-test("all navigation targets exist, with no obsolete screenshot or orb", () => {
-  const app = read("src/App.tsx");
+test("the homepage retains the large face and omits retired sections and controls", () => {
+  const app = read("src/pages/Home.tsx");
   const navigation = read("src/components/Nav.tsx");
-  const ids = new Set([...app.matchAll(/id="([^"]+)"/g)].map((match) => match[1]));
-  for (const [, target] of navigation.matchAll(/\["([a-z]+)",\s*"/g)) {
-    assert.ok(ids.has(target), `missing navigation target: ${target}`);
-  }
   assert.doesNotMatch(app, /console\.jpg|<Orb|id="console"/);
   assert.doesNotMatch(app, /id="faq"|faqs/);
+  assert.doesNotMatch(app, /id="demo"|Less chatting\. More doing\.|<WorkflowDemo/);
   assert.doesNotMatch(navigation, /"faq"|"FAQ"/);
   assert.doesNotMatch(read("src/content.ts"), /export const faqs/);
   assert.doesNotMatch(read("src/styles.css"), /\.faq\b/);
   assert.doesNotMatch(read("index.html"), /console\.jpg/);
   assert.equal(existsSync(new URL("../public/console.jpg", import.meta.url)), false);
-  assert.match(app, /lazy\(\(\) => import\("\.\/components\/JarvisMask"\)\)/);
-  assert.match(app, /Pause face animation/);
+  assert.match(app, /lazy\(\(\) => import\("\.\.\/components\/JarvisMask"\)\)/);
+  assert.doesNotMatch(app, /Pause face animation|Owner-controlled|Local-first/);
+  const mask = read("src/components/JarvisMask.tsx");
+  assert.doesNotMatch(mask, /Say hello|Hello there|pointermove|pointerleave/);
+  assert.match(mask, /aria-label="Animate JARVIS"/);
 });
 
 test("the public site uses bounded type and does not hide content behind animation", () => {
@@ -81,12 +81,11 @@ test("capability copy preserves tool limits and does not promise universal acces
   assert.match(feature("Documents").body, /existing XLSX.*formulas are not recalculated/);
   assert.match(feature("Contacts").body, /do-not-contact.*Authorized deletion removes the contact and its suppression.*permission policy/);
   assert.match(feature("Experimental").body, /Independent checks report separately.*not a sandbox.*no automatic commit, merge or push/);
-  const app = read("src/App.tsx");
-  const icons = app.match(/const featureIcons = \[([^\]]+)\]/)[1].split(",");
-  assert.equal(icons.length, features.length);
+  const product = read("src/pages/Product.tsx");
+  const groups = [...product.matchAll(/tags: \[([^\]]+)\]/g)].flatMap((match) => [...match[1].matchAll(/"([^"]+)"/g)].map((entry) => entry[1]));
+  assert.deepEqual([...groups].sort(), features.map((feature) => feature.tag).sort());
   assert.doesNotMatch(read("src/content.ts"), /Add any MCP server|always ask you first|resume after a restart|Blocked on the owner choosing/);
-  assert.match(app, /illustrative, not live runs/);
-  assert.doesNotMatch(app, /jarvis stop && jarvis service install/);
+  assert.doesNotMatch(read("src/pages/Install.tsx"), /jarvis stop && jarvis service install/);
 });
 
 test("Apache-2.0 metadata and served notices remain consistent without relicensing third parties", () => {
@@ -137,7 +136,8 @@ test("mobile navigation retains dismissal, focus and bounded-layout contracts", 
   assert.match(navigation, /removeEventListener\("pointerdown", outside\)/);
   assert.match(navigation, /removeEventListener\("focusin", outside\)/);
   assert.match(navigation, /desktop\.addEventListener\("change", resize\)/);
-  assert.match(navigation, /target\?\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(navigation, /menuButton\.current\?\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(navigation, /aria-current=\{page === item.id \? "page" : undefined\}/);
   const styles = read("src/styles.css");
   assert.match(styles, /\.nav__actions \.nav__menu \{ display: inline-grid/);
   assert.match(styles, /max-height: calc\(100dvh - 96px - env\(safe-area-inset-bottom\)\)/);
@@ -185,16 +185,16 @@ test("a read-only illustrative workflow completes without an approval or persist
   assert.equal(state.decision, null);
 });
 
-test("the capability film is lazy, honest about being a rendered visualization, and respects reduced motion", async () => {
+test("the capability film is manual-only and honest about being a rendered visualization", async () => {
   const { film } = await import("../src/content.ts");
   const component = read("src/components/Film.tsx");
-  const app = read("src/App.tsx");
+  const app = read("src/pages/Home.tsx");
   assert.match(app, /id="film"/);
-  assert.match(read("src/components/Nav.tsx"), /\["film",\s*"Watch"\]/);
   assert.match(component, /preload="none"/);
-  assert.match(component, /prefers-reduced-motion: reduce/);
-  assert.match(component, /userPaused/);
-  assert.match(component, /muted=\{muted\}/);
+  assert.doesNotMatch(component, /\bautoPlay\b|\bloop\b/);
+  assert.match(component, /controls=\{started\}/);
+  assert.match(component, /onClick=\{\(\) => play\(/);
+  assert.match(component, /!entry.isIntersecting\)\) element.pause/);
   assert.match(film.disclosure, /scripted run/);
   assert.match(film.disclosure, /not a recording of a live session/);
   assert.equal(film.chapters.length, 9);

@@ -3,26 +3,27 @@
 ## Goals
 
 1. Make a visitor understand in ten seconds what JARVIS is and why it is safe to leave running.
-2. Give them a clear source-install command and a separate setup handoff; document build prerequisites and the required model/ElevenLabs checks before calling the assistant ready.
+2. Give them a clear signed installer and a separate setup handoff; keep source-build prerequisites and the required model/ElevenLabs checks explicit.
 3. Never claim something the platform does not do.
 
 ## Non-goals
 
 No accounts, analytics, tracking, cookies or third-party fonts and scripts. The site practises the local-first stance it describes. No backend.
 
-## Page structure (single page)
+## Page structure (implemented locally, 2026-10-18)
 
-| Section | Purpose |
+| Page | Purpose |
 | --- | --- |
-| Hero | JARVIS name over an unframed canonical HUD face, primary install/docs actions |
-| Quick install | OS-aware commands, clipboard feedback and source-install prerequisites |
-| Principles | Your machine, model, memory and decision |
-| See it work | Three illustrative mission workflows with trace inspection, pause/resume/stop, connected approvals and outcome previews |
-| Capabilities | Twelve cards, checked against reachable tool code; coding delegation is labelled experimental |
-| Trust | Keyboard-accessible seven-gate inspector and four ownership guarantees |
-| Architecture | Rust-centered system blueprint; available interfaces, replaceable adapters, local data and explicit experimental/unshipped states |
-| Install | Three steps, handy commands, headless-server tunnel, platform status |
-| Roadmap | Dated evidence review: available, experimental, next and deliberately deferred |
+| `/` | Large autonomous face, concise intro, compact tabbed one-line installer, three use cases, manual film and deeper links |
+| `/product` | Twelve capabilities grouped into everyday work, knowledge and automation, with their limits |
+| `/integrations` | Google, Telegram, models, voice, MCP and experimental coding; connection types and setup limits |
+| `/how-it-works` | Plain-language introduction, keyboard-accessible policy inspector and architecture |
+| `/install` | One installer, prerequisites, first run, commands/server disclosures and platform evidence |
+| `/roadmap` | Dated evidence review: available, experimental, next and deliberately deferred |
+
+Native document links connect six Vite HTML entries. Metadata and sitemap come from
+`src/site.ts`; the face belongs only to the homepage. See [the design and
+verification record](DESIGN.md) and [build contract](research/integrations/multipage-site.md).
 
 ## Install strategy
 
@@ -44,5 +45,5 @@ The scripts never use `sudo`, never request administrator elevation and never to
 
 ## Risks
 
-- Copy drifts from the product. Mitigation: all factual copy lives in `src/content.ts` and is mapped to sources in CONTENT-ACCURACY.md.
+- Copy drifts from the product. Mitigation: preserve the capability/platform evidence in `src/content.ts` and review page-specific summaries against CONTENT-ACCURACY.md.
 - `curl | bash` is a trust trade-off. Mitigation: scripts are inspectable, pinned to a reviewed release and verify publisher signatures before execution; the website HTTPS origin remains the bootstrap trust root.
